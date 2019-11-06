@@ -9,7 +9,10 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.secret_key = "1aV1B&r6^wdC"
+# secret key for development
+app.secret_key = "dev"
+# production
+app.config.from_pyfile('config.py', silent=True)
 
 api = Api(app)
 
