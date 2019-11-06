@@ -16,16 +16,16 @@ The following endpoints are available (grouped by section):
 
 ### Country
 
-##### List all countries:
+#### List all countries:
 Return all country names and associated codes used in WHO Mortality database.
 >'/countries' 
 
-##### Find Country Code of Specific Country:
+#### Find Country Code of Specific Country:
 Return the name and code of a country (case insensitive). 
 >'country/<string:country_name>'
 
 e.g. 
-> 'country/djibouti'
+> GET 'country/djibouti'
 ```
 {
     "id": 14,
@@ -33,12 +33,12 @@ e.g.
     "name": "Djibouti"
 }
 ```
-##### Search for Countries:
+#### Search for Countries:
 Return all countries with names that contain a search term
-> '/country-search/<string:search_term>'
+> GET '/country-search/<string:search_term>'
 
 e.g.
-> '/country-search/anu'
+> GET '/country-search/anu'
 ```
 {
     "id": 145,
