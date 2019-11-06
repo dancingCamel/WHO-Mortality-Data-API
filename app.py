@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from db import db
 from populate_data_tables import populate_country_table
-from resources.country import Country, CountryList
+from resources.country import Country, CountryList, CountrySearch
 
 
 app = Flask(__name__)
@@ -25,6 +25,7 @@ def create_tables():
 
 api.add_resource(Country, '/country/<string:country_name>')
 api.add_resource(CountryList, '/countries')
+api.add_resource(CountrySearch, '/country-search/<string:search_term>')
 
 if __name__ == '__main__':
     from db import db

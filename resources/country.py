@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.country import CountryModel
+from sqlalchemy import func
 
 
 class Country(Resource):
@@ -59,3 +60,12 @@ class CountryList(Resource):
     def get(self):
         countries = [country.json() for country in CountryModel.find_all()]
         return {'countries': countries}, 200
+
+
+class CountrySearch(Resource):
+    def get(self, search_term):
+        countries = [country.json()
+                     for country in CountryModel.search_by_name(search_term)]
+        if countries:
+            return {'countries': countries}, 200
+        return {'message': "No countries match that search term"}, 404

@@ -1,4 +1,5 @@
 from db import db
+from sqlalchemy import func
 
 
 class CountryModel(db.Model):
@@ -25,7 +26,11 @@ class CountryModel(db.Model):
 
     @classmethod
     def find_by_name(cls, country_name):
-        return cls.query.filter_by(country_name=country_name).first()
+        return cls.query.filter(cls.country_name.ilike(country_name)).first()
+
+    @classmethod
+    def search_by_name(cls, search_term):
+        return cls.query.filter(cls.country_name.ilike('%' + search_term + '%')).all()
 
     @classmethod
     def find_all(cls):
