@@ -20,12 +20,15 @@ class Country(Resource):
             return country.json(), 200
         return {'message': "Country -'{}'- not found.".format(country_name)}, 404
 
-    # post a country code when supplying a country name
+    # add a new country code and name - check code doesn't already exist
     def post(self, country_name):
         if CountryModel.find_by_name(country_name):
             return {'message': "A country with name '{}' already exists.".format(country_name)}, 400
 
         data = Country.parser.parse_args()
+
+        if CountryModel.find_by_code(data['country_code']):
+            return {'message': "A country with code '{}' already exists.".format(data['country_code'])}, 400
 
         country = CountryModel(data['country_code'], country_name)
 
@@ -35,13 +38,7 @@ class Country(Resource):
             return {'message': "An error occurred inserting the country."}, 500
         return country.json(), 201
 
-    def delete(self, country_name):
-        country = CountryModel.find_by_name(country_name)
-        if country:
-            country.delete_from_db()
-            return {'message': "Country '{}' deleted".format(country_name)}, 200
-        return {'message': "Country '{}' not found.".format(country_name)}, 404
-
+    # change code of given country
     def put(self, country_name):
         data = Country.parser.parse_args()
         country = CountryModel.find_by_name(country_name)
@@ -53,6 +50,13 @@ class Country(Resource):
 
         country.save_to_db()
         return country.json()
+
+    def delete(self, country_name):
+        country = CountryModel.find_by_name(country_name)
+        if country:
+            country.delete_from_db()
+            return {'message': "Country '{}' deleted".format(country_name)}, 200
+        return {'message': "Country '{}' not found.".format(country_name)}, 404
 
 
 class CountryList(Resource):

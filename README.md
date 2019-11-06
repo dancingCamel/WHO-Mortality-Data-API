@@ -1,15 +1,15 @@
 # WHO Mortality Data API
 
-An API to allows easier querying of the World Health Organization's mortality data database. 
+An API to allow easier querying of the World Health Organization's Mortality. 
 
 All data is returned in JSON format.
 
 ## Data available
 The following datasets are available for searching:
-- country codes *not implemented*
-- ICD-10 codes *not implemented*
+- Country list and country codes
 - country populations *not implemented*
-- Mortality (cause of death) *not implemented*
+- ICD-10 codes *not implemented*
+- Mortality (cause of death) numbers *not implemented*
 
 ## Endpoints
 The following endpoints are available (grouped by section):
@@ -54,5 +54,8 @@ e.g.
 ### ICD-10
 
 ### Population
+Note: Population and live births are both in units. Population figures are mid-year populations as stated by member countries.
+
+
 
 ### Mortality Data
