@@ -2,3 +2,7 @@ __pycache__/
 *.pyc 
 config.py
 notes.py
+*.db
+*.csv
+*.accdb
+*.laccdb
