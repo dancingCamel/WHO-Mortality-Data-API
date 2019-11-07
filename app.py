@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from db import db
-from populate_data_tables import populate_country_table
+from populate_data_tables import populate_country_table, populate_population_table
 from resources.country import Country, CountryList, CountrySearch
 
 
@@ -21,6 +21,7 @@ api = Api(app)
 def create_tables():
     db.create_all()
     populate_country_table()
+    populate_population_table()
 
 
 api.add_resource(Country, '/country/<string:country_name>')

@@ -19,3 +19,17 @@ def populate_country_table():
                 if new_country_object.country_name == "name":
                     continue
                 new_country_object.save_to_db()
+<<<<<<< HEAD
+=======
+
+
+def populate_population_table():
+    with open('./raw_data/populations.csv', 'r') as population_file:
+        pop_reader = csv.reader(population_file)
+        for row in pop_reader:
+            # make it a PopulationModel object
+            new_population_object = PopulationModel(*row)
+
+            # can't check if in table as don't have unique identifiers
+            new_population_object.save_to_db()
+>>>>>>> aff8afd... fix mistake in population model. add data to population table. update gitignore to not upload csv and accdb
