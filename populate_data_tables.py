@@ -1,5 +1,6 @@
 import csv
 from models.country import CountryModel
+from models.population import PopulationModel
 
 
 def populate_country_table():
@@ -19,8 +20,6 @@ def populate_country_table():
                 if new_country_object.country_name == "name":
                     continue
                 new_country_object.save_to_db()
-<<<<<<< HEAD
-=======
 
 
 def populate_population_table():
@@ -32,4 +31,3 @@ def populate_population_table():
 
             # can't check if in table as don't have unique identifiers
             new_population_object.save_to_db()
->>>>>>> aff8afd... fix mistake in population model. add data to population table. update gitignore to not upload csv and accdb
