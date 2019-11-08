@@ -4,4 +4,4 @@ from models.sex import SexModel
 
 class Sex(Resource):
     def get(self, sex):
-        return SexModel.find_code(sex)
+        return SexModel.find_by_name(sex)

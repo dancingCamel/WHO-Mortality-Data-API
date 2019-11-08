@@ -1,5 +1,6 @@
 from db import db
 from models.country import CountryModel
+from models.sex import SexModel
 
 
 class PopulationModel(db.Model):
@@ -78,14 +79,15 @@ class PopulationModel(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'country_code': self.country_code,
-            'country': CountryModel.find_by_code(self.country_code),
+            # 'country_code': self.country_code,
+            'country': CountryModel.find_by_code(self.country_code).json(),
             'admin': self.admin,
             'subdiv': self.subdiv,
             'year': self.year,
-            'sex':  self.sex,
+            'sex': SexModel.find_by_code(self.sex),
             'age_format': self.age_format,
-            'pop1': self.pop1,
+            'population_all_ages': int(self.pop1),
+            # remove blanks with formating then change all to ints
             'pop2': self.pop2,
             'pop3': self.pop3,
             'pop4': self.pop4,
@@ -110,24 +112,36 @@ class PopulationModel(db.Model):
             'pop23': self.pop23,
             'pop24': self.pop24,
             'pop25': self.pop25,
-            'pop26': self.pop26
+            'pop26': self.pop26,
+            'live_births': self.live_births
         }
 
-    @classmethod
-    def find_by_year(cls, year):
-        return cls.query.filter_by(year=year).all()
+    # @classmethod
+    # def find_by_year(cls, year):
+    #     return cls.query.filter_by(year=year).all()
 
-    @classmethod
-    def find_by_sex(cls, sex):
-        return cls.query.filter_by(sex=sex).all()
+    # @classmethod
+    # def find_by_sex(cls, sex):
+    #     return cls.query.filter_by(sex=sex).all()
 
-    @classmethod
-    def find_by_country(cls, country_code):
-        return cls.query.filter_by(country_code=country_code).all()
+    # @classmethod
+    # def find_by_country(cls, country_code):
+    #     return cls.query.filter_by(country_code=country_code).all()
 
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    # @classmethod
+    # def find__by_cys(cls, country_code, year, sex):
+    #     # only one result should exist for this combination of variables - but just in case we return all
+    #     # .order_by(int(cls.year))
+    #     return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
+
+    @classmethod
+    # make sure we pass a dictionary to this
+    def search_populations(cls, kwargs):
+        return cls.query.filter_by(**kwargs).all()
 
     def save_to_db(self):
         db.session.add(self)
