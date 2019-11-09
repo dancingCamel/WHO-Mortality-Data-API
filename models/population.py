@@ -133,8 +133,20 @@ class PopulationModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find__by_cys(cls, country_code, year, sex):
+    def find_by_cys(cls, country_code, year, sex):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
+
+    @classmethod
+    def fin__by_cysa(cls, country_code, year, sex, admin):
+        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin).all()
+
+    @classmethod
+    def find_by_cysas(cls, country_code, year, sex, admin, subdiv):
+        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).all()
+
+    @classmethod
+    def find_by_cyss(cls, country_code, year, sex, subdiv):
+        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, subdiv=subdiv).all()
 
     @classmethod
     # pass a dictionary to this

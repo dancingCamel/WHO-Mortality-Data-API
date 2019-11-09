@@ -1,10 +1,60 @@
-from flask_restful import Resource, request
+from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
 
 
 class Population(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('country_code',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('sex',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('year',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('admin',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('subdiv',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('age_format',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    parser.add_argument('live_births',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
+    for num in range(1, 27):
+        parser.add_argument('pop' + str(num),
+                            type=str
+                            )
+
     # search for entries
+
     def get(self):
         # Validate request
         country_code = request.args.get('country_code', type=str)
@@ -44,18 +94,42 @@ class Population(Resource):
 
     def post(self):
         # need to have non default values for year sex and country - must be specific to one line in table
-        # need to have values for all columns
-        pass
+        # if find multiple entries for given ASC, return what's given and ask users to add admin or subdiv as required to choose only one
+        data = Population.parser.parse_args()
+        # check to see if entry already exists given all parameters
+        if PopulationModel.find_by_cysas(data['country_code'], data['year'], data['sex'], data['admin'], data['subdiv']):
+            return {'message': "An entry already exists for your given year, country, sex, admin and subdiv."}, 400
 
-    # use parser to ensure we have a value set for each of the 3 parameters
+        entry = PopulationModel(**data)
+
+        try:
+            entry.save_to_db()
+        except:
+            return {"message": "An error occurred inserting the item."}, 500
+
+        return entry.json(), 201
+
     def delete(self):
-        # need to have non default values for year sex and country - must be specific to one line in table
-        pass
+        data = Population.parser.parse_args()
 
-        # use parser
+        entry = PopulationModel.find_by_cysas(
+            data['country_code'], data['year'], data['sex'], data['admin'], data['subdiv'])
+
+        if entry:
+            if len(entry) > 1:
+                return {'message': "More than one entry for given country, year and sex. Please specify one by adding an admin or subdiv according to the data below.",
+                        'entries': [entry.json for entry in PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])]}
+
+            entry[0].delete_from_db()
+            return {'message': 'Entry deleted.'}
+        return {'message': 'Item not found.'}, 404
+
     def put(self):
-        # need to have non default values for year sex and country - must be specific to one line in table (one year, one sex, one country)
-        pass
+        data = Population.parser.parse_args()
+
+        if len(PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])) > 1:
+            return {'message': "More than one entry for given country, year and sex. Please specify one by adding an admin or subdiv according to the data below.",
+                    'entries': [entry.json for entry in PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])]}
 
 
 class PopulationsAll(Resource):

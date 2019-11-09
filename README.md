@@ -1,13 +1,14 @@
 # WHO Mortality Data API
 
-An API to allow easier querying of the World Health Organization's Mortality. 
+An API to allow easier querying of the World Health Organization's Mortality Data.
+Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/ in November 2019). 
 
-All data is returned in JSON format.
+This API returns in JSON format.
 
 ## Data available
 The following datasets are available for searching:
 - Country list and country codes
-- country populations 
+- Country populations 
 - ICD-10 codes *not implemented*
 - Mortality (cause of death) numbers *not implemented*
 
@@ -51,7 +52,12 @@ e.g.
     "name": "Kazakhstan"
 }
 ```
-### ICD-10
+### ICD-10 Codes (including condensed form)
+
+
+
+
+
 
 ### Population
 Note: Population and live births are both in units. Population figures are mid-year populations as stated by member countries. 
@@ -62,14 +68,13 @@ All terms used in the population API queries should be in terms of WHO codes whi
 Get a dictionary of all available population data
 >GET '/api/population-all'
 
-
 #### Find Population Using Custom Query:
-Get population data for given country, year or sex (or any combination thereof).
+Get raw population data for given country, year or sex (or any combination thereof).
 
 >GET '/population/query?country=<country>&year=<year>&sex=<sex>'
 
 e.g. 
 Return population data for Males in the United Kingdom in 1989:
->GET '/population/query?country=4308&year=1989&sex=1'
+>GET '/population?country=4308&year=1989&sex=1'
 
 ### Mortality Data

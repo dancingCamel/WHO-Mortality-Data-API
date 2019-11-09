@@ -32,7 +32,9 @@ api.add_resource(CountryList, '/api/country-all')
 api.add_resource(CountrySearch, '/api/country-search/<string:search_term>')
 api.add_resource(Sex, '/api/sex/<string:sex>')
 api.add_resource(Population, '/api/population')
+
 api.add_resource(PopulationsAll, '/api/population-all')
+
 
 if __name__ == '__main__':
     from db import db
