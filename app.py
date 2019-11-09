@@ -28,7 +28,7 @@ def create_tables():
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
-api.add_resource(CountryList, '/api/countries')
+api.add_resource(CountryList, '/api/country-all')
 api.add_resource(CountrySearch, '/api/country-search/<string:search_term>')
 api.add_resource(Sex, '/api/sex/<string:sex>')
 api.add_resource(Population, '/api/population')

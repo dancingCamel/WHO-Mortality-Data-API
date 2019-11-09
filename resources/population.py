@@ -61,4 +61,5 @@ class Population(Resource):
 class PopulationsAll(Resource):
     # get all population data
     def get(self):
-        pass
+        populations = [entry.json() for entry in PopulationModel.find_all()]
+        return {'populations': populations}, 200
