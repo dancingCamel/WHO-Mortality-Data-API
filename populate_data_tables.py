@@ -25,7 +25,11 @@ def populate_country_table():
 def populate_population_table():
     with open('./raw_data/populations.csv', 'r') as population_file:
         pop_reader = csv.reader(population_file)
+        count = 1
         for row in pop_reader:
+            if count == 1:
+                count += 1
+                continue
             # make it a PopulationModel object
             new_population_object = PopulationModel(*row)
 
