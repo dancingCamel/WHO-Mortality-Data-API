@@ -8,17 +8,20 @@ class Population(Resource):
     def get(self):
         # Validate request
         country_code = request.args.get('country_code', type=str)
-        # if country_code:
-        #     # check valid country_code
-        #     validate_country_code(country_code)
+        if country_code:
+            if not valid_country_code(country_code):
+                return {'message': '{} is not a valid country_code'.format(country_code)}, 400
 
         year = request.args.get('year', type=str)
-        # if year:
-        #     validate_year(year)
+        if year:
+            if not valid_year(year):
+                return {'message': 'Please enter a valid year'}, 400
 
         sex = request.args.get('sex', type=str)
-        # if sex:
-        #     validate_sex(sex)
+        if sex:
+            if not valid_sex(sex):
+                return {'message': 'Please enter a valid sex code'}, 400
+
         query = {}
         if sex:
             query['sex'] = sex
