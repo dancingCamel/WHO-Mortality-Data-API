@@ -68,13 +68,24 @@ All terms used in the population API queries should be in terms of WHO codes whi
 Get a dictionary of all available population data
 >GET '/api/population-all'
 
-#### Find Population Using Custom Query:
-Get raw population data for given country, year or sex (or any combination thereof).
+#### Find Multiple Population Entries Using Custom Query:
+Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
+Multiple responses allowed. 
 
->GET '/population/query?country=<country>&year=<year>&sex=<sex>'
+>GET '/population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>'
 
 e.g. 
-Return population data for Males in the United Kingdom in 1989:
+Return population data for males and females in the United Kingdom in 1989:
+>GET '/population?country=4308&year=1989'
+
+#### Find Single Population Entry Using Custom Query:
+Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
+Returns data if only one population entry matches the query
+
+>GET '/population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>'
+
+e.g. 
+Return population data for only males in the United Kingdom in 1989:
 >GET '/population?country=4308&year=1989&sex=1'
 
 ### Mortality Data

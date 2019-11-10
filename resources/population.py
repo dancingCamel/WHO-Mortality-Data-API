@@ -26,29 +26,28 @@ class Population(Resource):
 
     parser.add_argument('admin',
                         type=str,
-                        required=True,
-                        help="This field is required"
+                        default="",
                         )
 
     parser.add_argument('subdiv',
                         type=str,
-                        required=True,
-                        help="This field is required"
+                        default="",
                         )
 
     parser.add_argument('age_format',
                         type=str,
-                        help="This field is required"
+                        default="00",
                         )
 
     parser.add_argument('live_births',
                         type=str,
-                        help="This field is required"
+                        default="",
                         )
 
     for num in range(1, 27):
         parser.add_argument('pop' + str(num),
-                            type=str
+                            type=str,
+                            default=""
                             )
 
     # search for entries
@@ -90,7 +89,7 @@ class Population(Resource):
                    for entry in PopulationModel.search_populations(query)]
 
         if results:
-            return {'populations': results}
+            return {'entries': results}
         return {'message': "No populations match your query."}, 404
 
     # use parser to ensure we have a value set for each of the 3 parameters
@@ -119,10 +118,6 @@ class Population(Resource):
             data['country_code'], data['year'], data['sex'], data['admin'], data['subdiv'])
 
         if entry:
-            if len(entry) > 1:
-                return {'message': "More than one entry for given country, year and sex. Please specify one by adding an admin or subdiv according to the data below.",
-                        'entries': [entry.json for entry in PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])]}
-
             entry[0].delete_from_db()
             return {'message': 'Entry deleted.'}
         return {'message': 'Item not found.'}, 404
@@ -130,9 +125,89 @@ class Population(Resource):
     def put(self):
         data = Population.parser.parse_args()
 
-        if len(PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])) > 1:
-            return {'message': "More than one entry for given country, year and sex. Please specify one by adding an admin or subdiv according to the data below.",
-                    'entries': [entry.json for entry in PopulationModel.find_by_cys(data['country_code'], data['year'], data['sex'])]}
+        entry = PopulationModel.find_by_cysas(
+            data['country_code'], data['year'], data['sex'], data['admin'], data['subdiv'])
+
+        if entry:
+            entry.age_format = data['age_format']
+            entry.live_births = data['live_births']
+            entry.pop1 = data['pop1']
+            entry.pop2 = data['pop2']
+            entry.pop3 = data['pop3']
+            entry.pop4 = data['pop4']
+            entry.pop5 = data['pop5']
+            entry.pop6 = data['pop6']
+            entry.pop7 = data['pop7']
+            entry.pop8 = data['pop8']
+            entry.pop9 = data['pop9']
+            entry.pop10 = data['pop10']
+            entry.pop11 = data['pop11']
+            entry.pop12 = data['pop12']
+            entry.pop13 = data['pop13']
+            entry.pop14 = data['pop14']
+            entry.pop15 = data['pop15']
+            entry.pop16 = data['pop16']
+            entry.pop17 = data['pop17']
+            entry.pop18 = data['pop18']
+            entry.pop19 = data['pop19']
+            entry.pop20 = data['pop20']
+            entry.pop21 = data['pop21']
+            entry.pop22 = data['pop22']
+            entry.pop23 = data['pop23']
+            entry.pop24 = data['pop24']
+            entry.pop25 = data['pop25']
+            entry.pop26 = data['pop26']
+
+        else:
+            entry = PopulationModel(**data)
+
+        # entry.save_to_db()
+        return entry.json()
+
+
+class PopulationOne(Resource):
+    def get(self):
+        query = {}
+        # Validate request and add to query
+        country_code = request.args.get('country', type=str)
+        if country_code:
+            if not valid_country_code(country_code):
+                return {'message': '{} is not a valid country_code'.format(country_code)}, 400
+            query['country_code'] = country_code
+
+            year = request.args.get('year', type=str)
+            if year:
+                if not valid_year(year):
+                    return {'message': 'Please enter a valid year'}, 400
+                query['year'] = year
+
+            sex = request.args.get('sex', type=str)
+            if sex:
+                if not valid_sex(sex):
+                    return {'message': 'Please enter a valid sex code'}, 400
+                query['sex'] = sex
+
+            admin = request.args.get('admin', type=str)
+            if admin:
+                if not valid_admin(admin):
+                    return {'message': 'Please enter a valid admin code'}, 400
+                query['admin'] = admin
+
+            subdiv = request.args.get('subdiv', type=str)
+            if subdiv:
+                if not valid_subdiv(subdiv):
+                    return {'message': 'Please enter a valid subdiv code'}, 400
+                query['subdiv'] = subdiv
+
+            result = [entry.json()
+                      for entry in PopulationModel.search_populations(query)]
+
+            if result:
+                if len(result) > 1:
+                    return {'message': "More than one population entry was found matching your query."}, 400
+                return {'entry': result[0]}, 200
+
+            return {'message': "No populations match your query."}, 404
 
 
 class PopulationsAll(Resource):

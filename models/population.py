@@ -97,7 +97,7 @@ class PopulationModel(db.Model):
             'year': self.year,
             'sex': SexModel.find_by_code(self.sex),
             'age_format': self.age_format,
-            'population_all_ages': self.pop1,
+            'all_ages': self.pop1,
             # remove blanks with formating then change all to ints / floats then round to tens then ints
             'pop2': self.pop2,
             'pop3': self.pop3,
@@ -143,6 +143,7 @@ class PopulationModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
+    # searching by imcomplete datasets may yield multiple results
     @classmethod
     def find_by_cys(cls, country_code, year, sex):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
@@ -152,12 +153,13 @@ class PopulationModel(db.Model):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin).all()
 
     @classmethod
-    def find_by_cysas(cls, country_code, year, sex, admin, subdiv):
-        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).all()
-
-    @classmethod
     def find_by_cyss(cls, country_code, year, sex, subdiv):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, subdiv=subdiv).all()
+
+    # if have all these data points there will definitely only be one population entry
+    @classmethod
+    def find_by_cysas(cls, country_code, year, sex, admin, subdiv):
+        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).first()
 
     @classmethod
     # pass a dictionary to this.
