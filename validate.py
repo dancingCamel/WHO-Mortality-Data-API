@@ -1,10 +1,11 @@
 from models.sex import SexModel
 from models.country import CountryModel
+from models.admin import AdminModel
 from datetime import datetime
 
 
 def valid_year(year):
-    first_year = 1988
+    first_year = 1950
     this_year = datetime.now().year
     try:
         int(year)
@@ -28,3 +29,14 @@ def valid_country_code(country_code):
         return True
     else:
         return False
+
+
+def valid_admin(admin):
+    if AdminModel.find_by_code(admin):
+        return True
+    else:
+        return False
+
+
+def valid_subdiv(subdiv):
+    pass

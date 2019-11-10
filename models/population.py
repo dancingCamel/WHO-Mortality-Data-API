@@ -1,6 +1,7 @@
 from db import db
 from models.country import CountryModel
 from models.sex import SexModel
+from models.admin import AdminModel
 
 
 class PopulationModel(db.Model):
@@ -81,7 +82,7 @@ class PopulationModel(db.Model):
             'id': self.id,
             # 'country_code': self.country_code,
             'country': CountryModel.find_by_code(self.country_code).json(),
-            'admin': self.admin,
+            'admin': AdminModel.find_by_code_and_country(self.admin, self.country_code),
             'subdiv': self.subdiv,
             'year': self.year,
             'sex': SexModel.find_by_code(self.sex),
@@ -137,7 +138,7 @@ class PopulationModel(db.Model):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
 
     @classmethod
-    def fin__by_cysa(cls, country_code, year, sex, admin):
+    def fin_by_cysa(cls, country_code, year, sex, admin):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin).all()
 
     @classmethod
@@ -149,9 +150,15 @@ class PopulationModel(db.Model):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, subdiv=subdiv).all()
 
     @classmethod
-    # pass a dictionary to this
+    # pass a dictionary to this.
+    # return list of multiple population entries that first search criteria
     def search_populations(cls, kwargs):
         return cls.query.filter_by(**kwargs).all()
+
+    @classmethod
+    # return only one population entry
+    def search_single_population(cls, kwargs):
+        return cls.query.filter_by(**kwards).first()
 
     def save_to_db(self):
         db.session.add(self)

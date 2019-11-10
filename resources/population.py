@@ -38,13 +38,11 @@ class Population(Resource):
 
     parser.add_argument('age_format',
                         type=str,
-                        required=True,
                         help="This field is required"
                         )
 
     parser.add_argument('live_births',
                         type=str,
-                        required=True,
                         help="This field is required"
                         )
 
@@ -72,6 +70,16 @@ class Population(Resource):
             if not valid_sex(sex):
                 return {'message': 'Please enter a valid sex code'}, 400
 
+        admin = request.args.get('admin', type=str)
+        if admin:
+            if not valid_admin(admin):
+                return {'message': 'Please enter a valid admin code'}, 400
+
+        subdiv = request.args.get('subdiv', type=str)
+        # if subdiv:
+        # if not valid_subdiv(subdiv):
+        # return {'message': 'Please enter a valid subdiv code'}, 400
+
         query = {}
         if sex:
             query['sex'] = sex
@@ -79,12 +87,13 @@ class Population(Resource):
             query['country_code'] = country_code
         if year:
             query['year'] = year
-        # query = {'country_code': country_code, 'year': year, 'sex': sex}
+        if admin:
+            query['admin'] = admin
+        if subdiv:
+            query['subdiv'] = subdiv
+
         results = [entry.json()
                    for entry in PopulationModel.search_populations(query)]
-
-        # results = PopulationModel.query.filter_by(
-        #     country_code=country_code).first()
 
         if results:
             return {'populations': results}
