@@ -20,39 +20,39 @@ The following endpoints are available (grouped by section):
 
 #### List all countries:
 Return all country names and associated codes used in WHO Mortality database.
->'/api/country-all' 
+``` GET /api/country-all```
 
 #### Find Country Code of Specific Country:
 Return the name and code of a country (case insensitive). 
->'/api/country/<country_name>'
+``` GET /api/country/<country_name>```
 
 e.g. 
-> GET '/api/country/djibouti'
-```
-{
-    "id": 14,
-    "code": "1120",
-    "name": "Djibouti"
-}
-```
+``` GET /api/country/djibouti```
+
+> {
+>     "id": 14,
+>     "code": "1120",
+>     "name": "Djibouti"
+> }
+
 #### Search for Countries:
 Return all countries with names that contain a search term
-> GET '/api/country-search/<search_term>'
+``` GET /api/country-search/<search_term>```
 
 e.g.
-> GET '/api/country-search/ka'
-```
-{
-    "id": 145,
-    "code": "3365",
-    "name": "Sri Lanka"
-},
-{
-    "id": 178,
-    "code": "4182",
-    "name": "Kazakhstan"
-}
-```
+``` GET /api/country-search/ka'```
+
+>{
+>    "id": 145,
+>    "code": "3365",
+>    "name": "Sri Lanka"
+>},
+>{
+>    "id": 178,
+>   "code": "4182",
+>    "name": "Kazakhstan"
+>}
+
 ### ICD-10 Codes (including condensed form)
 
 
@@ -67,27 +67,27 @@ All terms used in the population API queries should be in terms of WHO codes whi
 
 ### Get All Population Data
 Get a dictionary of all available population data
->GET '/api/population-all'
+``` GET /api/population-all```
 
 #### Find Multiple Population Entries Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
 Multiple responses allowed. 
 
->GET '/population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>'
+``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
 Return population data for males and females in the United Kingdom in 1989:
->GET '/population?country=4308&year=1989'
+``` GET /population?country=4308&year=1989```
 
 #### Find Single Population Entry Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
 Returns data if only one population entry matches the query
 
->GET '/population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>'
+``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
 Return population data for only males in the United Kingdom in 1989:
->GET '/population?country=4308&year=1989&sex=1'
+``` GET /population?country=4308&year=1989&sex=1```
 
 ### Mortality Data
 
