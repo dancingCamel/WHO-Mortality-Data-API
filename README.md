@@ -1,14 +1,15 @@
 # WHO Mortality Data API
 
 An API to allow easier querying of the World Health Organization's Mortality Data.
-Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/ in November 2019). 
+
+Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/, November 2019). 
 
 This API returns in JSON format.
 
 ## Data available
 The following datasets are available for searching:
 - Country list and country codes
-- Country populations 
+- Country populations
 - ICD-10 codes *not implemented*
 - Mortality (cause of death) numbers *not implemented*
 
@@ -89,3 +90,8 @@ Return population data for only males in the United Kingdom in 1989:
 >GET '/population?country=4308&year=1989&sex=1'
 
 ### Mortality Data
+
+
+Disclaimer: Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the WHO's data querying services (https://www.who.int/healthinfo/mortality_data/en/)
+All analyses, interpretations or conclusions drawn from this API or found on this website are credited to the authors, not the WHO (which is responsible only for the provision of the original information).
+For more information visit https://www.who.int/healthinfo/statistics/mortality_rawdata/en/
