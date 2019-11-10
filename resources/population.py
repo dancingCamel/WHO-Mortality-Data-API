@@ -54,42 +54,36 @@ class Population(Resource):
     # search for entries
 
     def get(self):
-        # Validate request
-        country_code = request.args.get('country_code', type=str)
+        query = {}
+        # Validate request and add to query
+        country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
                 return {'message': '{} is not a valid country_code'.format(country_code)}, 400
+            query['country_code'] = country_code
 
         year = request.args.get('year', type=str)
         if year:
             if not valid_year(year):
                 return {'message': 'Please enter a valid year'}, 400
+            query['year'] = year
 
         sex = request.args.get('sex', type=str)
         if sex:
             if not valid_sex(sex):
                 return {'message': 'Please enter a valid sex code'}, 400
+            query['sex'] = sex
 
         admin = request.args.get('admin', type=str)
         if admin:
             if not valid_admin(admin):
                 return {'message': 'Please enter a valid admin code'}, 400
+            query['admin'] = admin
 
         subdiv = request.args.get('subdiv', type=str)
-        # if subdiv:
-        # if not valid_subdiv(subdiv):
-        # return {'message': 'Please enter a valid subdiv code'}, 400
-
-        query = {}
-        if sex:
-            query['sex'] = sex
-        if country_code:
-            query['country_code'] = country_code
-        if year:
-            query['year'] = year
-        if admin:
-            query['admin'] = admin
         if subdiv:
+            if not valid_subdiv(subdiv):
+                return {'message': 'Please enter a valid subdiv code'}, 400
             query['subdiv'] = subdiv
 
         results = [entry.json()

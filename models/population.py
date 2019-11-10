@@ -2,6 +2,7 @@ from db import db
 from models.country import CountryModel
 from models.sex import SexModel
 from models.admin import AdminModel
+from models.subdiv import SubdivModel
 
 
 class PopulationModel(db.Model):
@@ -78,12 +79,21 @@ class PopulationModel(db.Model):
         self.live_births = live_births
 
     def json(self):
+        admin = AdminModel.find_by_code_and_country(
+            self.admin, self.country_code)
+        if not admin:
+            admin = 'None'
+
+        subdiv = SubdivModel.find_by_code(self.subdiv)
+        if not subdiv:
+            subdiv = 'None'
+
         return {
             'id': self.id,
             # 'country_code': self.country_code,
             'country': CountryModel.find_by_code(self.country_code).json(),
-            'admin': AdminModel.find_by_code_and_country(self.admin, self.country_code),
-            'subdiv': self.subdiv,
+            'admin': admin,
+            'subdiv': subdiv,
             'year': self.year,
             'sex': SexModel.find_by_code(self.sex),
             'age_format': self.age_format,

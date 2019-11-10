@@ -8,12 +8,6 @@ class AdminModel():
         self.country_code = country_code
         self.description = description
 
-    def json(self):
-        return {
-            'admin': self.admin_code,
-            'description': self.description
-        }
-
     @classmethod
     def find_by_code_and_country(cls, admin_code, country_code):
         # error handling
