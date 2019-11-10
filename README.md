@@ -36,7 +36,7 @@ e.g.
 > }
 
 #### Search for Countries:
-Return all countries with names that contain a search term  \n
+Return all countries with names that contain a search term <br>
 ``` GET /api/country-search/<search_term>```
 
 e.g.
