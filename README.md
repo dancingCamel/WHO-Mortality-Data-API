@@ -19,21 +19,21 @@ The following endpoints are available (grouped by section):
 ### Country
 
 #### List all countries:
-Return all country names and associated codes used in WHO Mortality database.
+Return all country names and associated codes used in WHO Mortality database.<br>
 ``` GET /api/country-all```
 
 #### Find Country Code of Specific Country:
-Return the name and code of a country (case insensitive). 
+Return the name and code of a country (case insensitive). <br>
 ``` GET /api/country/<country_name>```
 
 e.g. 
 ``` GET /api/country/djibouti```
 
-> {
->     "id": 14,
->     "code": "1120",
->     "name": "Djibouti"
-> }
+> {<br>
+>     "id": 14,<br>
+>     "code": "1120",<br>
+>     "name": "Djibouti"<br>
+> }<br>
 
 #### Search for Countries:
 Return all countries with names that contain a search term <br>
@@ -66,27 +66,27 @@ Note: Population and live births are both in units. Population figures are mid-y
 All terms used in the population API queries should be in terms of WHO codes which can be found using other endpoints in this API
 
 ### Get All Population Data
-Get a dictionary of all available population data
+Get a dictionary of all available population data<br>
 ``` GET /api/population-all```
 
 #### Find Multiple Population Entries Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
-Multiple responses allowed. 
+Multiple responses allowed. <br>
 
 ``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
-Return population data for males and females in the United Kingdom in 1989:
+Return population data for males and females in the United Kingdom in 1989:<br>
 ``` GET /population?country=4308&year=1989```
 
 #### Find Single Population Entry Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
-Returns data if only one population entry matches the query
+Returns data if only one population entry matches the query<br>
 
 ``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
-Return population data for only males in the United Kingdom in 1989:
+Return population data for only males in the United Kingdom in 1989:<br>
 ``` GET /population?country=4308&year=1989&sex=1```
 
 ### Mortality Data
