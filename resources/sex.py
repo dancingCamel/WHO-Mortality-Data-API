@@ -1,7 +1,53 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from models.sex import SexModel
 
 
 class Sex(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('sex_code',
+                        type=str,
+                        required=True,
+                        help="This field is required"
+                        )
+
     def get(self, sex):
-        return SexModel.find_by_name(sex)
+        return SexModel.find_by_name(sex).json()
+
+    def post(self, sex):
+        data = Sex.parser.parse_args()
+        if SexModel.find_by_name(sex):
+            return {'message': "Sex '{}' already exists.".format(sex)}, 400
+
+        entry = SexModel(sex, data['sex_code'])
+
+        try:
+            entry.save_to_db()
+        except:
+            return {'message': "An error occurred inserting the country."}, 500
+        return entry.json(), 201
+
+    def put(self, sex):
+        data = Sex.parser.parse_args()
+        entry = SexModel.find_by_name(sex)
+
+        if entry:
+            entry.sex_code = data['sex_code']
+        else:
+            entry = SexModel(sex, data['sex_code'])
+
+        entry.save_to_db()
+        return entry.json()
+
+    def delete(self, sex):
+        entry = SexModel.find_by_name(sex)
+        if entry:
+            entry.delete_from_db()
+            return {'message': "Sex '{}' deleted".format(sex)}, 200
+        return {'message': "Sex '{}' not found.".format(sex)}, 404
+
+
+class SexList(Resource):
+    # return list of all sexes and their codes
+    def get(self):
+        sexes = [sex.json() for sex in SexModel.find_all()]
+        return {'sexes': sexes}, 200

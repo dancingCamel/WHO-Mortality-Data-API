@@ -88,14 +88,21 @@ class PopulationModel(db.Model):
         if not subdiv:
             subdiv = 'None'
 
+        sex = SexModel.find_by_code(self.sex)
+        if sex:
+            sex = sex.json()
+
+        country = CountryModel.find_by_code(self.country_code)
+        if country:
+            country = country.json()
+
         return {
             'id': self.id,
-            # 'country_code': self.country_code,
-            'country': CountryModel.find_by_code(self.country_code).json(),
+            'country': country,
             'admin': admin,
             'subdiv': subdiv,
             'year': self.year,
-            'sex': SexModel.find_by_code(self.sex),
+            'sex': sex,
             'age_format': self.age_format,
             'all_ages': self.pop1,
             # remove blanks with formating then change all to ints / floats then round to tens then ints
@@ -170,7 +177,7 @@ class PopulationModel(db.Model):
     @classmethod
     # return only one population entry
     def search_single_population(cls, kwargs):
-        return cls.query.filter_by(**kwards).first()
+        return cls.query.filter_by(**kwargs).first()
 
     def save_to_db(self):
         db.session.add(self)

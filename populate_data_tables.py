@@ -1,6 +1,8 @@
 import csv
 from models.country import CountryModel
 from models.population import PopulationModel
+from models.sex import SexModel
+from codes import *
 
 
 def populate_country_table():
@@ -25,13 +27,26 @@ def populate_country_table():
 def populate_population_table():
     with open('./raw_data/populations.csv', 'r') as population_file:
         pop_reader = csv.reader(population_file)
-        count = 1
         for row in pop_reader:
-            if count == 1:
-                count += 1
-                continue
+
             # make it a PopulationModel object
             new_population_object = PopulationModel(*row)
 
+            if new_population_object.year == "Year":
+                continue
+
+            population = PopulationModel.find_by_cysas(new_population_object.country_code, new_population_object.year,
+                                                       new_population_object.sex, new_population_object.admin, new_population_object.subdiv)
+            if population:
+                continue
+
             # can't check if in table as don't have unique identifiers
             new_population_object.save_to_db()
+
+
+def populate_sex_table():
+    for sex, sex_code in sex_codes.items():
+        if SexModel.find_by_name(sex):
+            continue
+        new_sex_object = SexModel(sex, sex_code)
+        new_sex_object.save_to_db()

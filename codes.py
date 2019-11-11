@@ -11,7 +11,6 @@ sex_codes = {
     'f': '2',
     'Unspecified': '9',
     'unspecified': '9',
-    'all': '*'
 }
 
 # just import internally as others won't need to query the data as we will translate it for them in the JSON
