@@ -4,7 +4,7 @@ from db import db
 from populate_data_tables import populate_country_table, populate_population_table
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex
-from resources.population import Population, PopulationsAll, PopulationOne
+from resources.population import Population, PopulationsAll, PopulationOne, PopulationAdmin
 
 
 app = Flask(__name__)
@@ -34,6 +34,8 @@ api.add_resource(Sex, '/api/sex/<string:sex>')
 api.add_resource(Population, '/api/population')
 api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsAll, '/api/population-all')
+api.add_resource(
+    PopulationAdmin, '/api/population-admin/<string:country_code>/<string:year>/<string:sex>')
 
 
 if __name__ == '__main__':

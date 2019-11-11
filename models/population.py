@@ -149,7 +149,7 @@ class PopulationModel(db.Model):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
 
     @classmethod
-    def fin_by_cysa(cls, country_code, year, sex, admin):
+    def find_by_cysa(cls, country_code, year, sex, admin):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin).all()
 
     @classmethod
@@ -159,7 +159,7 @@ class PopulationModel(db.Model):
     # if have all these data points there will definitely only be one population entry
     @classmethod
     def find_by_cysas(cls, country_code, year, sex, admin, subdiv):
-        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).first()
+        return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).all()
 
     @classmethod
     # pass a dictionary to this.
