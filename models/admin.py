@@ -1,5 +1,4 @@
 from db import db
-from codes import admin_codes
 from models.country import CountryModel
 
 

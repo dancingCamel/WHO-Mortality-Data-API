@@ -3,6 +3,7 @@ from models.country import CountryModel
 from models.population import PopulationModel
 from models.sex import SexModel
 from models.admin import AdminModel
+from models.subdiv import SubdivModel
 from codes import *
 
 
@@ -59,3 +60,11 @@ def populate_admin_table():
         if AdminModel.find_by_code_and_country(new_admin_model.admin_code, new_admin_model.country_code):
             continue
         new_admin_model.save_to_db()
+
+
+def populate_subdiv_table():
+    for subdiv_code, description in subdiv_codes.items():
+        if SubdivModel.find_by_code(subdiv_code):
+            continue
+        new_subdiv_object = SubdivModel(subdiv_code, description)
+        new_subdiv_object.save_to_db()

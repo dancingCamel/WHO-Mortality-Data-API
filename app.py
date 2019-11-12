@@ -1,7 +1,11 @@
 from flask import Flask
 from flask_restful import Api
 from db import db
-from populate_data_tables import populate_country_table, populate_population_table, populate_sex_table, populate_admin_table
+from populate_data_tables import (populate_country_table,
+                                  populate_population_table,
+                                  populate_sex_table,
+                                  populate_admin_table,
+                                  populate_subdiv_table)
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
@@ -28,6 +32,7 @@ def create_tables():
     # populate_population_table()
     # populate_sex_table()
     # populate_admin_table()
+    populate_subdiv_table()
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
