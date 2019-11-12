@@ -4,6 +4,7 @@ from models.population import PopulationModel
 from models.sex import SexModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
+from models.age_format import AgeFormatModel
 from codes import *
 
 
@@ -68,3 +69,12 @@ def populate_subdiv_table():
             continue
         new_subdiv_object = SubdivModel(subdiv_code, description)
         new_subdiv_object.save_to_db()
+
+
+def populate_age_format_table():
+    for age_format_code, format_list in age_format_codes.items():
+        if AgeFormatModel.find_by_code(age_format_code):
+            continue
+
+        new_age_format = AgeFormatModel(age_format_code, *format_list)
+        new_age_format.save_to_db()
