@@ -53,4 +53,4 @@ class Admin(Resource):
 class AdminList(Resource):
     def get(self):
         admins = AdminModel.find_all()
-        return [entry.json() for entry in admins]
+        return [entry.json() for entry in admins], 200
