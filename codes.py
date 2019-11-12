@@ -14,17 +14,12 @@ sex_codes = {
 }
 
 # just import internally as others won't need to query the data as we will translate it for them in the JSON
-admin_codes = {
-    '901': {
-        '2070': 'North and North-East',
-        '2350': 'Former Canal Zone',
-        '3150': 'Jewish Population'
-    },
-    '902': {
-        '2070': 'South, South-East and Central West'
-    }
-}
-
+admin_codes = [
+    ['901', '2070', 'North and North-East'],
+    ['901', '2350', 'Former Canal Zone'],
+    ['901', '3150', 'Jewish Population'],
+    ['902', '2070', 'South, South-East and Central West']
+]
 # just import internally as others won't need to query the data as we will translate it for them in the JSON
 subdiv_codes = {
     'A10': 'Survery',

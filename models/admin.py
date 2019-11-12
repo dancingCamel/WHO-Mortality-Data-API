@@ -1,27 +1,51 @@
+from db import db
 from codes import admin_codes
+from models.country import CountryModel
 
 
-class AdminModel():
+class AdminModel(db.Model):
+    __tablename__: 'admin'
+
+    id = db.Column(db.Integer, primary_key=True)
+    admin_code = db.Column(db.String(5))
+    country_code = db.Column(db.String(5))
+    description = db.Column(db.String(30))
 
     def __init__(self, admin_code, country_code, description):
         self.admin_code = admin_code
         self.country_code = country_code
         self.description = description
 
+    def json(self):
+        country = CountryModel.find_by_code(self.country_code)
+        if country:
+            country = country.json()
+
+        return {'admin': self.admin_code,
+                'country': country,
+                'description': self.description
+                }
+
     @classmethod
     def find_by_code_and_country(cls, admin_code, country_code):
-        # error handling
-        if admin_code in admin_codes:
-            if country_code in admin_codes[admin_code]:
-                return {'admin_code': admin_code, 'country': country_code, 'area': admin_codes[admin_code][country_code]}
-        return None
+        return cls.query.filter_by(admin_code=admin_code, country_code=country_code).first()
 
     @classmethod
     def find_by_code(cls, admin_code):
-        if admin_code in admin_codes:
-            for admin_code in admin_codes:
-                countries_with_admin_code = []
-                for country_code in admin_codes[admin_code]:
-                    countries_with_admin_code.append(country_code)
-                return {'admin_code': admin_code, 'countries': countries_with_admin_code}
-        return None
+        return cls.query.filter_by(admin_code=admin_code).all()
+
+    @classmethod
+    def find_by_country(cls, country_code):
+        return cls.query.filter_by(country_code=country_code).all()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()

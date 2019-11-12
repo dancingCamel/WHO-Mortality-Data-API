@@ -81,7 +81,10 @@ class PopulationModel(db.Model):
     def json(self):
         admin = AdminModel.find_by_code_and_country(
             self.admin, self.country_code)
-        if not admin:
+        if admin:
+            admin = {'admin_code': admin.admin_code,
+                     'description': admin.description}
+        else:
             admin = 'None'
 
         subdiv = SubdivModel.find_by_code(self.subdiv)

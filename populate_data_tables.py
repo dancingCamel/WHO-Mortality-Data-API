@@ -2,6 +2,7 @@ import csv
 from models.country import CountryModel
 from models.population import PopulationModel
 from models.sex import SexModel
+from models.admin import AdminModel
 from codes import *
 
 
@@ -50,3 +51,11 @@ def populate_sex_table():
             continue
         new_sex_object = SexModel(sex, sex_code)
         new_sex_object.save_to_db()
+
+
+def populate_admin_table():
+    for row in admin_codes:
+        new_admin_model = AdminModel(*row)
+        if AdminModel.find_by_code_and_country(new_admin_model.admin_code, new_admin_model.country_code):
+            continue
+        new_admin_model.save_to_db()

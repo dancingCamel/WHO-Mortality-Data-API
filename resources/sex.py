@@ -23,7 +23,7 @@ class Sex(Resource):
         try:
             entry.save_to_db()
         except:
-            return {'message': "An error occurred inserting the country."}, 500
+            return {'message': "An error occurred inserting the sex."}, 500
         return entry.json(), 201
 
     def put(self, sex):
@@ -35,8 +35,11 @@ class Sex(Resource):
         else:
             entry = SexModel(sex, data['sex_code'])
 
-        entry.save_to_db()
-        return entry.json()
+        try:
+            entry.save_to_db()
+        except:
+            return {'message': "An error occurred inserting the sex."}, 500
+        return entry.json(), 201
 
     def delete(self, sex):
         entry = SexModel.find_by_name(sex)
