@@ -22,7 +22,7 @@ admin_codes = [
 ]
 # just import internally as others won't need to query the data as we will translate it for them in the JSON
 subdiv_codes = {
-    'A10': 'Survery',
+    'A10': 'Survey',
     'A20': 'Reporting Areas',
     'A30': 'Part',
     'A35': 'Selected Urban and Rural Areas',

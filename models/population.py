@@ -82,13 +82,16 @@ class PopulationModel(db.Model):
         admin = AdminModel.find_by_code_and_country(
             self.admin, self.country_code)
         if admin:
-            admin = {'admin_code': admin.admin_code,
+            admin = {'code': admin.admin_code,
                      'description': admin.description}
         else:
             admin = 'None'
 
         subdiv = SubdivModel.find_by_code(self.subdiv)
-        if not subdiv:
+        if subdiv:
+            subdiv = {'code': subdiv.subdiv_code,
+                      'description': subdiv.description}
+        else:
             subdiv = 'None'
 
         sex = SexModel.find_by_code(self.sex)

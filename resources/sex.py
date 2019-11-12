@@ -11,7 +11,10 @@ class Sex(Resource):
                         )
 
     def get(self, sex):
-        return SexModel.find_by_name(sex).json()
+        sex_entry = SexModel.find_by_name(sex)
+        if sex_entry:
+            return sex_entry.json()
+        return {'message': "Sex not found."}, 404
 
     def post(self, sex):
         data = Sex.parser.parse_args()

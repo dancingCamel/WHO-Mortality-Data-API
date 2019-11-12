@@ -10,6 +10,7 @@ from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
 from resources.admin import Admin, AdminList
+from resources.subdiv import Subdiv, SubdivList
 
 
 app = Flask(__name__)
@@ -40,8 +41,10 @@ api.add_resource(CountryList, '/api/country-list')
 api.add_resource(CountrySearch, '/api/country-search/<string:search_term>')
 api.add_resource(Sex, '/api/sex/<string:sex>')
 api.add_resource(SexList, '/api/sex-list/')
-api.add_resource(Admin, '/api/<string:admin_code>/<string:country_code>')
+api.add_resource(Admin, '/api/admin/<string:admin_code>/<string:country_code>')
 api.add_resource(AdminList, '/api/admin-list')
+api.add_resource(Subdiv, '/api/subdiv/<string:subdiv_code>')
+api.add_resource(SubdivList, '/api/subdiv-list')
 api.add_resource(PopulationSearch, '/api/population-search')
 api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsList, '/api/population-list')

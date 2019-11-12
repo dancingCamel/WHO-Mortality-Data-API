@@ -11,7 +11,10 @@ class Admin(Resource):
                         )
 
     def get(self, admin_code, country_code):
-        return AdminModel.find_by_code_and_country(admin_code, country_code).json()
+        admin = AdminModel.find_by_code_and_country(admin_code, country_code)
+        if admin:
+            return admin.json()
+        return {'message': "No admin entry found for code {} and country {}.".format(admin_code, country_code)}, 404
 
     def post(self, admin_code, country_code):
         data = Admin.parser.parse_args()
