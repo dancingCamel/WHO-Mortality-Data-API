@@ -19,7 +19,7 @@ The following datasets are available:
 - Mortality (cause of death) statistics *not implemented*
 - Mortality (cause of death) statistics adjusted for population
 
-<br>
+
 ## Endpoints
 The following endpoints are available (grouped by section):
 
@@ -73,10 +73,10 @@ Return the code for a know sex<br>
 
 e.g.
 ```GET /api/sex/female```
->{
->    "name": "female",
->    "code": "2"
->}
+>{<br>
+>    "name": "female",<br>
+>    "code": "2"<br>
+>}<br>
 
 
 ### WHO 'Admin' Codes
@@ -92,14 +92,14 @@ Return the description of a specific admin code for a specific country.<br>
 
 e.g.  
 ```GET /api/admin/901/3150```
->{
->    "admin": "901",
->    "country": {
->        "code": "3150",
->        "name": "Israel"
->    },
->    "description": "Jewish Population"
->}
+>{<br>
+>    "admin": "901",<br>
+>    "country": {<br>
+>        "code": "3150",<br>
+>        "name": "Israel"<br>
+>    },<br>
+>    "description": "Jewish Population"<br>
+>}<br>
 
 
 ### WHO 'Subdiv' Codes 
@@ -115,10 +115,10 @@ Return the description of a specific subdiv code.<br>
 
 e.g. 
 ```GET /api/subdiv/A35```
->{
->    "code": "A35",
->    "description": "Selected Urban and Rural Areas"
->}
+>{<br>
+>    "code": "A35",<br>
+>    "description": "Selected Urban and Rural Areas"<br>
+>}<br>
 
 ### WHO Age Formats
 Endpoints related to the 'Age format' section of the Mortality Database
@@ -133,34 +133,34 @@ Return the description of a specific age format code.<br>
 
 e.g. 
 ```GET /api/age-format/08```
-{
->    "age_format_code": "08",
->    "pop2": "0",
->    "pop3": "1-4",
->    "pop4": "empty4",
->    "pop5": "empty5",
->    "pop6": "empty6",
->    "pop7": "5-14",
->    "pop8": "empty8",
->    "pop9": "15-24",
->    "pop10": "empty10",
->    "pop11": "25-34",
->    "pop12": "empty12",
->    "pop13": "35-44",
->    "pop14": "empty14",
->    "pop15": "45-54",
->    "pop16": "empty16",
->    "pop17": "55-64",
->    "pop18": "empty18",
->    "pop19": "65+",
->    "pop20": "empty20",
->    "pop21": "empty21",
->    "pop22": "empty22",
->    "pop23": "empty23",
->    "pop24": "empty24",
->    "pop25": "empty25",
->    "pop26": "Unknown"
->}
+{<br>
+>    "age_format_code": "08",<br>
+>    "pop2": "0",<br>
+>    "pop3": "1-4",<br>
+>    "pop4": "empty4",<br>
+>    "pop5": "empty5",<br>
+>    "pop6": "empty6",<br>
+>    "pop7": "5-14",<br>
+>    "pop8": "empty8",<br>
+>    "pop9": "15-24",<br>
+>    "pop10": "empty10",<br>
+>    "pop11": "25-34",<br>
+>    "pop12": "empty12",<br>
+>    "pop13": "35-44",<br>
+>    "pop14": "empty14",<br>
+>    "pop15": "45-54",<br>
+>    "pop16": "empty16",<br>
+>    "pop17": "55-64",<br>
+>    "pop18": "empty18",<br>
+>    "pop19": "65+",<br>
+>    "pop20": "empty20",<br>
+>    "pop21": "empty21",<br>
+>    "pop22": "empty22",<br>
+>    "pop23": "empty23",<br>
+>    "pop24": "empty24",<br>
+>    "pop25": "empty25",<br>
+>    "pop26": "Unknown"<br>
+>}<br>
 
 ### WHO Infant Age Formats
 Endpoints related to the 'Infant Mortality' section of the Mortality Database
@@ -176,13 +176,13 @@ Return the description of a specific infant mortality age format code.<br>
 e.g. 
 ```GET /api/infant-age-format/01```
 
->{
->    "infant_age_format_code": "01",
->    "infant_age1": "0 days",
->    "infant_age2": "1-6 days",
->    "infant_age3": "7-27 days",
->    "infant_age4": "28-365 days"
->}
+>{<br>
+>    "infant_age_format_code": "01",<br>
+>    "infant_age1": "0 days",<br>
+>    "infant_age2": "1-6 days",<br>
+>    "infant_age3": "7-27 days",<br>
+>    "infant_age4": "28-365 days"<br>
+>}<br>
 
 ### Population
 Note: Population and live births are both in units. Population figures are mid-year populations as stated by member countries. 
