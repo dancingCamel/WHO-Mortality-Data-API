@@ -3,7 +3,7 @@ from models.country import CountryModel
 
 
 class AdminModel(db.Model):
-    __tablename__: 'admin'
+    __tablename__: 'adminCodes'
 
     id = db.Column(db.Integer, primary_key=True)
     admin_code = db.Column(db.String(5))

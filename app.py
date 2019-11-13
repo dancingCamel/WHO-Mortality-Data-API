@@ -6,13 +6,15 @@ from populate_data_tables import (populate_country_table,
                                   populate_sex_table,
                                   populate_admin_table,
                                   populate_subdiv_table,
-                                  populate_age_format_table)
+                                  populate_age_format_table,
+                                  populate_infant_age_format_table)
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
 from resources.admin import Admin, AdminList
 from resources.subdiv import Subdiv, SubdivList
 from resources.age_format import AgeFormat, AgeFormatList
+from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
 
 
 app = Flask(__name__)
@@ -37,6 +39,7 @@ def create_tables():
     # populate_admin_table()
     # populate_subdiv_table()
     # populate_age_format_table()
+    populate_infant_age_format_table()
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
@@ -50,6 +53,9 @@ api.add_resource(Subdiv, '/api/subdiv/<string:subdiv_code>')
 api.add_resource(SubdivList, '/api/subdiv-list')
 api.add_resource(AgeFormat, '/api/age-format/<string:age_format_code>')
 api.add_resource(AgeFormatList, '/api/age-format-list')
+api.add_resource(
+    InfantAgeFormat, '/api/infant-age-format/<string:infant_age_format_code>')
+api.add_resource(InfantAgeFormatList, '/api/infant-age-format-list')
 api.add_resource(PopulationSearch, '/api/population-search')
 api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsList, '/api/population-list')

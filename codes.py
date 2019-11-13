@@ -48,7 +48,7 @@ age_format_codes = {
 
 # just import internally as others won't need to query the data as we will translate it for them in the JSON
 infant_age_format_codes = {
-    '01': ['0 day', '1-6 days', '7-27 days', '28-365 days'],
-    '02': ['0-6 days', None, '7-27 days', '28-365 days'],
-    '03': ['0-365 days', None, None, None]
+    '01': ['0 days', '1-6 days', '7-27 days', '28-365 days'],
+    '02': ['0-6 days', 'empty2', '7-27 days', '28-365 days'],
+    '03': ['0-365 days', 'empty2', 'empty3', 'empty4']
 }
