@@ -3,6 +3,7 @@ from models.country import CountryModel
 from models.sex import SexModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
+from models.age_format import AgeFormatModel
 
 
 class PopulationModel(db.Model):
@@ -102,6 +103,50 @@ class PopulationModel(db.Model):
         if country:
             country = country.json()
 
+        # sort the age data according to the given age format for the population entry
+        age_breakdown_format = AgeFormatModel.find_by_code(
+            self.age_format).json()
+        pops = [
+            self.pop2,
+            self.pop3,
+            self.pop4,
+            self.pop5,
+            self.pop6,
+            self.pop7,
+            self.pop8,
+            self.pop9,
+            self.pop10,
+            self.pop11,
+            self.pop12,
+            self.pop13,
+            self.pop14,
+            self.pop15,
+            self.pop16,
+            self.pop17,
+            self.pop18,
+            self.pop19,
+            self.pop20,
+            self.pop21,
+            self.pop22,
+            self.pop23,
+            self.pop24,
+            self.pop25,
+            self.pop26
+        ]
+        age_breakdown = {}
+        count = 0
+        for pop, age_range in age_breakdown_format.items():
+            if pop == "age_format_code":
+                continue
+            age_breakdown[age_range] = pops[count]
+            count += 1
+        empties = []
+        for age_range, value in age_breakdown.items():
+            if value == "":
+                empties.append(age_range)
+        for index in empties:
+            del age_breakdown[index]
+
         return {
             'id': self.id,
             'country': country,
@@ -111,32 +156,7 @@ class PopulationModel(db.Model):
             'sex': sex,
             'age_format': self.age_format,
             'all_ages': self.pop1,
-            # remove blanks with formating then change all to ints / floats then round to tens then ints
-            'pop2': self.pop2,
-            'pop3': self.pop3,
-            'pop4': self.pop4,
-            'pop5': self.pop5,
-            'pop6': self.pop6,
-            'pop7': self.pop7,
-            'pop8': self.pop8,
-            'pop9': self.pop9,
-            'pop10': self.pop10,
-            'pop11': self.pop11,
-            'pop12': self.pop12,
-            'pop13': self.pop13,
-            'pop14': self.pop14,
-            'pop15': self.pop15,
-            'pop16': self.pop16,
-            'pop17': self.pop17,
-            'pop18': self.pop18,
-            'pop19': self.pop19,
-            'pop20': self.pop20,
-            'pop21': self.pop21,
-            'pop22': self.pop22,
-            'pop23': self.pop23,
-            'pop24': self.pop24,
-            'pop25': self.pop25,
-            'pop26': self.pop26,
+            'age_breakdown': age_breakdown,
             'live_births': self.live_births
         }
 
@@ -156,7 +176,7 @@ class PopulationModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
-    # searching by imcomplete datasets may yield multiple results
+    # searching by incomplete datasets may yield multiple results
     @classmethod
     def find_by_cys(cls, country_code, year, sex):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
