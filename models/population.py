@@ -196,7 +196,7 @@ class PopulationModel(db.Model):
 
     @classmethod
     # pass a dictionary to this.
-    # return list of multiple population entries that first search criteria
+    # return list of multiple population entries that match search criteria
     def search_populations(cls, kwargs):
         return cls.query.filter_by(**kwargs).all()
 

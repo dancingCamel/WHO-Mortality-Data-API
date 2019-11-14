@@ -7,7 +7,12 @@ from populate_data_tables import (populate_country_table,
                                   populate_admin_table,
                                   populate_subdiv_table,
                                   populate_age_format_table,
-                                  populate_infant_age_format_table)
+                                  populate_infant_age_format_table,
+                                  populate_icd10_table_101,
+                                  populate_icd10_table_103,
+                                  populate_icd10_table_104,
+                                  populate_icd10_table_10M,
+                                  populate_icd10_table_UE1)
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
@@ -15,6 +20,7 @@ from resources.admin import Admin, AdminList
 from resources.subdiv import Subdiv, SubdivList
 from resources.age_format import AgeFormat, AgeFormatList
 from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
+from resources.icd10 import Icd10, Icd10List, Icd10Search
 
 
 app = Flask(__name__)
@@ -39,7 +45,12 @@ def create_tables():
     # populate_admin_table()
     # populate_subdiv_table()
     # populate_age_format_table()
-    populate_infant_age_format_table()
+    # populate_infant_age_format_table()
+    # populate_icd10_table_101()
+    # populate_icd10_table_103()
+    # populate_icd10_table_104()
+    # populate_icd10_table_10M()
+    # populate_icd10_table_UE1()
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
@@ -61,7 +72,9 @@ api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsList, '/api/population-list')
 api.add_resource(
     PopulationChange, '/api/population-change/<string:country_code>/<string:year>/<string:sex>')
-
+api.add_resource(Icd10, '/api/icd10/<string:code_list>/<string:code>')
+api.add_resource(Icd10List, '/api/icd10-list')
+api.add_resource(Icd10Search, '/api/icd10-search/<string:search_term>')
 
 if __name__ == '__main__':
     from db import db
