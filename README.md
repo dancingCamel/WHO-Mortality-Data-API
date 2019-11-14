@@ -2,7 +2,9 @@
 
 An API to allow easier querying of the World Health Organization's Mortality Data.
 
-Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/, November 2019). 
+Mortality Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/, November 2019). 
+
+ICD-10 codes taken from https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html and the WHO Mortality Database Documentation (https://www.who.int/healthinfo/statistics/mortality_rawdata/en/). (accessed November 2019) 
 
 This API returns in JSON format.
 
@@ -15,7 +17,7 @@ The following datasets are available:
 - WHO Age format codes and their meanings
 - WHO Infant age format codes and their meanings
 - Country populations (from 1950)
-- ICD-10 codes *not implemented*
+- ICD-10 codes and description
 - Mortality (cause of death) statistics *not implemented*
 - Mortality (cause of death) statistics adjusted for population
 
@@ -33,7 +35,7 @@ Return all country names and associated codes used in WHO Mortality database.<br
 Return the name and code of a country (case insensitive). <br>
 ``` GET /api/country/<country_name>```
 
-e.g. 
+e.g. <br>
 ``` GET /api/country/djibouti```
 
 > {<br>
@@ -46,7 +48,7 @@ e.g.
 Return all countries with names that contain a search term <br>
 ``` GET /api/country-search/<search_term>```
 
-e.g.
+e.g. <br>
 ``` GET /api/country-search/ka'```
 
 >{<br>
@@ -71,7 +73,7 @@ Return all sex codes used in the Mortality Database<br>
 Return the code for a know sex<br>
 ```GET /api/sex/<sex_name>```
 
-e.g.
+e.g. <br>
 ```GET /api/sex/female```
 >{<br>
 >    "name": "female",<br>
@@ -90,7 +92,7 @@ Return all admin codes and descriptions used in WHO Mortality database.<br>
 Return the description of a specific admin code for a specific country.<br>
 ```GET /api/admin/<admin_code>/<country_code>```
 
-e.g.  
+e.g.  <br>
 ```GET /api/admin/901/3150```
 >{<br>
 >    "admin": "901",<br>
@@ -113,7 +115,7 @@ Return all subdiv codes and descriptions used in WHO Mortality database.<br>
 Return the description of a specific subdiv code.<br>
 ```GET /api/subdiv/<subdiv_code>```
 
-e.g. 
+e.g. <br>
 ```GET /api/subdiv/A35```
 >{<br>
 >    "code": "A35",<br>
@@ -131,7 +133,7 @@ Return all age format codes and their year cut-off boundaries used in WHO Mortal
 Return the description of a specific age format code.<br>
 ```GET /api/age-format/<age_format_code>```
 
-e.g. 
+e.g. <br>
 ```GET /api/age-format/08```
 {<br>
 >    "age_format_code": "08",<br>
@@ -173,7 +175,7 @@ Return all infant age format codes and their day cut-off boundaries used in WHO 
 Return the description of a specific infant mortality age format code.<br>
 ```GET /api/-infant-age-format/<infant_age_format_code>```
 
-e.g. 
+e.g. <br>
 ```GET /api/infant-age-format/01```
 
 >{<br>
@@ -196,25 +198,89 @@ Return a dictionary of all available population data<br>
 #### Find Multiple Population Entries Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
 
-``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
+``` GET /api/population-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
 Return population data for males and females in the United Kingdom in 1989:<br>
-``` GET /population?country=4308&year=1989```
+``` GET /api/population-search?country=4308&year=1989```
 
 #### Find Single Population Entry Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof).
 Returns data if only one population entry matches the query<br>
 
-``` GET /population/query?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
+``` GET /api/population-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
 
 e.g. 
 Return population data for only males in the United Kingdom in 1989:<br>
-``` GET /population?country=4308&year=1989&sex=1```
+``` GET /api/population-one?country=4308&year=1989&sex=1```
 
 
 
 ### ICD-10 Codes (including condensed form)
+Endpoints related to the ICD-10 codes including search for descriptions and codes across multiple list versions used by WHO in mortality data.
+
+#### All ICD-10 Code Lists used in Mortality Data
+Find descriptions of all different code lists used in Mortality Data.<br>
+``` GET /api/icd10-code-lists```
+
+#### ICD-10 Code List Description
+Find the description of a specific code list.<br>
+``` GET /api/icd10-code-list/<code>```
+
+e.g. <br>
+```GET /api/icd10-code-list/103```
+
+>{<br>
+>    "list": "103",<br>
+>    "description": "3 Character ICD10 codes"<br>
+>}<br>
+
+### ICD-10 Code Description
+Find the description of a certain code in a certain list. (If list is unknown use the ICD-10 Search endpoint.)<br>
+NOTE 1: Y34 and Y349 respectively refer to the sum of all deaths from accidental deaths V00-Y89 for countries reporting with list 103 and 104 respectively<br>
+NOTE 2: If a country reports with a 4 character code in the 10M list, the death will not be counted in the 3 character code total (all numbers are mutually exclusive).<br>
+``` GET /api/icd10/<list>/<code>```
+
+e.g.<br>
+```GET /api/icd10/104/Y25```
+
+>{<br>
+>    "list": "104",<br>
+>    "code": "Y25",<br>
+>    "description": "Contact with explosive material (undetermined intent)"<br>
+>}<br>
+
+#### ICD-10 Search
+Search the ICD-10 with a search term (searches both codes and description)<br>
+``` GET /api/icd10-search/<search_term>```
+
+e.g.<br>
+```GET /api/icd10-search/boil```
+
+>{<br>
+>    "results": [<br>
+>        {<br>
+>            "list": "103",<br>
+>            "code": "W35",<br>
+>            "description": "Explosion and rupture of boiler"<br>
+>        },<br>
+>        {<br>
+>            "list": "104",<br>
+>            "code": "W35",<br>
+>            "description": "Explosion and rupture of boiler"<br>
+>        },<br>
+>        {<br>
+>            "list": "10M",<br>
+>            "code": "W35",<br>
+>            "description": "Explosion and rupture of boiler"<br>
+>        }<br>
+>    ]<br>
+>}<br>
+
+#### ICD-10 List
+Return all ICD-10 codes and their descriptions in all lists used in Mortality Database<br>
+``` GET /api/icd10-list```
+
 
 ### Mortality Data
 
