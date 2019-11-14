@@ -7,6 +7,7 @@ from models.subdiv import SubdivModel
 from models.age_format import AgeFormatModel
 from models.infant_age_format import InfantAgeFormatModel
 from models.icd10 import Icd10Model
+from models.icd10_lists import Icd10ListsModel
 from codes import *
 
 
@@ -170,3 +171,12 @@ def populate_icd10_table_UE1():
                 continue
 
             new_icd10_object.save_to_db()
+
+
+def populate_icd10_code_lists_table():
+    for code, description in icd10_lists.items():
+        if Icd10ListsModel.find_by_code(code):
+            continue
+
+        new_list = Icd10ListsModel(code, description)
+        new_list.save_to_db()

@@ -12,7 +12,8 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd10_table_103,
                                   populate_icd10_table_104,
                                   populate_icd10_table_10M,
-                                  populate_icd10_table_UE1)
+                                  populate_icd10_table_UE1,
+                                  populate_icd10_code_lists_table)
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
@@ -21,6 +22,7 @@ from resources.subdiv import Subdiv, SubdivList
 from resources.age_format import AgeFormat, AgeFormatList
 from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
 from resources.icd10 import Icd10, Icd10List, Icd10Search
+from resources.icd10_lists import Icd10CodeList, Icd10AllCodeLists
 
 
 app = Flask(__name__)
@@ -51,6 +53,7 @@ def create_tables():
     # populate_icd10_table_104()
     # populate_icd10_table_10M()
     # populate_icd10_table_UE1()
+    populate_icd10_code_lists_table()
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
@@ -75,6 +78,8 @@ api.add_resource(
 api.add_resource(Icd10, '/api/icd10/<string:code_list>/<string:code>')
 api.add_resource(Icd10List, '/api/icd10-list')
 api.add_resource(Icd10Search, '/api/icd10-search/<string:search_term>')
+api.add_resource(Icd10CodeList, '/api/icd10-code-list/<string:code>')
+api.add_resource(Icd10AllCodeLists, '/api/icd10-code-lists')
 
 if __name__ == '__main__':
     from db import db

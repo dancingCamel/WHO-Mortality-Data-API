@@ -62,14 +62,8 @@ class Icd10Search(Resource):
         return {'message': "No results match the search term '{}'.".format(search_term)}, 404
 
 
-class Icd10AvailableLists(Resource):
-    # return all available code lists and their descritpion e.g. 101, 103, 104
-    def get(self):
-        pass
-
-
 class Icd10List(Resource):
     # return whole icd10 list in json format
     def get(self):
         entries = [entry.json() for entry in Icd10Model.find_all()]
-        return {'all codes': entries}
+        return {'all_codes': entries}
