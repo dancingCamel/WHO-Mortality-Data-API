@@ -13,7 +13,8 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd10_table_104,
                                   populate_icd10_table_10M,
                                   populate_icd10_table_UE1,
-                                  populate_icd10_code_lists_table)
+                                  populate_icd10_code_lists_table,
+                                  populate_mortality_table)
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
@@ -23,6 +24,7 @@ from resources.age_format import AgeFormat, AgeFormatList
 from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
 from resources.icd10 import Icd10, Icd10List, Icd10Search
 from resources.icd10_lists import Icd10CodeList, Icd10AllCodeLists
+from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange
 
 
 app = Flask(__name__)
@@ -40,20 +42,21 @@ api = Api(app)
 @app.before_first_request
 def create_tables():
     db.create_all()
-    # only run these when first setting up the API
-    # populate_country_table()
-    # populate_population_table()
-    # populate_sex_table()
-    # populate_admin_table()
-    # populate_subdiv_table()
-    # populate_age_format_table()
-    # populate_infant_age_format_table()
-    # populate_icd10_table_101()
-    # populate_icd10_table_103()
-    # populate_icd10_table_104()
-    # populate_icd10_table_10M()
-    # populate_icd10_table_UE1()
+    # populate table function. auto skips if table exists
+    populate_country_table()
+    populate_population_table()
+    populate_sex_table()
+    populate_admin_table()
+    populate_subdiv_table()
+    populate_age_format_table()
+    populate_infant_age_format_table()
+    populate_icd10_table_101()
+    populate_icd10_table_103()
+    populate_icd10_table_104()
+    populate_icd10_table_10M()
+    populate_icd10_table_UE1()
     populate_icd10_code_lists_table()
+    # populate_mortality_table()
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
@@ -80,6 +83,10 @@ api.add_resource(Icd10List, '/api/icd10-list')
 api.add_resource(Icd10Search, '/api/icd10-search/<string:search_term>')
 api.add_resource(Icd10CodeList, '/api/icd10-code-list/<string:code>')
 api.add_resource(Icd10AllCodeLists, '/api/icd10-code-lists')
+api.add_resource(MortalityDataSearch, '/api/mortality-data-search')
+api.add_resource(MortalityDataOne, '/api/mortality-data-one')
+api.add_resource(MortalityDataChange,
+                 '/api/mortality-data-change/<string:country_code>/<string:year>/<string:sex>/<string:cause>')
 
 if __name__ == '__main__':
     from db import db

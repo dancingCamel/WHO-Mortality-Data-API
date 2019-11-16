@@ -134,7 +134,6 @@ class PopulationChange(Resource):
             del data['subdiv']
             subdiv = ""
 
-        # NEED TO FIGURE OUT WHY ADMIN CODE GETS DELETED AND SET TO NONE EVEN WHEN PASSING TO DATA
         entry = PopulationModel(country_code, admin, subdiv, year, sex, **data)
 
         try:

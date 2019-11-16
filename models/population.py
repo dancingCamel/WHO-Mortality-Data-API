@@ -4,6 +4,7 @@ from models.sex import SexModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
 from models.age_format import AgeFormatModel
+from sqlalchemy import distinct
 
 
 class PopulationModel(db.Model):
@@ -159,6 +160,51 @@ class PopulationModel(db.Model):
             'age_breakdown': age_breakdown,
             'live_births': self.live_births
         }
+
+    def json_unformatted(self):
+        return {
+            'id': self.id,
+            'country': self.country,
+            'admin': self.admin,
+            'subdiv': self.subdiv,
+            'year': self.year,
+            'sex': self.sex,
+            'age_format': self.age_format,
+            'all_ages': self.pop1,
+            'age_breakdown': self.age_breakdown,
+            'live_births': self.live_births,
+            'pop2': self.pop2,
+            'pop3': self.pop3,
+            'pop4': self.pop4,
+            'pop5': self.pop5,
+            'pop6': self.pop6,
+            'pop7': self.pop7,
+            'pop8': self.pop8,
+            'pop9': self.pop9,
+            'pop10': self.pop10,
+            'pop11': self.pop11,
+            'pop12': self.pop12,
+            'pop13': self.pop13,
+            'pop14': self.pop14,
+            'pop15': self.pop15,
+            'pop16': self.pop16,
+            'pop17': self.pop17,
+            'pop18': self.pop18,
+            'pop19': self.pop19,
+            'pop20': self.pop20,
+            'pop21': self.pop21,
+            'pop22': self.pop22,
+            'pop23': self.pop23,
+            'pop24': self.pop24,
+            'pop25': self.pop25,
+            'pop26': self.pop26
+        }
+
+    # use for creating list of distinct entries to use in making total population entries
+    @classmethod
+    def distinct_entries(cls, column):
+        return cls.query.distinct(column).all()
+        # session.query.with_entities(cls.column).distinct()
 
     @classmethod
     def find_by_year(cls, year):
