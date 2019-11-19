@@ -94,10 +94,10 @@ class MortalityDataOne(Resource):
 
             if result:
                 if len(result) > 1:
-                    return {'message': "More than one population entry was found matching your query, please be more specific."}, 400
+                    return {'message': "More than one mortality entry was found matching your query, please be more specific."}, 400
                 return {'entry': result[0]}, 200
 
-            return {'message': "No populations match your query."}, 404
+            return {'message': "No mortalities match your query."}, 404
 
 
 class MortalityDataChange(Resource):
@@ -359,7 +359,7 @@ class MortalityDataChange(Resource):
 
         if entry:
             if len(entry) > 1:
-                return {'message': "More than one population entry was found with the given parameters. Please supply either an admin or subdiv code as required.",
+                return {'message': "More than one mortality entry was found with the given parameters. Please supply either an admin or subdiv code as required.",
                         'entries': [mortality.json() for mortality in entry]}, 400
             entry[0].delete_from_db()
             return {'message': 'Entry deleted.'}

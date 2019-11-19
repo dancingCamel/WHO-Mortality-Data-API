@@ -2,9 +2,9 @@
 
 An API to allow easier querying of the World Health Organization's Mortality Data.
 
-Mortality Data drawn from the WHO ICD-10 (parts 1 and 2) raw data file (Downloaded from https://www.who.int/healthinfo/statistics/mortality_rawdata/en/, November 2019). 
+Mortality Data drawn from the WHO ICD-10 (parts 1 and 2) [raw data file](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/) (accessed November 2019). 
 
-ICD-10 codes taken from https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html and the WHO Mortality Database Documentation (https://www.who.int/healthinfo/statistics/mortality_rawdata/en/). (accessed November 2019) 
+ICD-10 codes taken from the [Centers for Medicare & Medicaid Services website](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html) and the [WHO Mortality Database Documentation](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/) (accessed November 2019). 
 
 This API returns in JSON format.
 
@@ -18,7 +18,7 @@ The following datasets are available:
 - WHO Infant age format codes and their meanings
 - Country populations (from 1950)
 - ICD-10 codes and description
-- Mortality (cause of death) statistics *not implemented*
+- Mortality (cause of death) statistics (from 2005)
 - Mortality (cause of death) statistics adjusted for population
 
 
@@ -64,6 +64,7 @@ e.g. <br>
 
 ### WHO Sex Codes
 Endpoints related to the 'Sex' section of the Mortality Database
+(Short version: 1 = Male, 2 = Female, 9 = Unspecified)
 
 #### List All Sex Codes
 Return all sex codes used in the Mortality Database<br>
@@ -198,8 +199,9 @@ Return a dictionary of all available population data<br>
 #### Find Multiple Population Entries Using Custom Query:
 Get raw population data for given country, year, sex, admin or subdiv (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
 
-``` GET /api/population-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```
+``` GET /api/population-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>```<br>
 
+Variables (variable name) = format: country = country code, year, sex = sex code, admin = admin code, subdiv = subdiv code <br>
 e.g. 
 Return population data for males and females in the United Kingdom in 1989:<br>
 ``` GET /api/population-search?country=4308&year=1989```
@@ -283,10 +285,35 @@ Return all ICD-10 codes and their descriptions in all lists used in Mortality Da
 
 
 ### Mortality Data
+Endpoints related to the WHO Mortality Database. Each mortality database entry details the number of deaths in a given country in any given year for any given sex from a certain cause. When searching with a cause of death icd10 code the code must be in the correct format for that countries mortality data. Mortality data starts in 2005. 
 
+NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
 
-Disclaimer: Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the WHO's data querying services (https://www.who.int/healthinfo/mortality_data/en/)
-All analyses, interpretations or conclusions drawn from this API or found on this website are credited to the authors, not the WHO (which is responsible only for the provision of the original information).
-For more information visit the [WHO website](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/)
+#### Find Multiple Mortality Entries Using Custom Query:
+Get raw mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
+
+``` GET /api/mortality-data-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```<br>
+
+Variables (variable = format): country = country code, year, sex = sex code, admin = admin code, subdiv = subdiv code, cause = cause code. All codes can be found from the respective endpoints <br>
+e.g. 
+Return mortality data for males and females in the United Kingdom in 2006 caused by "Airgun discharge (undetermined intent)":<br>
+``` GET /api/mortality-data-search?country=4308&year=2006&cause=Y240```
+
+#### Find Single Mortality Data Entry Using Custom Query:
+Get raw population data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
+Returns data only if only one mortality entry matches the query<br>
+
+``` GET /api/mortality-data-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```
+
+e.g. 
+Return mortality data for only males in the United Kingdom in 2016 caused by "Driver of special agricultural vehicle injured in traffic accident":<br>
+``` GET /api/mortality-data-one?country=4308&year=2016&sex=1&cause=V840```
+
 
 ### Mortality Data - adjusted for population
+
+
+
+Disclaimer: Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the [WHO's data querying services](https://www.who.int/healthinfo/mortality_data/en/)
+All analyses, interpretations or conclusions drawn from this API or found on this website are credited to the authors, not the WHO (which is responsible only for the provision of the original information).
+For more information visit the [WHO website](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/)
