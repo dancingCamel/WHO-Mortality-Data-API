@@ -25,6 +25,7 @@ from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
 from resources.icd10 import Icd10, Icd10List, Icd10Search
 from resources.icd10_lists import Icd10CodeList, Icd10AllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange
+from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne
 
 
 app = Flask(__name__)
@@ -88,6 +89,9 @@ api.add_resource(MortalityDataSearch, '/api/mortality-data-search')
 api.add_resource(MortalityDataOne, '/api/mortality-data-one')
 api.add_resource(MortalityDataChange,
                  '/api/mortality-data-change/<string:country_code>/<string:year>/<string:sex>/<string:cause>')
+api.add_resource(MortalityAdjustedSearch, '/api/mortality-adj-search')
+api.add_resource(MortalityAdjustedOne, '/api/mortality-adj-one')
+
 
 if __name__ == '__main__':
     from db import db

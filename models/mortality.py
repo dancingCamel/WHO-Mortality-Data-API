@@ -182,7 +182,13 @@ class MortalityDataModel(db.Model):
 
         # format infant age to remove blanks
         infant_age_breakdown_format = InfantAgeFormatModel.find_by_code(
-            self.infant_age_format).json()
+            self.infant_age_format)
+
+        if infant_age_breakdown_format:
+            infant_age_breakdown_format = infant_age_breakdown_format.json()
+        else:
+            return {'message': "No infant age breakdown found for code '{}'.".format(self.infant_age_format)}, 404
+
         infant_deaths = [
             self.infant_deaths1,
             self.infant_deaths2,
@@ -213,7 +219,7 @@ class MortalityDataModel(db.Model):
             'sex': sex,
             'age_format': self.age_format,
             'infant_age_format': self.infant_age_format,
-            'deaths_all_ages': self.deaths1,
+            'all_ages': self.deaths1,
             'age_breakdown': age_breakdown,
             'infant_age_breakdown': infant_age_breakdown,
         }
