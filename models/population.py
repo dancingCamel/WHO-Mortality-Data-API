@@ -99,10 +99,15 @@ class PopulationModel(db.Model):
         sex = SexModel.find_by_code(self.sex)
         if sex:
             sex = sex.json()
+        else:
+            sex = "Sex code '{}' not found.".format(self.sex)
 
         country = CountryModel.find_by_code(self.country_code)
         if country:
             country = country.json()
+        else:
+            country = "Country with code '{}' not found.".format(
+                self.country_code)
 
         # sort the age data according to the given age format for the population entry
         age_breakdown_format = AgeFormatModel.find_by_code(

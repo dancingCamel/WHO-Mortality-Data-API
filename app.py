@@ -56,6 +56,7 @@ def create_tables():
     populate_icd10_table_10M()
     populate_icd10_table_UE1()
     populate_icd10_code_lists_table()
+    # mortality data csv is too large. need to use sqlite3 .import function
     # populate_mortality_table()
 
 

@@ -12,7 +12,7 @@ class SexModel(db.Model):
         self.sex_code = sex_code
 
     def json(self):
-        return {'name': self.sex, 'code': self.sex_code}
+        return {'code': self.sex_code, 'description': self.sex}
 
     @classmethod
     def find_by_name(cls, sex):

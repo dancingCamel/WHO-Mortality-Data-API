@@ -16,7 +16,7 @@ class CountryModel(db.Model):
     def json(self):
         return {
             'code': self.country_code,
-            'name': self.country_name
+            'description': self.country_name
         }
 
     @classmethod
