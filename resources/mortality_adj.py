@@ -54,49 +54,67 @@ class MortalityAdjustedSearch(Resource):
             return {'message': "No mortality entries match your query."}, 404
 
         # for each item in the results lits, find the corresponding population
-        for entry in results:
-            pop_query = {}
-            pop_query['country_code'] = entry['country']['code']
-            pop_query['year'] = entry['year']
-            pop_query['sex'] = entry['sex']['code']
+            for entry in results:
+                pop_query = {}
+                pop_query['country_code'] = entry['country']['code']
+                pop_query['year'] = entry['year']
+                pop_query['sex'] = entry['sex']['code']
 
-            admin = entry['admin']
-            if admin != "None":
-                pop_query['admin'] = admin['code']
+                admin = entry['admin']
+                if admin != "None":
+                    pop_query['admin'] = admin['code']
 
-            subdiv = entry['subdiv']
-            if subdiv != "None":
-                pop_query['subdiv'] = subdiv['code']
-            pop_data = PopulationModel.search_single_population(
-                pop_query).json()
+                subdiv = entry['subdiv']
+                if subdiv != "None":
+                    pop_query['subdiv'] = subdiv['code']
+                pop_data = PopulationModel.search_single_population(
+                    pop_query)
+                if pop_data:
+                    pop_data = pop_data.json()
+                else:
+                    country = CountryModel.find_by_code(
+                        country_code).json()
+                    return {'message': "No population data available for '{}' in year {} for sex '{}'.".format(country['description'], year, sex)}, 404
 
-            # remove infant mortality data as no related population data given
-            del entry['infant_age_breakdown']
-            # remove age breakdown data as population data and mortality data age cutoffs don't match
-            del entry['age_breakdown']
-            # delete age format numbers as now irrelevant
-            del entry['age_format']
-            del entry['infant_age_format']
+                # remove infant mortality data as no related population data given
+                del entry['infant_age_breakdown']
+                # delete age format numbers as now irrelevant
+                del entry['age_format']
+                del entry['infant_age_format']
 
-            # divide mortality data by corresponding population number and multiply by 100,000
-            # population is population of that specific age/sex. not total country population
-            things_to_skip = ["country", "admin", "subdiv", "year",
-                              "code_list", "cause", "sex"]
-            for key, value in entry.items():
-                if key in things_to_skip:
-                    continue
+                # divide mortality data by corresponding population number and multiply by 100,000
+                # population is population of that specific age/sex. not total country population
+                things_to_skip = ["country", "admin", "subdiv", "year",
+                                  "code_list", "cause", "sex", "infant_age_breakdown"]
+                for key, value in entry.items():
+                    if key in things_to_skip:
+                        continue
 
-                # always round data up
-                def round_up(n, decimals=100):
-                    multiplier = 10 ** decimals
-                    return math.ceil(n * multiplier) / multiplier
+                    # always round data up
+                    def round_up(n, decimals=100):
+                        multiplier = 10 ** decimals
+                        return math.ceil(n * multiplier) / multiplier
 
-                entry[key] = str(
-                    round_up(int(value)/int(pop_data[key])*100000, 3))
+                    # format age_breakdown data per 100,000
+                    if key == "age_breakdown":
+                        ages_to_delete = []
+                        for age_range, value in entry[key].items():
+                            pop = pop_data[key].get(age_range)
+                            entry[key][age_range] = pop
+                            if pop:
+                                if pop == "0":
+                                    continue
+                                entry[key][age_range] = str(
+                                    round_up(int(value)/int(pop)*100000, 3))
+                            if pop == None:
+                                ages_to_delete.append(age_range)
+                        for index in ages_to_delete:
+                            del entry[key][index]
+                    else:
+                        entry[key] = str(
+                            round_up(int(value)/int(pop_data[key])*100000, 3))
 
-            # entry['population_data'] = pop_data
-
-        return {'adjusted_entries': results}
+            return {'adjusted_entries': results}, 200
 
 
 class MortalityAdjustedOne(Resource):
@@ -175,8 +193,6 @@ class MortalityAdjustedOne(Resource):
 
                 # remove infant mortality data as no related population data given
                 del entry['infant_age_breakdown']
-                # remove age breakdown data as population data and mortality data age cutoffs don't match
-                del entry['age_breakdown']
                 # delete age format numbers as now irrelevant
                 del entry['age_format']
                 del entry['infant_age_format']
@@ -184,7 +200,7 @@ class MortalityAdjustedOne(Resource):
                 # divide mortality data by corresponding population number and multiply by 100,000
                 # population is population of that specific age/sex. not total country population
                 things_to_skip = ["country", "admin", "subdiv", "year",
-                                  "code_list", "cause", "sex"]
+                                  "code_list", "cause", "sex", "infant_age_breakdown"]
                 for key, value in entry.items():
                     if key in things_to_skip:
                         continue
@@ -194,9 +210,23 @@ class MortalityAdjustedOne(Resource):
                         multiplier = 10 ** decimals
                         return math.ceil(n * multiplier) / multiplier
 
-                    entry[key] = str(
-                        round_up(int(value)/int(pop_data[key])*100000, 3))
+                    # format age_breakdown data per 100,000
+                    if key == "age_breakdown":
+                        ages_to_delete = []
+                        for age_range, value in entry[key].items():
+                            pop = pop_data[key].get(age_range)
+                            entry[key][age_range] = pop
+                            if pop:
+                                if pop == "0":
+                                    continue
+                                entry[key][age_range] = str(
+                                    round_up(int(value)/int(pop)*100000, 3))
+                            if pop == None:
+                                ages_to_delete.append(age_range)
+                        for index in ages_to_delete:
+                            del entry[key][index]
+                    else:
+                        entry[key] = str(
+                            round_up(int(value)/int(pop_data[key])*100000, 3))
 
-                # entry['population_data'] = pop_data
-
-            return {'adjusted_entries': results}
+            return {'adjusted_entries': results}, 200
