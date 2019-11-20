@@ -6,7 +6,7 @@ Mortality Data drawn from the WHO ICD-10 (parts 1 and 2) [raw data file](https:/
 
 ICD-10 codes taken from the [Centers for Medicare & Medicaid Services website](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html) and the [WHO Mortality Database Documentation](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/) (accessed November 2019). 
 
-This API returns in JSON format.
+This API returns data in JSON format with all values as strings.
 
 ## Data available
 The following datasets are available:
@@ -300,20 +300,45 @@ Return mortality data for males and females in the United Kingdom in 2006 caused
 ``` GET /api/mortality-data-search?country=4308&year=2006&cause=Y240```
 
 #### Find Single Mortality Data Entry Using Custom Query:
-Get raw population data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
+Get raw mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
 Returns data only if only one mortality entry matches the query<br>
 
 ``` GET /api/mortality-data-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```
 
 e.g. 
 Return mortality data for only males in the United Kingdom in 2016 caused by "Driver of special agricultural vehicle injured in traffic accident":<br>
+
 ``` GET /api/mortality-data-one?country=4308&year=2016&sex=1&cause=V840```
 
 
 ### Mortality Data - adjusted for population
+Endpoints related to the WHO Mortality Database with all mortalities adjusted for population (per 100,000) - also known as ASDR per 100,000. All other factors are the same as for the mortality data detailed above.
 
+NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
+NOTE: In some cases there is population data but no mortality data, or vice versa. In these situations the data point is removed so as to avoid confusion due to mixing of age-specific and absolute data.
 
+#### Find Multiple Population Adjusted Mortality Entries Using Custom Query:
+Get adjusted mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
 
-Disclaimer: Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the [WHO's data querying services](https://www.who.int/healthinfo/mortality_data/en/)
+``` GET /api/mortality-adj-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```<br>
+
+Variables (variable = format): country = country code, year, sex = sex code, admin = admin code, subdiv = subdiv code, cause = cause code. All codes can be found from the respective endpoints <br>
+e.g. 
+Return population adjusted mortality data for males and females in the United Kingdom in 2006 caused by "Airgun discharge (undetermined intent)":<br>
+``` GET /api/mortality-adj-search?country=4308&year=2006&cause=Y240```
+
+#### Find Single Population Adjusted Mortality Data Entry Using Custom Query:
+Get adjusted mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
+Returns data only if only one mortality entry matches the query<br>
+
+``` GET /api/mortality-adj-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```
+
+e.g. 
+Return population adjusted mortality data for only males in the United Kingdom in 2016 caused by "Driver of special agricultural vehicle injured in traffic accident":<br>
+
+``` GET /api/mortality-adj-one?country=4308&year=2016&sex=1&cause=V840```
+
+### Disclaimer
+Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the [WHO's data querying services](https://www.who.int/healthinfo/mortality_data/en/)
 All analyses, interpretations or conclusions drawn from this API or found on this website are credited to the authors, not the WHO (which is responsible only for the provision of the original information).
 For more information visit the [WHO website](https://www.who.int/healthinfo/statistics/mortality_rawdata/en/)
