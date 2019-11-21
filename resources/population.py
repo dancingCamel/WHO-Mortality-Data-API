@@ -74,6 +74,7 @@ class PopulationChange(Resource):
                             default=""
                             )
 
+    @fresh_jwt_required
     def post(self, country_code, year, sex):
         # need to add new country to countries list and new admin/subdiv to admin/subdiv lists before adding new population entry using those codes
         data = PopulationChange.parser.parse_args()
@@ -143,6 +144,7 @@ class PopulationChange(Resource):
 
         return entry.json(), 201
 
+    @fresh_jwt_required
     def delete(self, country_code, year, sex):
         data = PopulationChange.parser.parse_args()
 
@@ -198,6 +200,7 @@ class PopulationChange(Resource):
             return {'message': 'Entry deleted.'}
         return {'message': 'Item not found.'}, 404
 
+    @fresh_jwt_required
     def put(self, country_code, year, sex):
         data = PopulationChange.parser.parse_args()
 

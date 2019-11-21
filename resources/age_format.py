@@ -18,6 +18,7 @@ class AgeFormat(Resource):
             return age_format.json()
         return {'message': "Age format {} not found".format(age_format_code)}, 404
 
+    @fresh_jwt_required
     def post(self, age_format_code):
         data = AgeFormat.parser.parse_args()
 
@@ -33,6 +34,7 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format."}, 500
         return age_format.json(), 201
 
+    @fresh_jwt_required
     def put(self, age_format_code):
         data = AgeFormat.parser.parse_args()
 
@@ -73,6 +75,7 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format for code '{}'.".format(age_format_code)}, 500
         return age_format.json(), 201
 
+    @fresh_jwt_required
     def delete(self, age_format_code):
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:

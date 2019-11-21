@@ -139,6 +139,7 @@ class MortalityDataChange(Resource):
                             default=""
                             )
 
+    @fresh_jwt_required
     def post(self, country_code, year, sex, cause):
         data = MortalityDataChange.parser.parse_args()
 
@@ -214,6 +215,7 @@ class MortalityDataChange(Resource):
 
         return entry.json(), 201
 
+    @fresh_jwt_required
     def put(self, country_code, year, sex, cause):
         data = MortalityDataChange.parser.parse_args()
 
@@ -309,6 +311,7 @@ class MortalityDataChange(Resource):
         entry.save_to_db()
         return entry.json()
 
+    @fresh_jwt_required
     def delete(self, country_code, year, sex, cause):
         data = MortalityDataChange.parser.parse_args()
 

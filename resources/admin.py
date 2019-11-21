@@ -17,6 +17,7 @@ class Admin(Resource):
             return admin.json()
         return {'message': "No admin entry found for code {} and country {}.".format(admin_code, country_code)}, 404
 
+    @fresh_jwt_required
     def post(self, admin_code, country_code):
         data = Admin.parser.parse_args()
 
@@ -30,6 +31,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
+    @fresh_jwt_required
     def put(self, admin_code, country_code):
         data = Admin.parser.parse_args()
 
@@ -45,6 +47,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
+    @fresh_jwt_required
     def delete(self, admin_code, country_code):
         entry = AdminModel.find_by_code_and_country(admin_code, country_code)
 

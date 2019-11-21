@@ -17,6 +17,7 @@ class Sex(Resource):
             return sex_entry.json()
         return {'message': "Sex not found."}, 404
 
+    @fresh_jwt_required
     def post(self, sex):
         data = Sex.parser.parse_args()
         if SexModel.find_by_name(sex):
@@ -30,6 +31,7 @@ class Sex(Resource):
             return {'message': "An error occurred inserting the sex."}, 500
         return entry.json(), 201
 
+    @fresh_jwt_required
     def put(self, sex):
         data = Sex.parser.parse_args()
         entry = SexModel.find_by_name(sex)
@@ -45,6 +47,7 @@ class Sex(Resource):
             return {'message': "An error occurred inserting the sex."}, 500
         return entry.json(), 201
 
+    @fresh_jwt_required
     def delete(self, sex):
         entry = SexModel.find_by_name(sex)
         if entry:

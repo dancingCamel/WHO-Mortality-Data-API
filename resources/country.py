@@ -22,6 +22,7 @@ class Country(Resource):
         return {'message': "Country -'{}'- not found.".format(country_name)}, 404
 
     # add a new country code and name - check code doesn't already exist
+    @fresh_jwt_required
     def post(self, country_name):
         if CountryModel.find_by_name(country_name):
             return {'message': "A country with name '{}' already exists.".format(country_name)}, 400
@@ -40,6 +41,7 @@ class Country(Resource):
         return country.json(), 201
 
     # change code of given country
+    @fresh_jwt_required
     def put(self, country_name):
         data = Country.parser.parse_args()
         country = CountryModel.find_by_name(country_name)
@@ -52,6 +54,7 @@ class Country(Resource):
         country.save_to_db()
         return country.json()
 
+    @fresh_jwt_required
     def delete(self, country_name):
         country = CountryModel.find_by_name(country_name)
         if country:
@@ -62,12 +65,14 @@ class Country(Resource):
 
 class CountryList(Resource):
     # return list of all countries and their codes
+    @jwt_required
     def get(self):
         countries = [country.json() for country in CountryModel.find_all()]
         return {'countries': countries}, 200
 
 
 class CountrySearch(Resource):
+    @jwt_required
     def get(self, search_term):
         countries = [country.json()
                      for country in CountryModel.search_by_name(search_term)]

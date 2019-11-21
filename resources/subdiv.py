@@ -16,6 +16,7 @@ class Subdiv(Resource):
             return subdiv.json()
         return {'message': "Subdiv {} not found".format(subdiv_code)}, 404
 
+    @fresh_jwt_required
     def post(self, subdiv_code):
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
@@ -30,6 +31,7 @@ class Subdiv(Resource):
             return {'message': "There was an error inserting the subdiv."}, 500
         return subdiv.json(), 201
 
+    @fresh_jwt_required
     def put(self, subdiv_code):
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
@@ -46,6 +48,7 @@ class Subdiv(Resource):
 
         return subdiv.json(), 201
 
+    @fresh_jwt_required
     def delete(self, subdiv_code):
         subdiv = SubdivModel.find_by_code(subdiv_code)
 

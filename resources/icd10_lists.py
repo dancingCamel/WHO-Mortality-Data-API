@@ -17,6 +17,7 @@ class Icd10CodeList(Resource):
             return code_list.json(), 200
         return {'message': "Code list '{}' not found.".format(code)}
 
+    @fresh_jwt_required
     def post(self, code):
         if Icd10ListsModel.find_by_code(code):
             return {'message': "List '{}' already exists.".format(code)}, 404
@@ -29,6 +30,7 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return new_list.json()
 
+    @fresh_jwt_required
     def put(self, code):
         code_list = Icd10ListsModel.find_by_code(code)
 
@@ -44,6 +46,7 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return code_list.json()
 
+    @fresh_jwt_required
     def delete(self, code):
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:

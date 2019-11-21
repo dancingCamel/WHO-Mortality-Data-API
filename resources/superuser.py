@@ -11,6 +11,7 @@ _superuser_parser.add_argument('username',
 
 class Superuser(Resource):
     @classmethod
+    @jwt_required
     def get(cls, username):
         superuser = SuperuserModel.find_by_username(username)
         if not superuser:

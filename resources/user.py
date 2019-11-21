@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from werkzeug.security import safe_str_cmp
+from werkzeug.security import safe_str_cmp, generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -11,20 +11,26 @@ from flask_jwt_extended import (
 from models.user import UserModel
 from blacklist import BLACKLIST
 
+
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
                           type=str,
                           required=True,
-                          help="This field cannot be blank."
+                          help="This field cannot be blank.",
+                          location="form"
                           )
 _user_parser.add_argument('password',
                           type=str,
                           required=True,
-                          help="This field cannot be blank."
+                          help="This field cannot be blank.",
+                          location="form"
                           )
 
 
 class UserRegister(Resource):
+    def get(self):
+        # show template here
+        pass
 
     def post(self):
         data = _user_parser.parse_args()
@@ -32,7 +38,10 @@ class UserRegister(Resource):
         if UserModel.find_by_username(data['username']):
             return {"message": "A user with that username already exists"}, 400
 
-        user = UserModel(**data)
+        # hash password
+        hashed_password = generate_password_hash(
+            data['password'], method='pbkdf2:sha256', salt_length=32)
+        user = UserModel(data['username'], hashed_password)
         user.save_to_db()
 
         return {"message": "User created successfully."}, 201
@@ -47,6 +56,7 @@ class User(Resource):
         return user.json()
 
     @classmethod
+    @jwt_required
     def delete(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
@@ -56,6 +66,10 @@ class User(Resource):
 
 
 class UserLogin(Resource):
+    def get(self):
+        # show template here
+        pass
+
     @classmethod
     def post(cls):
         data = _user_parser.parse_args()
@@ -64,7 +78,7 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(data['username'])
 
         # check password and create tokens if correct
-        if user and safe_str_cmp(user.password, data['password']):
+        if user and check_password_hash(user.password, data['password']):
             access_token = create_access_token(identity=user.id, fresh=True)
             # create a refresh token, too
             refresh_token = create_refresh_token(identity=user.id)
@@ -77,7 +91,6 @@ class UserLogin(Resource):
             }, 200
 
         # return error string if user not found or password incorrect
-        # 401 unauthorised
         return {'message': "Invalid credentials"}, 401
 
 

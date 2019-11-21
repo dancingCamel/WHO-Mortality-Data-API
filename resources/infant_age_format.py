@@ -17,6 +17,7 @@ class InfantAgeFormat(Resource):
             return infant_age_format.json(), 200
         return {'message': "No infant age format found with code '{}'.".format(infant_age_format_code)}, 404
 
+    @fresh_jwt_required
     def post(self, infant_age_format_code):
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
@@ -31,6 +32,7 @@ class InfantAgeFormat(Resource):
             return {'message', "An error occured inserting the infant age format"}, 500
         return infant_age_format.json(), 201
 
+    @fresh_jwt_required
     def put(self, infant_age_format_code):
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
@@ -50,6 +52,7 @@ class InfantAgeFormat(Resource):
             return {'message': "An error occured inserting the infant age format."}, 500
         return infant_age_format.json(), 201
 
+    @fresh_jwt_required
     def delete(self, infant_age_format_code):
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
