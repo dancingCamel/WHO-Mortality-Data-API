@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from werkzeug.security import safe_str_cmp, generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -8,6 +8,7 @@ from flask_jwt_extended import (
     jwt_required,
     get_raw_jwt
 )
+
 from models.user import UserModel
 from blacklist import BLACKLIST
 

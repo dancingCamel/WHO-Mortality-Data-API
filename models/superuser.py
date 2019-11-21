@@ -11,8 +11,8 @@ class SuperuserModel(db.Model):
     username = db.Column(db.String(80))
 
     def __init__(self, user_id, username):
-        username = self.username
-        user_id = self.user_id
+        self.user_id = user_id
+        self.username = username
 
     def json(self):
         return {

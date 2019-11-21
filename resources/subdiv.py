@@ -1,5 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.subdiv import SubdivModel
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class Subdiv(Resource):

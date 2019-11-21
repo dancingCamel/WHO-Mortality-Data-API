@@ -1,5 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.infant_age_format import InfantAgeFormatModel
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class InfantAgeFormat(Resource):

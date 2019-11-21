@@ -4,6 +4,8 @@ from models.population import PopulationModel
 from models.country import CountryModel
 from validate import *
 import math
+from flask_jwt_extended import jwt_required
+
 
 
 class MortalityAdjustedSearch(Resource):

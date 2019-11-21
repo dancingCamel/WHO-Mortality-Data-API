@@ -1,6 +1,10 @@
 from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class PopulationSearch(Resource):

@@ -1,6 +1,10 @@
 from flask_restful import Resource, reqparse
 from models.country import CountryModel
 from sqlalchemy import func
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class Country(Resource):

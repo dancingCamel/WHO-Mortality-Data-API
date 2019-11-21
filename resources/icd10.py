@@ -1,5 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.icd10 import Icd10Model
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class Icd10(Resource):

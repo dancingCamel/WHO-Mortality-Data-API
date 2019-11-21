@@ -1,5 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.superuser import SuperuserModel
+from models.user import UserModel
+from flask_jwt_extended import jwt_required
+
 
 _superuser_parser = reqparse.RequestParser()
 _superuser_parser.add_argument('username',
@@ -10,9 +13,8 @@ _superuser_parser.add_argument('username',
 
 
 class Superuser(Resource):
-    @classmethod
     @jwt_required
-    def get(cls, username):
+    def get(self, username):
         superuser = SuperuserModel.find_by_username(username)
         if not superuser:
             return {'message': "Superuser not found"}, 404
@@ -20,17 +22,26 @@ class Superuser(Resource):
 
 
 class SuperuserUpdate(Resource):
+    @jwt_required
     def post(self):
         data = _superuser_parser.parse_args()
 
         if SuperuserModel.find_by_username(data['username']):
-            return {"message": "A superuser with that username already exists"}, 400
+            return {'message': "A superuser with that username already exists"}, 400
 
-        superuser = SuperuserModel(**data)
+        user = UserModel.find_by_username(data['username'])
+        if not user:
+            return {'message': "User not found (a superuser must be a user first)."}, 404
+
+        user = user.json()
+        superuser = SuperuserModel(
+            user_id=user['id'], username=user['username'])
+
         superuser.save_to_db()
 
         return {"message": "Superuser created successfully."}, 201
 
+    @jwt_required
     def delete(self):
         data = _superuser_parser.parse_args()
 

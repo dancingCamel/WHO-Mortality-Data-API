@@ -1,6 +1,10 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
 from validate import *
+from flask_jwt_extended import (
+    jwt_required,
+    fresh_jwt_required
+)
 
 
 class MortalityDataSearch(Resource):
