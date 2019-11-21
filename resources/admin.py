@@ -10,6 +10,7 @@ class Admin(Resource):
                         help="This field is required"
                         )
 
+    @jwt_required
     def get(self, admin_code, country_code):
         admin = AdminModel.find_by_code_and_country(admin_code, country_code)
         if admin:
@@ -54,6 +55,7 @@ class Admin(Resource):
 
 
 class AdminList(Resource):
+    @jwt_required
     def get(self):
         admins = AdminModel.find_all()
         return [entry.json() for entry in admins], 200

@@ -4,6 +4,7 @@ from validate import *
 
 
 class MortalityDataSearch(Resource):
+    @jwt_required
     def get(self):
         # use get_args() for variables. search with dict. return all()
         query = {}
@@ -52,6 +53,7 @@ class MortalityDataSearch(Resource):
 
 
 class MortalityDataOne(Resource):
+    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query

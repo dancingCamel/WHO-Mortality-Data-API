@@ -5,7 +5,7 @@ from models.population import PopulationModel
 
 class PopulationSearch(Resource):
     # search for entries
-
+    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query
@@ -285,6 +285,7 @@ class PopulationChange(Resource):
 
 
 class PopulationOne(Resource):
+    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query
@@ -331,6 +332,7 @@ class PopulationOne(Resource):
 
 class PopulationsList(Resource):
     # get all population data
+    @jwt_required
     def get(self):
         populations = [entry.json() for entry in PopulationModel.find_all()]
         return {'populations': populations}, 200

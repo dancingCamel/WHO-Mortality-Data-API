@@ -11,6 +11,7 @@ class AgeFormat(Resource):
                             default="empty"+str(num)
                             )
 
+    @jwt_required
     def get(self, age_format_code):
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
@@ -81,6 +82,7 @@ class AgeFormat(Resource):
 
 
 class AgeFormatList(Resource):
+    @jwt_required
     def get(self):
         age_formats = [age_format.json()
                        for age_format in AgeFormatModel.find_all()]

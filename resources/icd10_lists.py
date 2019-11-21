@@ -10,6 +10,7 @@ class Icd10CodeList(Resource):
                         help="This field is required"
                         )
 
+    @jwt_required
     def get(self, code):
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:
@@ -53,6 +54,7 @@ class Icd10CodeList(Resource):
 
 class Icd10AllCodeLists(Resource):
     # return all available code lists and their descritpion e.g. 101, 103, 104
+    @jwt_required
     def get(self):
         code_lists = [code_list.json()
                       for code_list in Icd10ListsModel.find_all()]

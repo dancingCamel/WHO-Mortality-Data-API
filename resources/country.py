@@ -14,6 +14,7 @@ class Country(Resource):
                         )
 
     # get the country code when supplying a country name
+    @jwt_required
     def get(self, country_name):
         country = CountryModel.find_by_name(country_name)
         if country:

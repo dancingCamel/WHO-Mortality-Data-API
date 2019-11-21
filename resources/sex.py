@@ -10,6 +10,7 @@ class Sex(Resource):
                         help="This field is required"
                         )
 
+    @jwt_required
     def get(self, sex):
         sex_entry = SexModel.find_by_name(sex)
         if sex_entry:
@@ -54,6 +55,7 @@ class Sex(Resource):
 
 class SexList(Resource):
     # return list of all sexes and their codes
+    @jwt_required
     def get(self):
         sexes = [sex.json() for sex in SexModel.find_all()]
         return {'sexes': sexes}, 200

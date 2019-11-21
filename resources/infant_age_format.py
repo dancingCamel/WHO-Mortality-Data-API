@@ -9,6 +9,7 @@ class InfantAgeFormat(Resource):
         parser.add_argument('infantAge'+str(num),
                             type=str)
 
+    @jwt_required
     def get(self, infant_age_format_code):
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -59,6 +60,7 @@ class InfantAgeFormat(Resource):
 
 
 class InfantAgeFormatList(Resource):
+    @jwt_required
     def get(self):
         infant_age_formats = [infant_age_format.json(
         ) for infant_age_format in InfantAgeFormatModel.find_all()]

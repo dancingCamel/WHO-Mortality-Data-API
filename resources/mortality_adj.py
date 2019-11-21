@@ -7,6 +7,7 @@ import math
 
 
 class MortalityAdjustedSearch(Resource):
+    @jwt_required
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 
@@ -118,6 +119,7 @@ class MortalityAdjustedSearch(Resource):
 
 
 class MortalityAdjustedOne(Resource):
+    @jwt_required
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 

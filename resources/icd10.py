@@ -10,6 +10,7 @@ class Icd10(Resource):
                         required=True,
                         help="This field is required")
 
+    @jwt_required
     def get(self, code_list, code):
         entry = Icd10Model.find_by_list_and_code(code_list, code)
         if entry:
@@ -55,6 +56,7 @@ class Icd10(Resource):
 
 class Icd10Search(Resource):
     # search for codes using a case insensitive partial description or code
+    @jwt_required
     def get(self, search_term):
         entries = Icd10Model.search(search_term)
         if entries:
@@ -64,6 +66,7 @@ class Icd10Search(Resource):
 
 class Icd10List(Resource):
     # return whole icd10 list in json format
+    @jwt_required
     def get(self):
         entries = [entry.json() for entry in Icd10Model.find_all()]
         return {'all_codes': entries}

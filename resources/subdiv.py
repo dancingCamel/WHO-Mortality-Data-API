@@ -9,6 +9,7 @@ class Subdiv(Resource):
                         required=True,
                         help="This field is required")
 
+    @jwt_required
     def get(self, subdiv_code):
         subdiv = SubdivModel.find_by_code(subdiv_code)
         if subdiv:
@@ -55,6 +56,7 @@ class Subdiv(Resource):
 
 
 class SubdivList(Resource):
+    @jwt_required
     def get(self):
         subdivs = [subdiv.json() for subdiv in SubdivModel.find_all()]
         return {'subdivs': subdivs}, 200
