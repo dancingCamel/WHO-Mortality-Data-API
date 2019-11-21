@@ -166,6 +166,17 @@ api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
+# api.add_resource(Profile, '/profile')
+
+# superuser endpoints
+api.add_resource(Superuser, '/superuser/<string:username')
+api.add_resource(SuperuserUpdate, '/superuser-update')
+
+# site endpoints
+# api.add_resource(Visualize, '/visualize')
+# api.add_resource(Index, '/')
+# api.add_resource(Docs '/docs')
+
 
 if __name__ == '__main__':
     from db import db

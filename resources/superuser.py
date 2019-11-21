@@ -30,12 +30,9 @@ class SuperuserUpdate(Resource):
 
         return {"message": "Superuser created successfully."}, 201
 
-    def put(self):
-        data = _superuser_parser.parse_args()
-        pass
-
     def delete(self):
         data = _superuser_parser.parse_args()
+
         superuser = SuperuserModel.find_by_username(data['username'])
 
         if not superuser:

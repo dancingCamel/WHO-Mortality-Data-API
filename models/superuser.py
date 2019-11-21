@@ -7,14 +7,17 @@ class SuperuserModel(db.Model):
     __tablename__: 'superusers'
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(80))
     username = db.Column(db.String(80))
 
-    def __init__(self, username):
+    def __init__(self, user_id, username):
         username = self.username
+        user_id = self.user_id
 
     def json(self):
         return {
             'id': self.id,
+            'user_id': self.user_id,
             'username': self.username
         }
 
@@ -25,6 +28,10 @@ class SuperuserModel(db.Model):
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_by_user_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).first()
 
     def save_to_db(self):
         db.session.add(self)
