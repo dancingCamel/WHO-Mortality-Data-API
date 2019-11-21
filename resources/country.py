@@ -3,7 +3,8 @@ from models.country import CountryModel
 from sqlalchemy import func
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -28,6 +29,9 @@ class Country(Resource):
     # add a new country code and name - check code doesn't already exist
     @fresh_jwt_required
     def post(self, country_name):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         if CountryModel.find_by_name(country_name):
             return {'message': "A country with name '{}' already exists.".format(country_name)}, 400
 
@@ -47,6 +51,9 @@ class Country(Resource):
     # change code of given country
     @fresh_jwt_required
     def put(self, country_name):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Country.parser.parse_args()
         country = CountryModel.find_by_name(country_name)
 
@@ -60,6 +67,9 @@ class Country(Resource):
 
     @fresh_jwt_required
     def delete(self, country_name):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         country = CountryModel.find_by_name(country_name)
         if country:
             country.delete_from_db()

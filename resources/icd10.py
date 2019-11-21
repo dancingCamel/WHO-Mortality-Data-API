@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from models.icd10 import Icd10Model
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -23,6 +24,9 @@ class Icd10(Resource):
 
     @fresh_jwt_required
     def post(self, code_list, code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         if Icd10Model.find_by_list_and_code(code_list, code):
             return {'message': "A '{}' code already exists in list '{}'.".format(code, code_list)}, 400
 
@@ -38,6 +42,9 @@ class Icd10(Resource):
 
     @fresh_jwt_required
     def put(self, code_list, code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         entry = Icd10Model.find_by_list_and_code(code_list, code)
 
         data = Icd10.parser.parse_args()
@@ -54,6 +61,9 @@ class Icd10(Resource):
 
     @fresh_jwt_required
     def delete(self, code_list, code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         entry = Icd10Model.find_by_list_and_code(code_list, code)
         if entry:
             entry.delete_from_db()

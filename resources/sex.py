@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from models.sex import SexModel
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -23,6 +24,9 @@ class Sex(Resource):
 
     @fresh_jwt_required
     def post(self, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Sex.parser.parse_args()
         if SexModel.find_by_name(sex):
             return {'message': "Sex '{}' already exists.".format(sex)}, 400
@@ -37,6 +41,9 @@ class Sex(Resource):
 
     @fresh_jwt_required
     def put(self, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Sex.parser.parse_args()
         entry = SexModel.find_by_name(sex)
 
@@ -53,6 +60,9 @@ class Sex(Resource):
 
     @fresh_jwt_required
     def delete(self, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         entry = SexModel.find_by_name(sex)
         if entry:
             entry.delete_from_db()

@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from models.admin import AdminModel
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -23,6 +24,9 @@ class Admin(Resource):
 
     @fresh_jwt_required
     def post(self, admin_code, country_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Admin.parser.parse_args()
 
         if AdminModel.find_by_code_and_country(admin_code, country_code):
@@ -37,6 +41,9 @@ class Admin(Resource):
 
     @fresh_jwt_required
     def put(self, admin_code, country_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Admin.parser.parse_args()
 
         entry = AdminModel.find_by_code_and_country(admin_code, country_code)
@@ -53,6 +60,9 @@ class Admin(Resource):
 
     @fresh_jwt_required
     def delete(self, admin_code, country_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         entry = AdminModel.find_by_code_and_country(admin_code, country_code)
 
         if entry:

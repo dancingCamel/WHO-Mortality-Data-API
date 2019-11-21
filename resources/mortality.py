@@ -3,7 +3,8 @@ from models.mortality import MortalityDataModel
 from validate import *
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -145,6 +146,9 @@ class MortalityDataChange(Resource):
 
     @fresh_jwt_required
     def post(self, country_code, year, sex, cause):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation
@@ -221,6 +225,9 @@ class MortalityDataChange(Resource):
 
     @fresh_jwt_required
     def put(self, country_code, year, sex, cause):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation
@@ -317,6 +324,9 @@ class MortalityDataChange(Resource):
 
     @fresh_jwt_required
     def delete(self, country_code, year, sex, cause):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation

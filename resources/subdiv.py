@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from models.subdiv import SubdivModel
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -22,6 +23,9 @@ class Subdiv(Resource):
 
     @fresh_jwt_required
     def post(self, subdiv_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
@@ -37,6 +41,9 @@ class Subdiv(Resource):
 
     @fresh_jwt_required
     def put(self, subdiv_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
@@ -54,6 +61,9 @@ class Subdiv(Resource):
 
     @fresh_jwt_required
     def delete(self, subdiv_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
         if subdiv:

@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.superuser import SuperuserModel
 from models.user import UserModel
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 
 
 _superuser_parser = reqparse.RequestParser()
@@ -22,8 +22,12 @@ class Superuser(Resource):
 
 
 class SuperuserUpdate(Resource):
-    @jwt_required
+    @fresh_jwt_required
     def post(self):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
+
         data = _superuser_parser.parse_args()
 
         if SuperuserModel.find_by_username(data['username']):
@@ -41,8 +45,11 @@ class SuperuserUpdate(Resource):
 
         return {"message": "Superuser created successfully."}, 201
 
-    @jwt_required
+    @fresh_jwt_required
     def delete(self):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = _superuser_parser.parse_args()
 
         superuser = SuperuserModel.find_by_username(data['username'])

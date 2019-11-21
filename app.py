@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api
+from flask_jwt_extended import JWTManager
 from db import db
 from populate_data_tables import (populate_country_table,
                                   populate_population_table,
@@ -29,6 +30,7 @@ from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOn
 from blacklist import BLACKLIST
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
 from resources.superuser import Superuser, SuperuserUpdate
+from models.superuser import SuperuserModel
 
 
 app = Flask(__name__)
@@ -75,10 +77,10 @@ jwt = JWTManager(app)  # /auth
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    pass
-    # if identity == 1:   don't hardcode. have superuser table and endpoints. check to see if user id/username is in superuser table then set is_superuser
-    #     return {'is_admin': True}
-    # return {'is_admin': False}
+    user = SuperuserModel.find_by_user_id(identity)
+    if user:
+        return {'is_admin': True}
+    return {'is_admin': False}
 
 
 @jwt.token_in_blacklist_loader
@@ -90,7 +92,7 @@ def check_if_token_in_blacklist(decrypted_token):
 # custom error messages
 @jwt.expired_token_loader
 # do this when token expires
-def expired_token_callback():
+def expired_token_callback(error):
     return jsonify({
         'description': "The token has expired.",
         'error': "token_expired"
@@ -106,7 +108,7 @@ def invalid_token_callback(error):
 
 
 @jwt.unauthorized_loader
-def missing_token_callback():
+def missing_token_callback(error):
     return jsonify({
         'description': 'Request does not contain an access token',
         'error': 'authorization_required'
@@ -114,7 +116,7 @@ def missing_token_callback():
 
 
 @jwt.needs_fresh_token_loader
-def token_not_fresh_callback():
+def token_not_fresh_callback(error):
     return jsonify({
         'description': 'This token is not fresh',
         'error': 'fresh_token_required'
@@ -122,7 +124,7 @@ def token_not_fresh_callback():
 
 # revoke token when log out or if hit usage limits
 @jwt.revoked_token_loader
-def revoked_token_callback():
+def revoked_token_callback(error):
     return jsonify({
         'description': 'The token has been revoked',
         'error': 'token_revoked'
@@ -169,7 +171,7 @@ api.add_resource(TokenRefresh, '/refresh')
 # api.add_resource(Profile, '/profile')
 
 # superuser endpoints
-api.add_resource(Superuser, '/superuser/<string:username')
+api.add_resource(Superuser, '/superuser/<string:username>')
 api.add_resource(SuperuserUpdate, '/superuser-update')
 
 # site endpoints

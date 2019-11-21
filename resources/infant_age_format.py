@@ -2,7 +2,8 @@ from flask_restful import Resource, reqparse
 from models.infant_age_format import InfantAgeFormatModel
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -23,6 +24,9 @@ class InfantAgeFormat(Resource):
 
     @fresh_jwt_required
     def post(self, infant_age_format_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -38,6 +42,9 @@ class InfantAgeFormat(Resource):
 
     @fresh_jwt_required
     def put(self, infant_age_format_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -58,6 +65,9 @@ class InfantAgeFormat(Resource):
 
     @fresh_jwt_required
     def delete(self, infant_age_format_code):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
         if infant_age_format:

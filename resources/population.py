@@ -3,7 +3,8 @@ from validate import *
 from models.population import PopulationModel
 from flask_jwt_extended import (
     jwt_required,
-    fresh_jwt_required
+    fresh_jwt_required,
+    get_jwt_claims
 )
 
 
@@ -52,7 +53,6 @@ class PopulationSearch(Resource):
 
 
 class PopulationChange(Resource):
-
     parser = reqparse.RequestParser()
     parser.add_argument('admin',
                         type=str,
@@ -80,6 +80,9 @@ class PopulationChange(Resource):
 
     @fresh_jwt_required
     def post(self, country_code, year, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         # need to add new country to countries list and new admin/subdiv to admin/subdiv lists before adding new population entry using those codes
         data = PopulationChange.parser.parse_args()
 
@@ -150,6 +153,9 @@ class PopulationChange(Resource):
 
     @fresh_jwt_required
     def delete(self, country_code, year, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
         # validation
@@ -206,6 +212,9 @@ class PopulationChange(Resource):
 
     @fresh_jwt_required
     def put(self, country_code, year, sex):
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
         # validation
