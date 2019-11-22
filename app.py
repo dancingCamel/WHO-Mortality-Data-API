@@ -31,6 +31,8 @@ from blacklist import BLACKLIST
 from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
+from resources.index import Index
+# from resources.profile import Profile
 
 
 app = Flask(__name__)
@@ -77,8 +79,8 @@ jwt = JWTManager(app)  # /auth
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    user = SuperuserModel.find_by_user_id(identity)
-    if user:
+    superuser = SuperuserModel.find_by_user_id(identity)
+    if superuser:
         return {'is_admin': True}
     return {'is_admin': False}
 
@@ -176,7 +178,7 @@ api.add_resource(SuperuserUpdate, '/superuser-update')
 
 # site endpoints
 # api.add_resource(Visualize, '/visualize')
-# api.add_resource(Index, '/')
+api.add_resource(Index, '/')
 # api.add_resource(Docs '/docs')
 
 
