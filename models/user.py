@@ -25,7 +25,7 @@ class UserModel(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'username': self.username
+            'username': self.username,
             'api_key': self.api_key
         }
 

@@ -1,10 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.icd10_lists import Icd10ListsModel
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
+
 
 
 class Icd10CodeList(Resource):
@@ -15,18 +11,16 @@ class Icd10CodeList(Resource):
                         help="This field is required"
                         )
 
-    @jwt_required
     def get(self, code):
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:
             return code_list.json(), 200
         return {'message': "Code list '{}' not found.".format(code)}
 
-    @fresh_jwt_required
     def post(self, code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         if Icd10ListsModel.find_by_code(code):
             return {'message': "List '{}' already exists.".format(code)}, 404
 
@@ -38,11 +32,10 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return new_list.json()
 
-    @fresh_jwt_required
     def put(self, code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         code_list = Icd10ListsModel.find_by_code(code)
 
         data = Icd10CodeList.parser.parse_args()
@@ -57,11 +50,10 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return code_list.json()
 
-    @fresh_jwt_required
     def delete(self, code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:
             code_list.delete_from_db()
@@ -71,7 +63,6 @@ class Icd10CodeList(Resource):
 
 class Icd10AllCodeLists(Resource):
     # return all available code lists and their descritpion e.g. 101, 103, 104
-    @jwt_required
     def get(self):
         code_lists = [code_list.json()
                       for code_list in Icd10ListsModel.find_all()]

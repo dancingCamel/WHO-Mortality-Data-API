@@ -1,16 +1,10 @@
 from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
 
 
 class PopulationSearch(Resource):
     # search for entries
-    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query
@@ -78,11 +72,10 @@ class PopulationChange(Resource):
                             default=""
                             )
 
-    @fresh_jwt_required
     def post(self, country_code, year, sex):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         # need to add new country to countries list and new admin/subdiv to admin/subdiv lists before adding new population entry using those codes
         data = PopulationChange.parser.parse_args()
 
@@ -151,11 +144,10 @@ class PopulationChange(Resource):
 
         return entry.json(), 201
 
-    @fresh_jwt_required
     def delete(self, country_code, year, sex):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
         # validation
@@ -210,11 +202,10 @@ class PopulationChange(Resource):
             return {'message': 'Entry deleted.'}
         return {'message': 'Item not found.'}, 404
 
-    @fresh_jwt_required
     def put(self, country_code, year, sex):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
         # validation
@@ -301,7 +292,6 @@ class PopulationChange(Resource):
 
 
 class PopulationOne(Resource):
-    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query
@@ -348,7 +338,6 @@ class PopulationOne(Resource):
 
 class PopulationsList(Resource):
     # get all population data
-    @jwt_required
     def get(self):
         populations = [entry.json() for entry in PopulationModel.find_all()]
         return {'populations': populations}, 200

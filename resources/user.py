@@ -1,14 +1,7 @@
 from flask import render_template, make_response, url_for
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_refresh_token_required,
-    get_jwt_identity,
-    jwt_required,
-    get_raw_jwt
-)
+
 
 from models.user import UserModel
 from blacklist import BLACKLIST
@@ -58,7 +51,6 @@ class User(Resource):
         return user.json()
 
     @classmethod
-    @jwt_required
     def delete(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
@@ -81,15 +73,15 @@ class UserLogin(Resource):
 
         # check password and create tokens if correct
         if user and check_password_hash(user.password, data['password']):
-            access_token = create_access_token(identity=user.id, fresh=True)
+            # access_token = create_access_token(identity=user.id, fresh=True)
             # create a refresh token, too
-            refresh_token = create_refresh_token(identity=user.id)
+            # refresh_token = create_refresh_token(identity=user.id)
 
             # return the tokens to the client
             return {
-                'access_token': access_token,
+                # 'access_token': access_token,
                 # this token never changes
-                'refresh_token': refresh_token
+                # 'refresh_token': refresh_token
             }, 200
 
         # return error string if user not found or password incorrect
@@ -97,18 +89,17 @@ class UserLogin(Resource):
 
 
 class UserLogout(Resource):
-    @jwt_required
     def post(self):
-        jti = get_raw_jwt()['jti']
-        BLACKLIST.add(jti)
-        return {'message': "Successfully logged out."}
-
+        # jti = get_raw_jwt()['jti']
+        # BLACKLIST.add(jti)
+        # return {'message': "Successfully logged out."}
+        pass
 
 class TokenRefresh(Resource):
-    @jwt_refresh_token_required
     # if we get past the decorator we definitely have a refresh token
     def post(self):
         # get_jwt_identity uses both access and refresh tokens. returns user_id in this case (as the identity we set is the id)
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user, fresh=False)
-        return {'access_token': new_token}, 200
+        # current_user = get_jwt_identity()
+        # new_token = create_access_token(identity=current_user, fresh=False)
+        # return {'access_token': new_token}, 200
+        pass

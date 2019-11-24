@@ -15,14 +15,12 @@ class Admin(Resource):
                         help="This field is required"
                         )
 
-    @jwt_required
     def get(self, admin_code, country_code):
         admin = AdminModel.find_by_code_and_country(admin_code, country_code)
         if admin:
             return admin.json()
         return {'message': "No admin entry found for code {} and country {}.".format(admin_code, country_code)}, 404
 
-    @fresh_jwt_required
     def post(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -39,7 +37,6 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
-    @fresh_jwt_required
     def put(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -58,7 +55,6 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
-    @fresh_jwt_required
     def delete(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -72,7 +68,6 @@ class Admin(Resource):
 
 
 class AdminList(Resource):
-    @jwt_required
     def get(self):
         admins = AdminModel.find_all()
         return [entry.json() for entry in admins], 200

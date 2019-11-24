@@ -1,10 +1,5 @@
 from flask_restful import Resource, reqparse
 from models.infant_age_format import InfantAgeFormatModel
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
 
 
 class InfantAgeFormat(Resource):
@@ -14,7 +9,6 @@ class InfantAgeFormat(Resource):
         parser.add_argument('infantAge'+str(num),
                             type=str)
 
-    @jwt_required
     def get(self, infant_age_format_code):
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -22,11 +16,10 @@ class InfantAgeFormat(Resource):
             return infant_age_format.json(), 200
         return {'message': "No infant age format found with code '{}'.".format(infant_age_format_code)}, 404
 
-    @fresh_jwt_required
     def post(self, infant_age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -40,11 +33,10 @@ class InfantAgeFormat(Resource):
             return {'message', "An error occured inserting the infant age format"}, 500
         return infant_age_format.json(), 201
 
-    @fresh_jwt_required
     def put(self, infant_age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = InfantAgeFormat.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
@@ -63,11 +55,10 @@ class InfantAgeFormat(Resource):
             return {'message': "An error occured inserting the infant age format."}, 500
         return infant_age_format.json(), 201
 
-    @fresh_jwt_required
     def delete(self, infant_age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
         if infant_age_format:
@@ -77,7 +68,6 @@ class InfantAgeFormat(Resource):
 
 
 class InfantAgeFormatList(Resource):
-    @jwt_required
     def get(self):
         infant_age_formats = [infant_age_format.json(
         ) for infant_age_format in InfantAgeFormatModel.find_all()]

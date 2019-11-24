@@ -1,10 +1,5 @@
 from flask_restful import Resource, reqparse
 from models.subdiv import SubdivModel
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
 
 
 class Subdiv(Resource):
@@ -14,18 +9,16 @@ class Subdiv(Resource):
                         required=True,
                         help="This field is required")
 
-    @jwt_required
     def get(self, subdiv_code):
         subdiv = SubdivModel.find_by_code(subdiv_code)
         if subdiv:
             return subdiv.json()
         return {'message': "Subdiv {} not found".format(subdiv_code)}, 404
 
-    @fresh_jwt_required
     def post(self, subdiv_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
@@ -39,11 +32,10 @@ class Subdiv(Resource):
             return {'message': "There was an error inserting the subdiv."}, 500
         return subdiv.json(), 201
 
-    @fresh_jwt_required
     def put(self, subdiv_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = Subdiv.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
@@ -59,11 +51,10 @@ class Subdiv(Resource):
 
         return subdiv.json(), 201
 
-    @fresh_jwt_required
     def delete(self, subdiv_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
         if subdiv:
@@ -73,7 +64,6 @@ class Subdiv(Resource):
 
 
 class SubdivList(Resource):
-    @jwt_required
     def get(self):
         subdivs = [subdiv.json() for subdiv in SubdivModel.find_all()]
         return {'subdivs': subdivs}, 200

@@ -1,15 +1,9 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
 from validate import *
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
 
 
 class MortalityDataSearch(Resource):
-    @jwt_required
     def get(self):
         # use get_args() for variables. search with dict. return all()
         query = {}
@@ -58,7 +52,6 @@ class MortalityDataSearch(Resource):
 
 
 class MortalityDataOne(Resource):
-    @jwt_required
     def get(self):
         query = {}
         # Validate request and add to query
@@ -144,11 +137,10 @@ class MortalityDataChange(Resource):
                             default=""
                             )
 
-    @fresh_jwt_required
     def post(self, country_code, year, sex, cause):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation
@@ -223,11 +215,10 @@ class MortalityDataChange(Resource):
 
         return entry.json(), 201
 
-    @fresh_jwt_required
     def put(self, country_code, year, sex, cause):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation
@@ -322,11 +313,10 @@ class MortalityDataChange(Resource):
         entry.save_to_db()
         return entry.json()
 
-    @fresh_jwt_required
     def delete(self, country_code, year, sex, cause):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation

@@ -1,11 +1,7 @@
 from flask import jsonify, json
 from flask_restful import Resource, reqparse
 from models.age_format import AgeFormatModel
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-    get_jwt_claims
-)
+
 
 
 class AgeFormat(Resource):
@@ -24,11 +20,10 @@ class AgeFormat(Resource):
             return json.dumps(age_format.json())
         return {'message': "Age format {} not found".format(age_format_code)}, 404
 
-    @fresh_jwt_required
     def post(self, age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = AgeFormat.parser.parse_args()
 
         age_format = AgeFormatModel.find_by_code(age_format_code)
@@ -43,11 +38,10 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format."}, 500
         return age_format.json(), 201
 
-    @fresh_jwt_required
     def put(self, age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         data = AgeFormat.parser.parse_args()
 
         age_format = AgeFormatModel.find_by_code(age_format_code)
@@ -87,11 +81,10 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format for code '{}'.".format(age_format_code)}, 500
         return age_format.json(), 201
 
-    @fresh_jwt_required
     def delete(self, age_format_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+        # claims = get_jwt_claims()
+        # if not claims['is_admin']:
+        #     return {'message': 'Admin privilege required'}, 401
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
             age_format.delete_from_db()
@@ -100,7 +93,6 @@ class AgeFormat(Resource):
 
 
 class AgeFormatList(Resource):
-    @jwt_required
     def get(self):
         age_formats = [age_format.json()
                        for age_format in AgeFormatModel.find_all()]

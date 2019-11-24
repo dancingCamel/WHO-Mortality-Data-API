@@ -4,12 +4,10 @@ from models.population import PopulationModel
 from models.country import CountryModel
 from validate import *
 import math
-from flask_jwt_extended import jwt_required
 
 
 
 class MortalityAdjustedSearch(Resource):
-    @jwt_required
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 
@@ -121,7 +119,6 @@ class MortalityAdjustedSearch(Resource):
 
 
 class MortalityAdjustedOne(Resource):
-    @jwt_required
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 
