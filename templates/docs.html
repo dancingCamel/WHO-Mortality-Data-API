@@ -1,2 +1,33 @@
 <!-- list of all endpoints available to API -->
 <!-- can see this page whether logged in or not -->
+
+{% extends "base.html" %}
+
+{% block title %}
+<title>WHO Mortality Database | Docs</title>
+{% endblock %}
+
+{% block main %}
+<main>
+    <div class="container mt-3">
+        <div>
+            <h2>Find mortality data using custom query</h2>
+            <p>
+                <!-- make the get a button then put border round rest of text. extend/expand the link to cover all-->
+                <a class="btn btn-primary" data-toggle="collapse" href="#api-mortality-search" role="button"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    GET /api/mortality-search?country=?&sex=?
+                </a>
+            </p>
+            <div class="collapse" id="api-mortality-search">
+                <div class="card card-body">
+                    GET /api/mortality-search?country=4308&sex=1
+                    <p class="text-muted bg-light mt-3">{<br>&nbsp;&nbsp;&nbsp;&nbsp;"results": [
+                        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"country": "4308",
+                        <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sex": "1"}]}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

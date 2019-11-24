@@ -1,0 +1,56 @@
+<!-- Allow searching of admin, sex, subdiv and icd10 codes in separate search input fields -->
+
+{% extends "base.html" %}
+
+
+{% block title %}
+<title>WHO Mortality Database | Codes</title>
+{% endblock %}
+
+{% block main %}
+<main>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <form class="form">
+                    <div class="h3">Find Codes for Queries (or general interest)</div>
+                    <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
+                    <!-- will allow the options to be easily passed at GET request -->
+                    <div class="radio mr-2">
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="country"
+                                name="code-data-choice-radio" class="mr-1" checked>Country</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="sex"
+                                name="code-data-choice-radio" class="mr-1" checked>Sex</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="admin"
+                                name="code-data-choice-radio" class="mr-1">Admin</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="subdiv"
+                                name="code-data-choice-radio" class="mr-1">Subdiv</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="age-format"
+                                name="code-data-choice-radio" class="mr-1">Age Format</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="infant-age-format"
+                                name="code-data-choice-radio" class="mr-1">Infant Age Format</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="icd-10-codes"
+                                name="code-data-choice-radio" class="mr-1">ICD-10 Codes</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="icd-10-code-lists"
+                                name="code-data-choice-radio" class="mr-1">ICD-10 Code Lists</label>
+                    </div>
+
+                    <!-- depending on which radio button is checked, change possible inputs -->
+                    <!-- want to input words and return codes that match -->
+                    <!-- use auto complete search fields -->
+                    <!-- use inputs to generate get request for search -->
+                    <!-- return data as JSON -->
+
+                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <!-- alert with json data inside - formatted if possible -->
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

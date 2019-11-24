@@ -1,31 +1,35 @@
 <!-- simple sign up page -->
 {% extends "base.html" %}
 
-{% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Sign Up</h3>
-    <div class="box">
-        <form method="POST" action="/signup">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
-                </div>
-            </div>
+{% block title %}
+<title>WHO Mortality Database | Register</title>
+{% endblock %}
 
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
+{% block main %}
+<main class="text-center container">
+    <div class="row justify-content-center vertical-center ">
+        <div class="col-6">
+            <form class="form-signin align-middle">
+                <a class="h1 mt-5" href="#">
+                    WHO Mortality Database
+                </a>
+                <h1 class="h3 mb-3 mt-3 font-weight-normal text-wrap">Sign up</h1>
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input type="email" id="inputEmail" class="form-control mt-3" placeholder="Email address" required
+                    autofocus="">
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" id="inputPassword" class="form-control mt-3" placeholder="Password" required>
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me" class="mt-3"> Remember me
+                    </label>
                 </div>
-            </div>
-
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Password">
+                <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Sign up</button>
+                <div class="text-muted">
+                    Already registered? <a href="login">Log in</a>
                 </div>
-            </div>
-
-            <button class="button is-block is-info is-large is-fullwidth">Sign Up</button>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 {% endblock %}

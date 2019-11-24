@@ -1,3 +1,4 @@
+from flask import render_template, make_response, url_for
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
@@ -30,8 +31,8 @@ _user_parser.add_argument('password',
 
 class UserRegister(Resource):
     def get(self):
-        # show template here
-        pass
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template('register.html'), 200, headers)
 
     def post(self):
         data = _user_parser.parse_args()
@@ -68,8 +69,8 @@ class User(Resource):
 
 class UserLogin(Resource):
     def get(self):
-        # show template here
-        pass
+        headers = {'Content-Type': 'text/html'}
+        return make_response(render_template('login.html'), 200, headers)
 
     @classmethod
     def post(cls):

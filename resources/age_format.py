@@ -1,3 +1,4 @@
+from flask import jsonify, json
 from flask_restful import Resource, reqparse
 from models.age_format import AgeFormatModel
 from flask_jwt_extended import (
@@ -16,11 +17,11 @@ class AgeFormat(Resource):
                             default="empty"+str(num)
                             )
 
-    @jwt_required
+    # @jwt_required
     def get(self, age_format_code):
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
-            return age_format.json()
+            return json.dumps(age_format.json())
         return {'message': "Age format {} not found".format(age_format_code)}, 404
 
     @fresh_jwt_required

@@ -1,51 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flask Auth Example</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block title %}
+    {% endblock %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 
 <body>
-    <section class="hero is-primary is-fullheight">
 
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                Home
-                            </a>
-                            <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                                Profile
-                            </a>
-                            <a href="{{ url_for('auth.login') }}" class="navbar-item">
-                                Login
-                            </a>
-                            <a href="{{ url_for('auth.signup') }}" class="navbar-item">
-                                Sign Up
-                            </a>
-                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                                Logout
-                            </a>
-                        </div>
-                    </div>
+    <!-- NAV -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="d-flex flex-grow-1">
+                <span class="w-100 d-lg-none d-block">
+                    <!-- hidden spacer to center brand on mobile --></span>
+                <a class="navbar-brand font-weight-bold" href="">
+                    WHO Mortality Database
+                </a>
+                <div class="w-100 text-right">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-links">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                 </div>
-            </nav>
-        </div>
+            </div>
+            <div class="collapse navbar-collapse flex-grow-1 text-right" id="nav-links">
+                <ul class="navbar-nav ml-auto flex-nowrap">
+                    <li class="nav-item m-1">
+                        <a href="visualize" class="nav-link">Visualize</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="json" class="nav-link">JSON</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="codes" class="nav-link">Codes</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="docs" class="nav-link">Docs</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <a href="profile" class="nav-link">Profile</a>
+                    </li>
+                    <li class="nav-item m-1">
+                        <button type="button" class="btn btn-outline-primary">Sign-up</button>
+                    </li>
+                    <li class="nav-item m-1">
+                        <button type="button" class="btn btn-primary">Login</button>
+                    </li>
+                    <li class="nav-item m-1">
+                        <button type="button" class="btn btn-primary">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                {% block content %}
-                {% endblock %}
+    <!-- MAIN -->
+    {% block main %}
+    {% endblock %}
+
+    <!-- FOOTER -->
+    <footer class="page-footer font-small bg-primary text-light pt-4">
+        <!-- Footer Links -->
+        <div class="container-fluid text-center text-md-left">
+            <div class="row">
+
+                <div class="col-md-6 mt-md-0 mt-3">
+                    <h5 class="text-uppercase">Disclaimer</h5>
+                    <p>This should be the whole disclaimer text</p>
+                </div>
+
+                <hr class="clearfix w-100 d-md-none pb-3">
+
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <h5 class="text-uppercase">My site Links</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!" class="text-light">Visualize</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">JSON</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">Codes</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">Docs</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <h5 class="text-uppercase">External Links</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!" class="text-light">Github</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">WHO</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">WHO Mortality Data</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-light">Place I got icd-10 data from</a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </div>
-    </section>
+
+        <!-- Copyright -->
+        <div class="footer-copyright bg-secondary text-center py-3">© 2019 Copyright:
+            <a href="#" class="text-light"> whomortalitydata.com</a>
+        </div>
+
+    </footer>
+
+
+    <!-- Bootstrap scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <!-- app script -->
+    <script src="../static/app.js"></script>
+    <script>
+        var test = document.querySelector('#test');
+
+        function myFun() {
+            // document.write("{{ message }}"); example of using flask variables
+
+            $.get('/api/age-format/08', function (returnedData) {
+                test.innerHTML = "clicked"
+                alert((returnedData));
+            });
+
+            // alert(("{\"age_format_code\": \"08\", \"pop10\": \"empty10\", \"pop11\": \"25-34\", \"pop12\": \"empty12\", \"pop13\": \"35-44\", \"pop14\": \"empty14\", \"pop15\": \"45-54\", \"pop16\": \"empty16\", \"pop17\": \"55-64\", \"pop18\": \"empty18\", \"pop19\": \"65+\", \"pop2\": \"0\", \"pop20\": \"empty20\", \"pop21\": \"empty21\", \"pop22\": \"empty22\", \"pop23\": \"empty23\", \"pop24\": \"empty24\", \"pop25\": \"empty25\", \"pop26\": \"Unknown\", \"pop3\": \"1-4\", \"pop4\": \"empty4\", \"pop5\": \"empty5\", \"pop6\": \"empty6\", \"pop7\": \"5-14\", \"pop8\": \"empty8\", \"pop9\": \"15-24\"}"))
+
+        }
+        test.addEventListener('click', myFun);</script>
 </body>
 
 </html>

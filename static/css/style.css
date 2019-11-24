@@ -1,0 +1,16 @@
+.vertical-center {
+	min-height: 90%;
+	min-height: 90vh;
+
+	display: flex;
+	align-items: center;
+}
+
+.active {
+	text-decoration: underline;
+}
+
+.container {
+	min-height: 87%;
+	min-height: 87vh;
+}

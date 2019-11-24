@@ -1,30 +1,35 @@
 <!-- simple login page -->
 {% extends "base.html" %}
 
-{% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Login</h3>
-    <div class="box">
-        <form method="POST" action="/login">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
-                </div>
-            </div>
+{% block title %}
+<title>WHO Mortality Database | Login</title>
+{% endblock %}
 
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
+{% block main %}
+<main class="text-center container">
+    <div class="row justify-content-center vertical-center ">
+        <div class="col-6">
+            <form class="form-signin align-middle">
+                <a class="h1 mt-5" href="#">
+                    WHO Mortality Database
+                </a>
+                <h1 class="h3 mb-3 mt-3 font-weight-normal text-wrap">Log in</h1>
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input type="email" id="inputEmail" class="form-control mt-3" placeholder="Email address" required=""
+                    autofocus="">
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" id="inputPassword" class="form-control mt-3" placeholder="Password" required>
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me" class="mt-3"> Remember me
+                    </label>
                 </div>
-            </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox">
-                    Remember me
-                </label>
-            </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
-        </form>
+                <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Log in</button>
+                <div class="text-muted">
+                    Not registered yet? <a href="register">Sign up</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+</main>
 {% endblock %}

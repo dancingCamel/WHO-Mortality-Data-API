@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, url_for
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from db import db
@@ -32,7 +32,11 @@ from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogo
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
 from resources.index import Index
-# from resources.profile import Profile
+from resources.profile import Profile
+from resources.docs import Docs
+from resources.visualize import Visualize
+from resources.codes import Codes
+from resources.json import Json
 
 
 app = Flask(__name__)
@@ -170,16 +174,21 @@ api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 api.add_resource(TokenRefresh, '/refresh')
-# api.add_resource(Profile, '/profile')
+api.add_resource(Profile, '/profile')
 
 # superuser endpoints
 api.add_resource(Superuser, '/superuser/<string:username>')
 api.add_resource(SuperuserUpdate, '/superuser-update')
 
 # site endpoints
-# api.add_resource(Visualize, '/visualize')
 api.add_resource(Index, '/')
-# api.add_resource(Docs '/docs')
+api.add_resource(Visualize, '/visualize')
+api.add_resource(Docs, '/docs')
+api.add_resource(Json, '/json')
+api.add_resource(Codes, '/codes')
+
+
+
 
 
 if __name__ == '__main__':

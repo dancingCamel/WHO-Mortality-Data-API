@@ -1,0 +1,44 @@
+<!-- users get data from custom queries returned in JSON Format -->
+
+{% extends "base.html" %}
+
+{% block title %}
+<title>WHO Mortality Database | JSON</title>
+{% endblock %}
+
+{% block main %}
+<main>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <form class="form">
+                    <div class="h3">Get data as JSON</div>
+                    <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
+                    <div class="radio mr-2">
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="pop"
+                                name="json-data-choice-radio" class="mr-1" checked>Population</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="mort"
+                                name="json-data-choice-radio" class="mr-1">Mortality</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="pop-adj-mort"
+                                name="json-data-choice-radio" class="mr-1">Population
+                            Adjusted
+                            Mortality</label>
+                    </div>
+
+                    <!-- depending on which radio button is checked, change possible inputs -->
+                    <!-- use inputs to generate get request for search -->
+                    <!-- can return lists of results but must select at least 3 inputs -->
+
+                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <!-- alert with json data inside - formatted if possible -->
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

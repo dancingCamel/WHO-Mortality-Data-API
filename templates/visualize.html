@@ -1,0 +1,54 @@
+<!-- after user logged in they see this page. it's where they can make requests to the api and get data returned in charts -->
+<!-- can only see this page if logged in -->
+
+{% extends "base.html" %}
+
+{% block title %}
+<title>WHO Mortality Database | Visualize</title>
+{% endblock %}
+
+{% block main %}
+<main>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <form class="form">
+                    <div class="h3">Visualize Mortality Data with Charts</div>
+                    <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
+                    <div class="radio mr-2">
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="mort"
+                                name="vis-data-choice-radio" class="mr-1">Mortality</label>
+                        <label class="radio-inline mr-2"><input type="radio" accesskey="pop-adj-mort"
+                                name="vis-data-choice-radio" class="mr-1">Population
+                            Adjusted
+                            Mortality</label>
+                    </div>
+
+                    <!-- use inputs to generate get request for search -->
+                    <!-- all choosing multiple countries, years, genders, causes, admins and subdivs -->
+                    <!-- make string of inputs e.g. country=4038,1020,4308 then use split string to make a list -->
+                    <!-- all inputs required at least one (except admin and subdiv which can be empty and default to "") -->
+
+                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="bar-charts">
+            <div class="col">
+
+            </div>
+        </div>
+        <div class="row" id="line-charts">
+            <div class="col">
+
+            </div>
+        </div>
+        <div class="row" id="geo-charts">
+            <div class="col">
+
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

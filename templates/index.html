@@ -4,11 +4,69 @@
 
 {% extends "base.html" %}
 
-{% block content %}
-<h1 class="title">
-    Flask Login Example
-</h1>
-<h2 class="subtitle">
-    Easy authentication and authorization in Flask.
-</h2>
+{% block title %}
+<title>WHO Mortality Database</title>
+{% endblock %}
+
+{% block main %}
+<main>
+    <div class="container mt-3">
+
+        <div class="row">
+            <div class="col-sm">
+                <!-- text describing the project, return json or use online queries to make charts, return json -->
+                <span id="test">Message from server:</span>
+                {% for message in get_flashed_messages() %}
+                {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm" id="chartExampleImg">
+                <img src="..." class="img-fluid" alt="Responsive image">
+            </div>
+            <div>
+                <!-- text explaining how to use charts and visualize data as population adjusted or raw -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <!-- text about helper apis so users can find other data to help them generate custom queries -->
+            </div>
+            <div class="col-sm">
+                <!-- cards with description of icd-10, icd-10 list, sex, admin, subdiv, population -->
+                <!-- each card has a link that goes to codes pages but has different text. selects thing on codes pages they were looking for -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <!-- link to doc and text saying "find out more about sending custom queries to the api in the docs" -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <!-- for more detail on how the api works, check the github page (link) -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm">
+                <!-- call to action to login or sign up in order to get your API key -->
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script>
+
+
+
+</script>
+
+
 {% endblock %}
