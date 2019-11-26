@@ -43,11 +43,9 @@ from resources.json import Json
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# JWT error handling
+# error handling
 app.config['PROPAGATE_EXCEPTIONS'] = True
-# enable blacklisting
-app.config['JWT_BLACKLIST_ENABLED'] = True
-app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+
 
 # secret key for development
 app.secret_key = "dev"
@@ -63,15 +61,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    # since the user_id is just the primary key of our user table, use it in the query for the user
-    # return User.query.get(int(user_id))
     return UserModel.find_by_id(user_id)
-
-# check api_key for requests
-# @login_manager.header_loader
-# def load_user_from_header(header_val):
-#     header_val = header_val.replace('Basic ', '', 1)
-#     return UserModel.query.filter_by(api_key=header_val).first()
 
 
 @app.before_first_request
