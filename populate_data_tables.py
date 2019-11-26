@@ -9,6 +9,7 @@ from models.infant_age_format import InfantAgeFormatModel
 from models.icd10 import Icd10Model
 from models.icd10_lists import Icd10ListsModel
 from models.mortality import MortalityDataModel
+from models.superuser import SuperuserModel
 from codes import *
 
 # use break instead of continue - if it finds an entry the table exists. Skip populating that table
@@ -197,3 +198,11 @@ def add_total_population_entries():
     # need array of all possible years, all possible sexes and all possible admins and subdivs and all possible countires
     # loop through each array nested. check to see if exists and save them to vars
     # return the json_unformated. add relevant numbers together and save new entry to db
+
+
+def add_first_admin():
+    user_id = "1"
+    username = "William"
+
+    superuser = SuperuserModel(username)
+    superuser.save_to_db()
