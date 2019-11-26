@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.infant_age_format import InfantAgeFormatModel
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class InfantAgeFormat(Resource):
@@ -18,7 +18,7 @@ class InfantAgeFormat(Resource):
             return infant_age_format.json(), 200
         return {'message': "No infant age format found with code '{}'.".format(infant_age_format_code)}, 404
 
-    @requireApiKey
+    @requireAdmin
     def post(self, infant_age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -36,7 +36,7 @@ class InfantAgeFormat(Resource):
             return {'message', "An error occured inserting the infant age format"}, 500
         return infant_age_format.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def put(self, infant_age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -59,7 +59,7 @@ class InfantAgeFormat(Resource):
             return {'message': "An error occured inserting the infant age format."}, 500
         return infant_age_format.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def delete(self, infant_age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:

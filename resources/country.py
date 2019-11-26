@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from models.country import CountryModel
 from sqlalchemy import func
 from flask_login import login_required
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class Country(Resource):
@@ -25,7 +25,7 @@ class Country(Resource):
         return {'message': "Country -'{}'- not found.".format(country_name)}, 404
 
     # add a new country code and name - check code doesn't already exist
-    @requireApiKey
+    @requireAdmin
     def post(self, country_name):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -46,7 +46,7 @@ class Country(Resource):
             return {'message': "An error occurred inserting the country."}, 500
         return country.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     # change code of given country
     def put(self, country_name):
         # claims = get_jwt_claims()
@@ -63,7 +63,7 @@ class Country(Resource):
         country.save_to_db()
         return country.json()
 
-    @requireApiKey
+    @requireAdmin
     def delete(self, country_name):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:

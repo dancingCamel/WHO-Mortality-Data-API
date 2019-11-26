@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     fresh_jwt_required,
     get_jwt_claims
 )
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class Admin(Resource):
@@ -23,7 +23,7 @@ class Admin(Resource):
             return admin.json()
         return {'message': "No admin entry found for code {} and country {}.".format(admin_code, country_code)}, 404
 
-    @requireApiKey
+    @requireAdmin
     def post(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -40,7 +40,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def put(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -59,7 +59,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def delete(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:

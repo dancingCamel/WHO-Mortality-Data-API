@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.superuser import SuperuserModel
 from models.user import UserModel
-from auth import requireApiKey
+from auth import requireAdmin
 
 _superuser_parser = reqparse.RequestParser()
 _superuser_parser.add_argument('username',
@@ -12,7 +12,7 @@ _superuser_parser.add_argument('username',
 
 
 class Superuser(Resource):
-    @requireApiKey
+    @requireAdmin
     def get(self, username):
         superuser = SuperuserModel.find_by_username(username)
         if not superuser:
@@ -21,7 +21,7 @@ class Superuser(Resource):
 
 
 class SuperuserUpdate(Resource):
-    @requireApiKey
+    @requireAdmin
     def post(self):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -44,7 +44,7 @@ class SuperuserUpdate(Resource):
 
         return {"message": "Superuser created successfully."}, 201
 
-    @requireApiKey
+    @requireAdmin
     def delete(self):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:

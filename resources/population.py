@@ -1,7 +1,7 @@
 from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class PopulationSearch(Resource):
@@ -74,6 +74,7 @@ class PopulationChange(Resource):
                             default=""
                             )
 
+    @requireAdmin
     def post(self, country_code, year, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -146,6 +147,7 @@ class PopulationChange(Resource):
 
         return entry.json(), 201
 
+    @requireAdmin
     def delete(self, country_code, year, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -204,6 +206,7 @@ class PopulationChange(Resource):
             return {'message': 'Entry deleted.'}
         return {'message': 'Item not found.'}, 404
 
+    @requireAdmin
     def put(self, country_code, year, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -294,6 +297,7 @@ class PopulationChange(Resource):
 
 
 class PopulationOne(Resource):
+    @requireApiKey
     def get(self):
         query = {}
         # Validate request and add to query
@@ -340,6 +344,7 @@ class PopulationOne(Resource):
 
 class PopulationsList(Resource):
     # get all population data
+    @requireApiKey
     def get(self):
         populations = [entry.json() for entry in PopulationModel.find_all()]
         return {'populations': populations}, 200

@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
 from validate import *
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class MortalityDataSearch(Resource):
@@ -140,7 +140,7 @@ class MortalityDataChange(Resource):
                             default=""
                             )
 
-    @requireApiKey
+    @requireAdmin
     def post(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -219,7 +219,7 @@ class MortalityDataChange(Resource):
 
         return entry.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def put(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -318,7 +318,7 @@ class MortalityDataChange(Resource):
         entry.save_to_db()
         return entry.json()
 
-    @requireApiKey
+    @requireAdmin
     def delete(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:

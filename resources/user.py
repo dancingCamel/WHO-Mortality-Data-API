@@ -53,7 +53,7 @@ class UserRegister(Resource):
         while UserModel.find_by_key(api_key):
             api_key = str(b64encode(urandom(64)).decode('latin1'))
 
-        # create new user 
+        # create new user
         new_user = UserModel(username, hashed_password, api_key)
 
         # add the new user to the database
@@ -64,11 +64,12 @@ class UserRegister(Resource):
             message = "Something went wrong registering the user."
             flash(message)
             return redirect(url_for('userregister', message=message))
-        
+
         if message:
             flash(message)
         return redirect(url_for('userlogin', message=message))
 
+    # need user put method to change password or api_ley
 
 
 class User(Resource):
@@ -110,7 +111,7 @@ class UserLogin(Resource):
 
         # if the above check passes, then we know the user has the right credentials
         login_user(user, remember=remember)
-        
+
         # save api_key to session storage
 
         return redirect(url_for('profile'))
@@ -121,4 +122,3 @@ class UserLogout(Resource):
     def get(self):
         logout_user()
         return redirect(url_for('index'))
-        

@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.subdiv import SubdivModel
-from auth import requireApiKey
+from auth import requireApiKey, requireAdmin
 
 
 class Subdiv(Resource):
@@ -17,7 +17,7 @@ class Subdiv(Resource):
             return subdiv.json()
         return {'message': "Subdiv {} not found".format(subdiv_code)}, 404
 
-    @requireApiKey
+    @requireAdmin
     def post(self, subdiv_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -35,7 +35,7 @@ class Subdiv(Resource):
             return {'message': "There was an error inserting the subdiv."}, 500
         return subdiv.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def put(self, subdiv_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -55,7 +55,7 @@ class Subdiv(Resource):
 
         return subdiv.json(), 201
 
-    @requireApiKey
+    @requireAdmin
     def delete(self, subdiv_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
