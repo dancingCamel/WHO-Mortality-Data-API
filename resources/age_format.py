@@ -1,7 +1,7 @@
 from flask import jsonify, json
 from flask_restful import Resource, reqparse
 from models.age_format import AgeFormatModel
-
+from auth import requireApiKey
 
 
 class AgeFormat(Resource):
@@ -13,13 +13,14 @@ class AgeFormat(Resource):
                             default="empty"+str(num)
                             )
 
-    # @jwt_required
+    @requireApiKey
     def get(self, age_format_code):
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
             return json.dumps(age_format.json())
         return {'message': "Age format {} not found".format(age_format_code)}, 404
 
+    @requireApiKey
     def post(self, age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -38,6 +39,7 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format."}, 500
         return age_format.json(), 201
 
+    @requireApiKey
     def put(self, age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -81,6 +83,7 @@ class AgeFormat(Resource):
             return {'message': "An error occurred inserting the age format for code '{}'.".format(age_format_code)}, 500
         return age_format.json(), 201
 
+    @requireApiKey
     def delete(self, age_format_code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -93,6 +96,7 @@ class AgeFormat(Resource):
 
 
 class AgeFormatList(Resource):
+    @requireApiKey
     def get(self):
         age_formats = [age_format.json()
                        for age_format in AgeFormatModel.find_all()]

@@ -1,25 +1,28 @@
-from flask import render_template, make_response, url_for
+from flask import render_template, make_response, url_for, request, redirect, flash
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, logout_user, login_required
+from base64 import b64encode
+from os import urandom
 
 
 from models.user import UserModel
 from blacklist import BLACKLIST
 
-
+# reqparse returns python dictionaries.
 _user_parser = reqparse.RequestParser()
-_user_parser.add_argument('username',
-                          type=str,
-                          required=True,
-                          help="This field cannot be blank.",
-                          location="form"
-                          )
-_user_parser.add_argument('password',
-                          type=str,
-                          required=True,
-                          help="This field cannot be blank.",
-                          location="form"
-                          )
+# _user_parser.add_argument('username',
+#                           type=str,
+#                           required=True,
+#                           help="This field cannot be blank.",
+#                           location="form"
+#                           )
+# _user_parser.add_argument('password',
+#                           type=str,
+#                           required=True,
+#                           help="This field cannot be blank.",
+#                           location="form"
+#                           )
 
 
 class UserRegister(Resource):
@@ -28,18 +31,44 @@ class UserRegister(Resource):
         return make_response(render_template('register.html'), 200, headers)
 
     def post(self):
-        data = _user_parser.parse_args()
+        # data = _user_parser.parse_args()
+        username = request.form.get("username")
+        password = request.form.get("password")
+        # username = data['username']
+        # password = data['password']
 
-        if UserModel.find_by_username(data['username']):
-            return {"message": "A user with that username already exists"}, 400
+        # if this returns a user, then the email already exists in database
+        user = UserModel.find_by_username(username)
+
+        if user:  # if a user is found, we want to redirect back to signup page so user can try again
+            flash('Email address already exists')
+            return redirect(url_for('userregister'))
 
         # hash password
         hashed_password = generate_password_hash(
-            data['password'], method='pbkdf2:sha256', salt_length=32)
-        user = UserModel(data['username'], hashed_password)
-        user.save_to_db()
+            password, method='pbkdf2:sha256', salt_length=32)
 
-        return {"message": "User created successfully."}, 201
+        # generate api key and check not already used
+        api_key = str(b64encode(urandom(64)).decode('latin1'))
+        while UserModel.find_by_key(api_key):
+            api_key = str(b64encode(urandom(64)).decode('latin1'))
+
+        # create new user 
+        new_user = UserModel(username, hashed_password, api_key)
+
+        # add the new user to the database
+        try:
+            new_user.save_to_db()
+            message = "Registered successfully. Please log in."
+        except:
+            message = "Something went wrong registering the user."
+            flash(message)
+            return redirect(url_for('userregister', message=message))
+        
+        if message:
+            flash(message)
+        return redirect(url_for('userlogin', message=message))
+
 
 
 class User(Resource):
@@ -66,40 +95,30 @@ class UserLogin(Resource):
 
     @classmethod
     def post(cls):
-        data = _user_parser.parse_args()
+        username = request.form.get('username')
+        password = request.form.get('password')
+        remember = True if request.form.get('remember') else False
 
         # find user in db
-        user = UserModel.find_by_username(data['username'])
+        user = UserModel.find_by_username(username)
 
-        # check password and create tokens if correct
-        if user and check_password_hash(user.password, data['password']):
-            # access_token = create_access_token(identity=user.id, fresh=True)
-            # create a refresh token, too
-            # refresh_token = create_refresh_token(identity=user.id)
+        # check if user actually exists
+        if not user or not check_password_hash(user.password, password):
+            flash('Please check your login details and try again.')
+            # if user doesn't exist or password is wrong, reload the page
+            return redirect(url_for('userlogin'))
 
-            # return the tokens to the client
-            return {
-                # 'access_token': access_token,
-                # this token never changes
-                # 'refresh_token': refresh_token
-            }, 200
+        # if the above check passes, then we know the user has the right credentials
+        login_user(user, remember=remember)
+        
+        # save api_key to session storage
 
-        # return error string if user not found or password incorrect
-        return {'message': "Invalid credentials"}, 401
+        return redirect(url_for('profile'))
 
 
 class UserLogout(Resource):
-    def post(self):
-        # jti = get_raw_jwt()['jti']
-        # BLACKLIST.add(jti)
-        # return {'message': "Successfully logged out."}
-        pass
-
-class TokenRefresh(Resource):
-    # if we get past the decorator we definitely have a refresh token
-    def post(self):
-        # get_jwt_identity uses both access and refresh tokens. returns user_id in this case (as the identity we set is the id)
-        # current_user = get_jwt_identity()
-        # new_token = create_access_token(identity=current_user, fresh=False)
-        # return {'access_token': new_token}, 200
-        pass
+    @login_required
+    def get(self):
+        logout_user()
+        return redirect(url_for('index'))
+        

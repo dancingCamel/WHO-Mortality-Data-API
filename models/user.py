@@ -1,13 +1,14 @@
+from flask_login import UserMixin
 from db import db
 
 
-class UserModel(db.Model):
+class UserModel(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
-    api_key = db.column(db.String(256))
+    api_key = db.Column(db.String(100))
 
     def __init__(self, username, password, api_key):
         self.username = username

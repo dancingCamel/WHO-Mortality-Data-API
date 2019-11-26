@@ -64,7 +64,20 @@
 
 <script>
 
+    var test = document.querySelector('#test');
 
+    function myFun() {
+        // document.write("{{ message }}"); example of using flask variables
+
+        $.get('/api/age-format/08', function (returnedData) {
+            test.innerHTML = "clicked"
+            alert((returnedData));
+        });
+
+        // alert(("{\"age_format_code\": \"08\", \"pop10\": \"empty10\", \"pop11\": \"25-34\", \"pop12\": \"empty12\", \"pop13\": \"35-44\", \"pop14\": \"empty14\", \"pop15\": \"45-54\", \"pop16\": \"empty16\", \"pop17\": \"55-64\", \"pop18\": \"empty18\", \"pop19\": \"65+\", \"pop2\": \"0\", \"pop20\": \"empty20\", \"pop21\": \"empty21\", \"pop22\": \"empty22\", \"pop23\": \"empty23\", \"pop24\": \"empty24\", \"pop25\": \"empty25\", \"pop26\": \"Unknown\", \"pop3\": \"1-4\", \"pop4\": \"empty4\", \"pop5\": \"empty5\", \"pop6\": \"empty6\", \"pop7\": \"5-14\", \"pop8\": \"empty8\", \"pop9\": \"15-24\"}"))
+
+    }
+    test.addEventListener('click', myFun);
 
 </script>
 

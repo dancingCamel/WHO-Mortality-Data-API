@@ -4,10 +4,11 @@ from models.population import PopulationModel
 from models.country import CountryModel
 from validate import *
 import math
-
+from auth import requireApiKey
 
 
 class MortalityAdjustedSearch(Resource):
+    @requireApiKey
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 
@@ -119,6 +120,7 @@ class MortalityAdjustedSearch(Resource):
 
 
 class MortalityAdjustedOne(Resource):
+    @requireApiKey
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000. round?
 

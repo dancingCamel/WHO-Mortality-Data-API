@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, render_template, url_for
+from flask import Flask, jsonify, request, abort
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
 from db import db
 from populate_data_tables import (populate_country_table,
                                   populate_population_table,
@@ -16,6 +16,7 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd10_table_UE1,
                                   populate_icd10_code_lists_table,
                                   populate_mortality_table)
+from models.user import UserModel
 from resources.country import Country, CountryList, CountrySearch
 from resources.sex import Sex, SexList
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
@@ -28,7 +29,7 @@ from resources.icd10_lists import Icd10CodeList, Icd10AllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange
 from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne
 from blacklist import BLACKLIST
-from resources.user import UserRegister, User, UserLogin, TokenRefresh, UserLogout
+from resources.user import UserRegister, User, UserLogin, UserLogout
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
 from resources.index import Index
@@ -55,6 +56,22 @@ app.config.from_pyfile('config.py', silent=True)
 app.config.from_pyfile('config.py', silent=True)
 
 api = Api(app)
+login_manager = LoginManager()
+login_manager.login_view = 'userlogin'
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    # return User.query.get(int(user_id))
+    return UserModel.find_by_id(user_id)
+
+# check api_key for requests
+# @login_manager.header_loader
+# def load_user_from_header(header_val):
+#     header_val = header_val.replace('Basic ', '', 1)
+#     return UserModel.query.filter_by(api_key=header_val).first()
 
 
 @app.before_first_request
@@ -76,65 +93,6 @@ def create_tables():
     populate_icd10_code_lists_table()
     # mortality data csv is too large. need to use sqlite3 .import function
     # populate_mortality_table()
-
-
-jwt = JWTManager(app)  # /auth
-
-
-@jwt.user_claims_loader
-def add_claims_to_jwt(identity):
-    superuser = SuperuserModel.find_by_user_id(identity)
-    if superuser:
-        return {'is_admin': True}
-    return {'is_admin': False}
-
-
-@jwt.token_in_blacklist_loader
-# function to return true if in blacklist
-def check_if_token_in_blacklist(decrypted_token):
-    # return true or false. if true it will jump to revoked token loader
-    return decrypted_token['jti'] in BLACKLIST
-
-# custom error messages
-@jwt.expired_token_loader
-# do this when token expires
-def expired_token_callback(error):
-    return jsonify({
-        'description': "The token has expired.",
-        'error': "token_expired"
-    }), 401
-
-
-@jwt.invalid_token_loader
-def invalid_token_callback(error):
-    return jsonify({
-        'description': 'Signature verification failed',
-        'error': 'invalid_token'
-    }), 401
-
-
-@jwt.unauthorized_loader
-def missing_token_callback(error):
-    return jsonify({
-        'description': 'Request does not contain an access token',
-        'error': 'authorization_required'
-    }), 401
-
-
-@jwt.needs_fresh_token_loader
-def token_not_fresh_callback(error):
-    return jsonify({
-        'description': 'This token is not fresh',
-        'error': 'fresh_token_required'
-    }), 401
-
-# revoke token when log out or if hit usage limits
-@jwt.revoked_token_loader
-def revoked_token_callback(error):
-    return jsonify({
-        'description': 'The token has been revoked',
-        'error': 'token_revoked'
-    }), 401
 
 
 api.add_resource(Country, '/api/country/<string:country_name>')
@@ -173,8 +131,7 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
-api.add_resource(TokenRefresh, '/refresh')
-api.add_resource(Profile, '/profile')
+# api.add_resource(TokenRefresh, '/refresh')
 
 # superuser endpoints
 api.add_resource(Superuser, '/superuser/<string:username>')
@@ -186,9 +143,7 @@ api.add_resource(Visualize, '/visualize')
 api.add_resource(Docs, '/docs')
 api.add_resource(Json, '/json')
 api.add_resource(Codes, '/codes')
-
-
-
+api.add_resource(Profile, '/profile')
 
 
 if __name__ == '__main__':

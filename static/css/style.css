@@ -14,3 +14,7 @@
 	min-height: 87%;
 	min-height: 87vh;
 }
+
+.modal-body p {
+	word-wrap: break-word;
+}

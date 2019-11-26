@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.icd10_lists import Icd10ListsModel
-
+from auth import requireApiKey
 
 
 class Icd10CodeList(Resource):
@@ -11,12 +11,14 @@ class Icd10CodeList(Resource):
                         help="This field is required"
                         )
 
+    @requireApiKey
     def get(self, code):
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:
             return code_list.json(), 200
         return {'message': "Code list '{}' not found.".format(code)}
 
+    @requireApiKey
     def post(self, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -32,6 +34,7 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return new_list.json()
 
+    @requireApiKey
     def put(self, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -50,6 +53,7 @@ class Icd10CodeList(Resource):
             {'message': "An error occurred inserting the list."}, 500
         return code_list.json()
 
+    @requireApiKey
     def delete(self, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -63,6 +67,7 @@ class Icd10CodeList(Resource):
 
 class Icd10AllCodeLists(Resource):
     # return all available code lists and their descritpion e.g. 101, 103, 104
+    @requireApiKey
     def get(self):
         code_lists = [code_list.json()
                       for code_list in Icd10ListsModel.find_all()]

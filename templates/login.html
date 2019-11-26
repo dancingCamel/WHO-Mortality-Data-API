@@ -9,19 +9,27 @@
 <main class="text-center container">
     <div class="row justify-content-center vertical-center ">
         <div class="col-6">
-            <form class="form-signin align-middle">
+            <form class="form-signin align-middle" method="POST" action="/login">
                 <a class="h1 mt-5" href="#">
                     WHO Mortality Database
                 </a>
                 <h1 class="h3 mb-3 mt-3 font-weight-normal text-wrap">Log in</h1>
-                <label for="inputEmail" class="sr-only">Email address</label>
-                <input type="email" id="inputEmail" class="form-control mt-3" placeholder="Email address" required=""
-                    autofocus="">
-                <label for="inputPassword" class="sr-only">Password</label>
-                <input type="password" id="inputPassword" class="form-control mt-3" placeholder="Password" required>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-info">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" id="username" name="username" class="form-control mt-3" placeholder="Username"
+                    required autofocus="">
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" class="form-control mt-3" placeholder="Password"
+                    required>
                 <div class="checkbox mb-3">
                     <label>
-                        <input type="checkbox" value="remember-me" class="mt-3"> Remember me
+                        <input type="checkbox" value="remember" class="mt-3"> Remember me
                     </label>
                 </div>
                 <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Log in</button>

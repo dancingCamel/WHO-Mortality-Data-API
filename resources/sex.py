@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.sex import SexModel
+from auth import requireApiKey
+
 
 class Sex(Resource):
     parser = reqparse.RequestParser()
@@ -9,12 +11,14 @@ class Sex(Resource):
                         help="This field is required"
                         )
 
+    @requireApiKey
     def get(self, sex):
         sex_entry = SexModel.find_by_name(sex)
         if sex_entry:
             return sex_entry.json()
         return {'message': "Sex not found."}, 404
 
+    @requireApiKey
     def post(self, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -31,6 +35,7 @@ class Sex(Resource):
             return {'message': "An error occurred inserting the sex."}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def put(self, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -49,6 +54,7 @@ class Sex(Resource):
             return {'message': "An error occurred inserting the sex."}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def delete(self, sex):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -62,6 +68,7 @@ class Sex(Resource):
 
 class SexList(Resource):
     # return list of all sexes and their codes
+    @requireApiKey
     def get(self):
         sexes = [sex.json() for sex in SexModel.find_all()]
         return {'sexes': sexes}, 200

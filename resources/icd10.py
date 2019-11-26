@@ -10,12 +10,14 @@ class Icd10(Resource):
                         required=True,
                         help="This field is required")
 
+    @requireApiKey
     def get(self, code_list, code):
         entry = Icd10Model.find_by_list_and_code(code_list, code)
         if entry:
             return entry.json(), 200
         return {'message': "'{}' code not found in the '{}' list.".format(code, code_list)}, 404
 
+    @requireApiKey
     def post(self, code_list, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -33,6 +35,7 @@ class Icd10(Resource):
             return {'message': "Something we wrong inserting the code."}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def put(self, code_list, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -51,6 +54,7 @@ class Icd10(Resource):
             return {'message': "Something we wrong inserting the code."}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def delete(self, code_list, code):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -64,6 +68,7 @@ class Icd10(Resource):
 
 class Icd10Search(Resource):
     # search for codes using a case insensitive partial description or code
+    @requireApiKey
     def get(self, search_term):
         entries = Icd10Model.search(search_term)
         if entries:
@@ -73,6 +78,7 @@ class Icd10Search(Resource):
 
 class Icd10List(Resource):
     # return whole icd10 list in json format
+    @requireApiKey
     def get(self):
         entries = [entry.json() for entry in Icd10Model.find_all()]
         return {'all_codes': entries}

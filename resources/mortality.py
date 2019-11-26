@@ -1,9 +1,11 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
 from validate import *
+from auth import requireApiKey
 
 
 class MortalityDataSearch(Resource):
+    @requireApiKey
     def get(self):
         # use get_args() for variables. search with dict. return all()
         query = {}
@@ -52,6 +54,7 @@ class MortalityDataSearch(Resource):
 
 
 class MortalityDataOne(Resource):
+    @requireApiKey
     def get(self):
         query = {}
         # Validate request and add to query
@@ -137,6 +140,7 @@ class MortalityDataChange(Resource):
                             default=""
                             )
 
+    @requireApiKey
     def post(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -215,6 +219,7 @@ class MortalityDataChange(Resource):
 
         return entry.json(), 201
 
+    @requireApiKey
     def put(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -313,6 +318,7 @@ class MortalityDataChange(Resource):
         entry.save_to_db()
         return entry.json()
 
+    @requireApiKey
     def delete(self, country_code, year, sex, cause):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:

@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.country import CountryModel
 from sqlalchemy import func
+from flask_login import login_required
+from auth import requireApiKey
 
 
 class Country(Resource):
@@ -13,6 +15,8 @@ class Country(Resource):
                         help="This field is required"
                         )
 
+    @requireApiKey
+    # @login_required
     # get the country code when supplying a country name
     def get(self, country_name):
         country = CountryModel.find_by_name(country_name)
@@ -21,6 +25,7 @@ class Country(Resource):
         return {'message': "Country -'{}'- not found.".format(country_name)}, 404
 
     # add a new country code and name - check code doesn't already exist
+    @requireApiKey
     def post(self, country_name):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -41,6 +46,7 @@ class Country(Resource):
             return {'message': "An error occurred inserting the country."}, 500
         return country.json(), 201
 
+    @requireApiKey
     # change code of given country
     def put(self, country_name):
         # claims = get_jwt_claims()
@@ -57,6 +63,7 @@ class Country(Resource):
         country.save_to_db()
         return country.json()
 
+    @requireApiKey
     def delete(self, country_name):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
@@ -70,12 +77,14 @@ class Country(Resource):
 
 class CountryList(Resource):
     # return list of all countries and their codes
+    @requireApiKey
     def get(self):
         countries = [country.json() for country in CountryModel.find_all()]
         return {'countries': countries}, 200
 
 
 class CountrySearch(Resource):
+    @requireApiKey
     def get(self, search_term):
         countries = [country.json()
                      for country in CountryModel.search_by_name(search_term)]

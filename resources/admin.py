@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     fresh_jwt_required,
     get_jwt_claims
 )
+from auth import requireApiKey
 
 
 class Admin(Resource):
@@ -15,12 +16,14 @@ class Admin(Resource):
                         help="This field is required"
                         )
 
+    @requireApiKey
     def get(self, admin_code, country_code):
         admin = AdminModel.find_by_code_and_country(admin_code, country_code)
         if admin:
             return admin.json()
         return {'message': "No admin entry found for code {} and country {}.".format(admin_code, country_code)}, 404
 
+    @requireApiKey
     def post(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -37,6 +40,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def put(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -55,6 +59,7 @@ class Admin(Resource):
             {'message': 'Something went wrong inserting the admin.'}, 500
         return entry.json(), 201
 
+    @requireApiKey
     def delete(self, admin_code, country_code):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -68,6 +73,7 @@ class Admin(Resource):
 
 
 class AdminList(Resource):
+    @requireApiKey
     def get(self):
         admins = AdminModel.find_all()
         return [entry.json() for entry in admins], 200

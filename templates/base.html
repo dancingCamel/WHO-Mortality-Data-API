@@ -20,7 +20,7 @@
             <div class="d-flex flex-grow-1">
                 <span class="w-100 d-lg-none d-block">
                     <!-- hidden spacer to center brand on mobile --></span>
-                <a class="navbar-brand font-weight-bold" href="">
+                <a class="navbar-brand font-weight-bold" href="/">
                     WHO Mortality Database
                 </a>
                 <div class="w-100 text-right">
@@ -31,6 +31,7 @@
             </div>
             <div class="collapse navbar-collapse flex-grow-1 text-right" id="nav-links">
                 <ul class="navbar-nav ml-auto flex-nowrap">
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item m-1">
                         <a href="visualize" class="nav-link">Visualize</a>
                     </li>
@@ -40,21 +41,28 @@
                     <li class="nav-item m-1">
                         <a href="codes" class="nav-link">Codes</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item m-1">
                         <a href="docs" class="nav-link">Docs</a>
                     </li>
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item m-1">
                         <a href="profile" class="nav-link">Profile</a>
                     </li>
+                    {% endif %}
+                    {% if not current_user.is_authenticated %}
                     <li class="nav-item m-1">
-                        <button type="button" class="btn btn-outline-primary">Sign-up</button>
+                        <button type="button" class="btn btn-outline-primary" id="navRegister">Sign-up</button>
                     </li>
                     <li class="nav-item m-1">
-                        <button type="button" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-primary" id="navLogin">Login</button>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item m-1">
-                        <button type="button" class="btn btn-primary">Logout</button>
+                        <button type="button" class="btn btn-primary" id="navLogout">Logout</button>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
@@ -138,22 +146,9 @@
         crossorigin="anonymous"></script>
 
     <!-- app script -->
-    <script src="../static/app.js"></script>
+    <script src="../static/app.js" type="text/javascript"></script>
     <script>
-        var test = document.querySelector('#test');
-
-        function myFun() {
-            // document.write("{{ message }}"); example of using flask variables
-
-            $.get('/api/age-format/08', function (returnedData) {
-                test.innerHTML = "clicked"
-                alert((returnedData));
-            });
-
-            // alert(("{\"age_format_code\": \"08\", \"pop10\": \"empty10\", \"pop11\": \"25-34\", \"pop12\": \"empty12\", \"pop13\": \"35-44\", \"pop14\": \"empty14\", \"pop15\": \"45-54\", \"pop16\": \"empty16\", \"pop17\": \"55-64\", \"pop18\": \"empty18\", \"pop19\": \"65+\", \"pop2\": \"0\", \"pop20\": \"empty20\", \"pop21\": \"empty21\", \"pop22\": \"empty22\", \"pop23\": \"empty23\", \"pop24\": \"empty24\", \"pop25\": \"empty25\", \"pop26\": \"Unknown\", \"pop3\": \"1-4\", \"pop4\": \"empty4\", \"pop5\": \"empty5\", \"pop6\": \"empty6\", \"pop7\": \"5-14\", \"pop8\": \"empty8\", \"pop9\": \"15-24\"}"))
-
-        }
-        test.addEventListener('click', myFun);</script>
+    </script>
 </body>
 
 </html>

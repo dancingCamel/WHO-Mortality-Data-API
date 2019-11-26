@@ -1,10 +1,12 @@
 from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
+from auth import requireApiKey
 
 
 class PopulationSearch(Resource):
     # search for entries
+    @requireApiKey
     def get(self):
         query = {}
         # Validate request and add to query
