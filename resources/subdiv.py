@@ -3,7 +3,7 @@ from models.subdiv import SubdivModel
 from auth import requireApiKey, requireAdmin
 
 
-class Subdiv(Resource):
+class SubdivCode(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('description',
                         type=str,
@@ -66,6 +66,16 @@ class Subdiv(Resource):
             subdiv.delete_from_db()
             return {'message': "Subdiv '{}' deleted.".format(subdiv_code)}, 200
         return {'message': "Subdiv '{}' not found.".format(subdiv_code)}, 404
+
+
+class SubdivDesc(Resource):
+    @requireApiKey
+    def get(self, search_term):
+        subdivs = [subdiv.json()
+                   for subdiv in SubdivModel.search_by_desc(search_term)]
+        if subdivs:
+            return {'subdivs': subdivs}, 200
+        return {'message': "No subdivs match that search term"}, 404
 
 
 class SubdivList(Resource):

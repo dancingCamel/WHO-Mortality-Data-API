@@ -23,6 +23,10 @@ class Icd10ListsModel(db.Model):
         return cls.query.filter_by(code=code).first()
 
     @classmethod
+    def search_by_desc(cls, search_term):
+        return cls.query.filter(cls.description.ilike('%' + search_term + '%')).all()
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
 

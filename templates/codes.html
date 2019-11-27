@@ -12,45 +12,178 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col">
-                <form class="form">
-                    <div class="h3">Find Codes for Queries (or general interest)</div>
+                <form class="form" name="codeForm">
+                    <div class="h3">Find WHO Codes for Queries (or general interest)</div>
                     <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
                     <!-- will allow the options to be easily passed at GET request -->
                     <div class="radio mr-2">
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="country"
-                                name="code-data-choice-radio" class="mr-1">Country</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="sex"
-                                name="code-data-choice-radio" class="mr-1">Sex</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="admin"
-                                name="code-data-choice-radio" class="mr-1">Admin</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="subdiv"
-                                name="code-data-choice-radio" class="mr-1">Subdiv</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="age-format"
-                                name="code-data-choice-radio" class="mr-1">Age Format</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="infant-age-format"
-                                name="code-data-choice-radio" class="mr-1">Infant Age Format</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="icd-10-codes"
-                                name="code-data-choice-radio" class="mr-1">ICD-10 Codes</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="icd-10-code-lists"
-                                name="code-data-choice-radio" class="mr-1">ICD-10 Code Lists</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="country">Country</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="sex">Sex</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="admin">Admin</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="subdiv">Subdiv</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="age-format">Age
+                            Format</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="infant-age-format">Infant Age Format</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="icd10">ICD Codes</label>
+                        <label class="radio-inline mr-2"><input type="radio" name="codeDataChoiceRadio" class="mr-1"
+                                data-table="icd10-code-list">ICD Code Lists</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                <label for="codeSearchInput">
+                                    <input class="form-control form-control-lg" type="text" name="codeSearchInput"
+                                        id="codeSearchInput" placeholder="Code">
+                                </label>
+                            </div>
+                            <button class="btn btn-lg btn-primary mb-3" type="submit" id="codeSearchSubmit">Search
+                                Code</button>
+                        </div>
+                        <div class="col-6">
+                            <div>
+                                <label for="codeSearchInput">
+                                    <input class="form-control form-control-lg" type="text" name="codeSearchInput"
+                                        id="descSearchInput" placeholder="Description">
+                                </label>
+                            </div>
+                            <button class="btn btn-lg btn-primary mb-3" type="submit" id="descSearchSubmit">Search
+                                Description</button>
+                        </div>
                     </div>
 
                     <!-- depending on which radio button is checked, change possible inputs -->
+                    <!-- use bootstrap disable to hide options -->
+                    <!-- or in this case just have a search box -->
                     <!-- want to input words and return codes that match -->
                     <!-- use auto complete search fields -->
                     <!-- use inputs to generate get request for search -->
                     <!-- return data as JSON -->
 
-                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+
+
                 </form>
             </div>
         </div>
 
         <div class="row">
-            <div class="col">
-                <!-- alert with json data inside - formatted if possible -->
+            <div class="col-12">
+                <!-- show spinner while performing ajax call -->
+
+                <div class="spinner-border text-primary" role="status" id="spinner"><span class="sr-only">
+                        Loading...</span></div>
+
+                <div id="searchOutput">
+                    <!-- JSON text area goes here -->
+                </div>
             </div>
         </div>
     </div>
 </main>
+{% endblock %}
+
+{% block script %}
+<script>
+    const api_key = $('#apiKeyDiv').html()
+    const codeSearchBtn = $('#codeSearchSubmit')
+    const descSearchBtn = $('#descSearchSubmit')
+    const ageFormatRadios = ["age-format", "infant-age-format"]
+
+    // function to resize text area
+    function auto_grow(element) {
+        $(element).css("height", ((element[0].scrollHeight) + "px"))
+    }
+
+    // check if age formats selected to disable description search as age formats don't have descriptions
+    $(window).click(function () {
+        if (ageFormatRadios.includes($('input[name="codeDataChoiceRadio"]:checked').data('table'))) {
+            $('#descSearchInput').attr("disabled", "disabled");
+            $(descSearchBtn).attr("disabled", "disabled");
+        }
+        else {
+            $('#descSearchInput').removeAttr("disabled");
+            $(descSearchBtn).removeAttr("disabled");
+        }
+    })
+
+    // loader image
+    $(document).ajaxStart(function () {
+        // Show spinner
+        $('#spinner').show()
+        $('#searchOutput').html('')
+    });
+    $(document).ajaxComplete(function () {
+        // Hide spinner
+        $("#spinner").hide();
+    });
+
+
+    // query database with user search terms, return data to textarea
+    $(codeSearchBtn).click(function () {
+        // prevent sending of form
+        event.preventDefault();
+
+        // check which type of endpoints to send requests to
+        searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
+        searchTerm = $('#codeSearchInput').val()
+
+        // generate url depending on endpoint choice, search term and endpoint type
+        api_url = "/api/" + searchTable + "-code/" + searchTerm
+
+        $.ajax({
+            url: api_url,
+            dataType: "json",
+            headers: { "api_key": "WtZgT+CtWyqneNSh//J99+cYCKYBfMoSWbbmJkcshzFjnoOQ/N2LIQoOdgllcuC4g101na7LgSVDjXuerIhcgg==" },
+            success: function (result) {
+                console.log(JSON.stringify(result, null, "\t"))
+                result = JSON.stringify(result, null, "\t")
+                // use textarea so json in properly formatted for users
+                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>'
+                $('#searchOutput').html(output)
+                // resize the textarea
+                auto_grow($('#returnedJson'))
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>'
+                $('#searchOutput').html(output)
+            }
+        });
+    });
+
+    $(descSearchBtn).click(function () {
+        event.preventDefault();
+
+        searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
+        searchTerm = $('#descSearchInput').val()
+
+        api_url = "/api/" + searchTable + "-desc/" + searchTerm
+
+        $.ajax({
+            url: api_url,
+            dataType: "json",
+            headers: { "api_key": "WtZgT+CtWyqneNSh//J99+cYCKYBfMoSWbbmJkcshzFjnoOQ/N2LIQoOdgllcuC4g101na7LgSVDjXuerIhcgg==" },
+            success: function (result) {
+                console.log(JSON.stringify(result, null, "\t"))
+                result = JSON.stringify(result, null, "\t")
+                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>'
+
+                $('#searchOutput').html(output)
+                auto_grow($('#returnedJson'))
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>'
+                $('#searchOutput').html(output)
+            }
+        });
+    });
+
+
+</script>
 {% endblock %}

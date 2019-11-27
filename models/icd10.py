@@ -26,6 +26,10 @@ class Icd10Model(db.Model):
         return cls.query.filter_by(code_list=code_list).all()
 
     @classmethod
+    def find_by_code(cls, code):
+        return cls.query.filter_by(code=code).all()
+
+    @classmethod
     def find_by_list_and_code(cls, code_list, code):
         # should only be able to find one entry
         return cls.query.filter_by(code_list=code_list, code=code).first()

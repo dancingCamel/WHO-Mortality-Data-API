@@ -3,7 +3,7 @@ from models.infant_age_format import InfantAgeFormatModel
 from auth import requireApiKey, requireAdmin
 
 
-class InfantAgeFormat(Resource):
+class InfantAgeFormatCode(Resource):
     parser = reqparse.RequestParser()
 
     for num in range(1, 5):

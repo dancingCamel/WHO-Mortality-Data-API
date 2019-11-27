@@ -1,10 +1,10 @@
-from flask import jsonify, json
+from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.age_format import AgeFormatModel
 from auth import requireApiKey, requireAdmin
 
 
-class AgeFormat(Resource):
+class AgeFormatCode(Resource):
     parser = reqparse.RequestParser()
     # add arguments with for loop like in population resource
     for num in range(2, 27):
@@ -17,7 +17,7 @@ class AgeFormat(Resource):
     def get(self, age_format_code):
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
-            return json.dumps(age_format.json())
+            return age_format.json()
         return {'message': "Age format {} not found".format(age_format_code)}, 404
 
     @requireAdmin

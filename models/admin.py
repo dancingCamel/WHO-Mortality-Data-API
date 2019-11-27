@@ -38,6 +38,10 @@ class AdminModel(db.Model):
         return cls.query.filter_by(country_code=country_code).all()
 
     @classmethod
+    def search_by_desc(cls, search_term):
+        return cls.query.filter(cls.description.ilike('%' + search_term + '%')).all()
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
 

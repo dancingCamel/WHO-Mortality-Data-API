@@ -17,15 +17,15 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd10_code_lists_table,
                                   populate_mortality_table)
 from models.user import UserModel
-from resources.country import Country, CountryList, CountrySearch
-from resources.sex import Sex, SexList
+from resources.country import CountryCode, CountryList, CountrySearch, CountryDesc, CountryName
+from resources.sex import SexCode, SexList, SexDesc
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
-from resources.admin import Admin, AdminList
-from resources.subdiv import Subdiv, SubdivList
-from resources.age_format import AgeFormat, AgeFormatList
-from resources.infant_age_format import InfantAgeFormat, InfantAgeFormatList
-from resources.icd10 import Icd10, Icd10List, Icd10Search
-from resources.icd10_lists import Icd10CodeList, Icd10AllCodeLists
+from resources.admin import Admin, AdminList, AdminCode, AdminDesc
+from resources.subdiv import SubdivCode, SubdivList, SubdivDesc
+from resources.age_format import AgeFormatCode, AgeFormatList
+from resources.infant_age_format import InfantAgeFormatCode, InfantAgeFormatList
+from resources.icd10 import Icd10, Icd10List, Icd10Search, Icd10Code, Icd10Desc
+from resources.icd10_lists import Icd10CodeListCode, Icd10CodeListDesc, Icd10AllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange
 from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne
 from blacklist import BLACKLIST
@@ -85,30 +85,60 @@ def create_tables():
     # populate_mortality_table()
 
 
-api.add_resource(Country, '/api/country/<string:country_name>')
+# Country endpoints
+api.add_resource(CountryCode, '/api/country-code/<string:country_code>')
+api.add_resource(CountryName, '/api/country-name/<string:country_name>')
 api.add_resource(CountryList, '/api/country-list')
 api.add_resource(CountrySearch, '/api/country-search/<string:search_term>')
-api.add_resource(Sex, '/api/sex/<string:sex>')
+# replicate search endpoint specifically for browser page search
+api.add_resource(CountryDesc, '/api/country-desc/<string:search_term>')
+
+# Sex endpoints
+api.add_resource(SexCode, '/api/sex-code/<string:sex_code>')
+api.add_resource(SexDesc, '/api/sex-desc/<string:sex>')
 api.add_resource(SexList, '/api/sex-list/')
+
+# 'Admin' endpoints
 api.add_resource(Admin, '/api/admin/<string:admin_code>/<string:country_code>')
 api.add_resource(AdminList, '/api/admin-list')
-api.add_resource(Subdiv, '/api/subdiv/<string:subdiv_code>')
+api.add_resource(AdminCode, '/api/admin-code/<string:admin_code>')
+api.add_resource(AdminDesc, '/api/admin-desc/<string:search_term>')
+
+# Subdiv endpoints
+api.add_resource(SubdivCode, '/api/subdiv-code/<string:subdiv_code>')
+api.add_resource(SubdivDesc, '/api/subdiv-desc/<string:search_term>')
 api.add_resource(SubdivList, '/api/subdiv-list')
-api.add_resource(AgeFormat, '/api/age-format/<string:age_format_code>')
+
+# Age format endpoints
+api.add_resource(
+    AgeFormatCode, '/api/age-format-code/<string:age_format_code>')
 api.add_resource(AgeFormatList, '/api/age-format-list')
 api.add_resource(
-    InfantAgeFormat, '/api/infant-age-format/<string:infant_age_format_code>')
+    InfantAgeFormatCode, '/api/infant-age-format-code/<string:infant_age_format_code>')
 api.add_resource(InfantAgeFormatList, '/api/infant-age-format-list')
+
+# Population endpoints
 api.add_resource(PopulationSearch, '/api/population-search')
 api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsList, '/api/population-list')
 api.add_resource(
     PopulationChange, '/api/population-change/<string:country_code>/<string:year>/<string:sex>')
+
+# ICD10 code endpoints
 api.add_resource(Icd10, '/api/icd10/<string:code_list>/<string:code>')
 api.add_resource(Icd10List, '/api/icd10-list')
 api.add_resource(Icd10Search, '/api/icd10-search/<string:search_term>')
-api.add_resource(Icd10CodeList, '/api/icd10-code-list/<string:code>')
+# ICD10 endpoints specifically for browser based search
+api.add_resource(Icd10Desc, '/api/icd10-desc/<string:search_term>')
+api.add_resource(Icd10Code, '/api/icd10-code/<string:code>')
+
+# ICD code list endpoints
+api.add_resource(Icd10CodeListCode, '/api/icd10-code-list-code/<string:code>')
+api.add_resource(Icd10CodeListDesc,
+                 '/api/icd10-code-list-desc/<string:search_term>')
 api.add_resource(Icd10AllCodeLists, '/api/icd10-code-lists')
+
+# Mortality data endpoints
 api.add_resource(MortalityDataSearch, '/api/mortality-data-search')
 api.add_resource(MortalityDataOne, '/api/mortality-data-one')
 api.add_resource(MortalityDataChange,

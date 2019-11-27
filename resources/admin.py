@@ -72,6 +72,26 @@ class Admin(Resource):
         return {'message': "Admin code '{}' not found for country with code '{}'.".format(admin_code, country_code)}, 404
 
 
+class AdminCode(Resource):
+    @requireApiKey
+    def get(self, admin_code):
+        admins = [admin.json()
+                  for admin in AdminModel.find_by_code(admin_code)]
+        if admins:
+            return {'admins': admins}, 200
+        return {'message': "No admins match that code"}, 404
+
+
+class AdminDesc(Resource):
+    @requireApiKey
+    def get(self, search_term):
+        admins = [admin.json()
+                  for admin in AdminModel.search_by_desc(search_term)]
+        if admins:
+            return {'admins': admins}, 200
+        return {'message': "No admins match that search term"}, 404
+
+
 class AdminList(Resource):
     @requireApiKey
     def get(self):

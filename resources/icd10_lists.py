@@ -3,7 +3,7 @@ from models.icd10_lists import Icd10ListsModel
 from auth import requireApiKey, requireAdmin
 
 
-class Icd10CodeList(Resource):
+class Icd10CodeListCode(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('description',
                         type=str,
@@ -16,7 +16,7 @@ class Icd10CodeList(Resource):
         code_list = Icd10ListsModel.find_by_code(code)
         if code_list:
             return code_list.json(), 200
-        return {'message': "Code list '{}' not found.".format(code)}
+        return {'message': "Code list '{}' not found.".format(code)}, 404
 
     @requireAdmin
     def post(self, code):
@@ -63,6 +63,15 @@ class Icd10CodeList(Resource):
             code_list.delete_from_db()
             return {'message': "List '{}' deleted.".format(code)}, 200
         return {'message': "List '{}' not found.".format(code)}, 404
+
+
+class Icd10CodeListDesc(Resource):
+    def get(self, search_term):
+        lists = [icd10list.json()
+                 for icd10list in Icd10ListsModel.search_by_desc(search_term)]
+        if lists:
+            return {'lists': lists}, 200
+        return {'message': "No lists match that search term"}, 404
 
 
 class Icd10AllCodeLists(Resource):

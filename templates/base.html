@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% block title %}
     {% endblock %}
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../static/css/style.css">
@@ -15,6 +16,7 @@
 <body>
 
     <!-- NAV -->
+
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="d-flex flex-grow-1">
@@ -79,8 +81,19 @@
             <div class="row">
 
                 <div class="col-md-6 mt-md-0 mt-3">
-                    <h5 class="text-uppercase">Disclaimer</h5>
-                    <p>This should be the whole disclaimer text</p>
+                    <h5 class="text-uppercase font-weight-bold">Disclaimer</h5>
+                    <p>Every attempt has been made to keep data true to the original raw data files but veracity cannot
+                        be guaranteed. If this is important, download the data directly or use one of the <a
+                            class="alert-link text-white" href="https://www.who.int/healthinfo/mortality_data/en/">WHO's
+                            data
+                            querying services.</a><br>
+                        All analyses, interpretations or conclusions drawn from this API or found on this website
+                        are
+                        credited to the authors, not the WHO (which is responsible only for the provision of the
+                        original information).
+                        For more information visit the <a class="alert-link text-white"
+                            href="https://www.who.int/healthinfo/statistics/mortality_rawdata/en/">WHO
+                            website</a></p>
                 </div>
 
                 <hr class="clearfix w-100 d-md-none pb-3">
@@ -133,7 +146,9 @@
         </div>
 
     </footer>
-
+    {% if current_user.is_authenticated %}
+    <div id="apiKeyDiv">{{current_user.api_key}}</div>
+    {% endif %}
 
     <!-- Bootstrap scripts -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -147,6 +162,9 @@
 
     <!-- app script -->
     <script src="../static/app.js" type="text/javascript"></script>
+
+    {% block script %}
+    {% endblock %}
 
     <script>
         // checking how to format JSON

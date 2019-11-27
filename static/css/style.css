@@ -18,3 +18,17 @@
 .modal-body p {
 	word-wrap: break-word;
 }
+
+#apiKeyDiv {
+	display: none;
+}
+
+textarea {
+	min-height: 50px;
+	max-height: 650px;
+}
+
+#spinner {
+	display: none;
+	margin: 0 auto;
+}

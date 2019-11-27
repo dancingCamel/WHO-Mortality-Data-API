@@ -57,14 +57,31 @@ class Icd10(Resource):
 
     @requireAdmin
     def delete(self, code_list, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         entry = Icd10Model.find_by_list_and_code(code_list, code)
         if entry:
             entry.delete_from_db()
             return {'message': "Deleted code '{}' from list '{}'.".format(code, code_list)}, 200
         return {'message': "Code '{}' not found in list '{}'.".format(code, code_list)}, 404
+
+
+class Icd10Code(Resource):
+    # get all codes that match a code (list code pairs)
+    @requireApiKey
+    def get(self, code):
+        entries = Icd10Model.find_by_code(code)
+        if entries:
+            return {'results': [entry.json() for entry in entries]}, 200
+        return {'message': "No results match the code '{}'.".format(code)}, 404
+
+
+class Icd10Desc(Resource):
+    # search for codes using a case insensitive partial description or code
+    @requireApiKey
+    def get(self, search_term):
+        entries = Icd10Model.search(search_term)
+        if entries:
+            return {'results': [entry.json() for entry in entries]}, 200
+        return {'message': "No results match the search term '{}'.".format(search_term)}, 404
 
 
 class Icd10Search(Resource):

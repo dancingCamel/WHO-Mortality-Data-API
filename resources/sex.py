@@ -3,7 +3,16 @@ from models.sex import SexModel
 from auth import requireApiKey, requireAdmin
 
 
-class Sex(Resource):
+class SexCode(Resource):
+    @requireApiKey
+    def get(self, sex_code):
+        sex_entry = SexModel.find_by_code(sex_code)
+        if sex_entry:
+            return sex_entry.json()
+        return {'message': "Sex not found."}, 404
+
+
+class SexDesc(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('sex_code',
                         type=str,
@@ -20,9 +29,6 @@ class Sex(Resource):
 
     @requireAdmin
     def post(self, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = Sex.parser.parse_args()
         if SexModel.find_by_name(sex):
             return {'message': "Sex '{}' already exists.".format(sex)}, 400
@@ -37,9 +43,6 @@ class Sex(Resource):
 
     @requireAdmin
     def put(self, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = Sex.parser.parse_args()
         entry = SexModel.find_by_name(sex)
 
@@ -56,9 +59,6 @@ class Sex(Resource):
 
     @requireAdmin
     def delete(self, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         entry = SexModel.find_by_name(sex)
         if entry:
             entry.delete_from_db()
