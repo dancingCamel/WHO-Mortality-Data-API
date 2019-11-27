@@ -99,22 +99,22 @@
                 <hr class="clearfix w-100 d-md-none pb-3">
 
                 <div class="col-md-3 mb-md-0 mb-3">
-                    <h5 class="text-uppercase">My site Links</h5>
+                    <h5 class="text-uppercase">Site Links</h5>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="#!" class="text-light">Visualize</a>
+                            <a href="/visualize" class="text-light">Visualize</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">JSON</a>
+                            <a href="/json" class="text-light">JSON</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">Codes</a>
+                            <a href="/codes" class="text-light">Codes</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">Docs</a>
+                            <a href="/docs" class="text-light">Docs</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">Contact</a>
+                            <a href="/contact" class="text-light">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -123,16 +123,19 @@
                     <h5 class="text-uppercase">External Links</h5>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="#!" class="text-light">Github</a>
+                            <a href="https://github.com/dancingCamel/WHO-Mortality-Data-API"
+                                class="text-light">Github</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">WHO</a>
+                            <a href="https://www.who.int/" class="text-light">WHO</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">WHO Mortality Data</a>
+                            <a href="https://www.who.int/healthinfo/mortality_data/en/" class="text-light">WHO Mortality
+                                Data</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-light">Place I got icd-10 data from</a>
+                            <a href="https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs"
+                                class="text-light">CMS ICD-10 codes</a>
                         </li>
                     </ul>
                 </div>
@@ -166,18 +169,6 @@
     {% block script %}
     {% endblock %}
 
-    <script>
-        // checking how to format JSON
-        // var result = $('#getMortalitySearchResult')
-        // var resultOriginal = JSON.parse(result.html())
-
-        // result.click(() => $('#test').html(JSON.stringify(resultOriginal, "\n", 4)));
-
-        // var obj = { "hello": "world", "Test": ["hello"] }
-
-        // document.body.innerHTML = "";
-        // document.body.appendChild(document.createTextNode(JSON.stringify(obj, null, 4)));
-    </script>
 </body>
 
 </html>

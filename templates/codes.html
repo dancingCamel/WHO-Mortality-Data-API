@@ -131,16 +131,16 @@
         event.preventDefault();
 
         // check which type of endpoints to send requests to
-        searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
-        searchTerm = $('#codeSearchInput').val()
+        var searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
+        var searchTerm = $('#codeSearchInput').val()
 
         // generate url depending on endpoint choice, search term and endpoint type
-        api_url = "/api/" + searchTable + "-code/" + searchTerm
+        var api_url = "/api/" + searchTable + "-code/" + searchTerm
 
         $.ajax({
             url: api_url,
             dataType: "json",
-            headers: { "api_key": "WtZgT+CtWyqneNSh//J99+cYCKYBfMoSWbbmJkcshzFjnoOQ/N2LIQoOdgllcuC4g101na7LgSVDjXuerIhcgg==" },
+            headers: { "api_key": api_key },
             success: function (result) {
                 console.log(JSON.stringify(result, null, "\t"))
                 result = JSON.stringify(result, null, "\t")
@@ -160,15 +160,15 @@
     $(descSearchBtn).click(function () {
         event.preventDefault();
 
-        searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
-        searchTerm = $('#descSearchInput').val()
+        var searchTable = $('input[name="codeDataChoiceRadio"]:checked').data('table');
+        var searchTerm = $('#descSearchInput').val()
 
-        api_url = "/api/" + searchTable + "-desc/" + searchTerm
+        var api_url = "/api/" + searchTable + "-desc/" + searchTerm
 
         $.ajax({
             url: api_url,
             dataType: "json",
-            headers: { "api_key": "WtZgT+CtWyqneNSh//J99+cYCKYBfMoSWbbmJkcshzFjnoOQ/N2LIQoOdgllcuC4g101na7LgSVDjXuerIhcgg==" },
+            headers: { "api_key": api_key },
             success: function (result) {
                 console.log(JSON.stringify(result, null, "\t"))
                 result = JSON.stringify(result, null, "\t")
