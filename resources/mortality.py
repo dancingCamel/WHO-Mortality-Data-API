@@ -53,6 +53,80 @@ class MortalityDataSearch(Resource):
         return {'message': "No mortality entries match your query."}, 404
 
 
+class MortalitySearchMultiple(Resource):
+    # want to accept a list in each of the variables and search each permutation.
+    @requireApiKey
+    def get(self):
+
+        def strip_whitespace(string):
+            return ('').join(string.split(' '))
+
+        # check all variables given and make list of strings from user input. strip all whitespace
+        country_code_input = request.args.get('country', type=str)
+        year_input = request.args.get('year', type=str)
+        sex_code_input = request.args.get('sex', type=str)
+        cause_code_input = request.args.get('cause', type=str)
+        admin_code_input = request.args.get('admin', type=str)
+        subdiv_code_input = request.args.get('subdiv', type=str)
+
+        if not country_code_input or not year_input or not sex_code_input or not cause_code_input:
+            return {'message': "Please add at least a year, country, sex and cause variable"}, 400
+
+        country_code_list = strip_whitespace(country_code_input).split(',')
+        year_list = strip_whitespace(year_input).split(',')
+        sex_code_list = strip_whitespace(sex_code_input).split(',')
+        cause_code_list = strip_whitespace(cause_code_input).split(',')
+
+        # add "" to admin and subdiv lists to ensure some results if no specific code given
+        admin_code_list = []
+        if admin_code_input:
+            admin_code_list = strip_whitespace(admin_code_input).split(',')
+        else:
+            admin_code_list.append("")
+
+        subdiv_code_list = []
+        if subdiv_code_input:
+            subdiv_code_list = strip_whitespace(subdiv_code_input).split(',')
+        else:
+            subdiv_code_list.append("")
+
+        results = []
+        # loop over all permutations of list items and validate codes.
+        for country_code in filter(valid_country_code, country_code_list):
+            for year in filter(valid_year, year_list):
+                for sex in filter(valid_sex, sex_code_list):
+                    for cause in cause_code_list:
+                        for admin in filter(valid_admin, admin_code_list):
+                            for subdiv in filter(valid_subdiv, subdiv_code_list):
+
+                                # generate query
+                                query = {}
+                                query['country_code'] = country_code
+                                query['sex'] = sex
+                                query['year'] = year
+                                query['cause'] = cause
+                                query['admin_code'] = admin
+                                query['subdiv_code'] = subdiv
+
+                                # check only one result for each permutaton of variable. continue if not
+                                result = [entry.json()
+                                          for entry in MortalityDataModel.search_mortalities(query)]
+
+                                if result:
+                                    if len(result) > 1:
+                                        # return {'message': "More than one population entry was found matching your query."}, 400
+                                        continue
+                                    # add all results to a results list
+                                    results.append(result[0])
+
+        # if results is a blank list then send an error message for 404 not found
+        if len(results) == 0:
+            return {'message': 'No mortality data matches your search parameters'}, 404
+
+        # return results list to user
+        return {'results': results}, 200
+
+
 class MortalityDataOne(Resource):
     @requireApiKey
     def get(self):

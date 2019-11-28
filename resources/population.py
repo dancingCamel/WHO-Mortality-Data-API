@@ -347,25 +347,24 @@ class PopulationOne(Resource):
 
 
 class PopulationSearchMultiple(Resource):
-    # want to accept a list in each of the variables and search each permutation. admin and subdiv need to add "" to list
+    # want to accept a list in each of the variables and search each permutation.
     @requireApiKey
     def get(self):
         def strip_whitespace(string):
             return ('').join(string.split(' '))
         # check all variables given make list of strings from user input. strip all whitespace
-        country_code_input = strip_whitespace(request.args.get(
-            'country', type=str))
-        year_code_input = strip_whitespace(request.args.get('year', type=str))
-        sex_code_input = strip_whitespace(request.args.get('sex', type=str))
+        country_code_input = request.args.get('country', type=str)
+        year_input = request.args.get('year', type=str)
+        sex_code_input = request.args.get('sex', type=str)
         admin_code_input = request.args.get('admin', type=str)
         subdiv_code_input = request.args.get('subdiv', type=str)
 
-        if not country_code_input or not year_code_input or not sex_code_input:
+        if not country_code_input or not year_input or not sex_code_input:
             return {'message': "Please add at least a year, country and sex variable"}, 400
 
-        country_code_list = country_code_input.split(',')
-        year_code_list = year_code_input.split(',')
-        sex_code_list = sex_code_input.split(',')
+        country_code_list = strip_whitespace(country_code_input).split(',')
+        year_list = strip_whitespace(year_input).split(',')
+        sex_code_list = strip_whitespace(sex_code_input).split(',')
 
         # add "" to admin and subdiv lists to ensure some results if no specific code given
         admin_code_list = []
@@ -381,32 +380,12 @@ class PopulationSearchMultiple(Resource):
             subdiv_code_list.append("")
 
         results = []
-        # loop over all permutations of list items.
-        for country_code in country_code_list:
-            for year in year_code_list:
-                for sex in sex_code_list:
-                    for admin in admin_code_list:
-                        for subdiv in subdiv_code_list:
-                            # validate parameteres, continue if not valid
-                            if not valid_country_code(country_code):
-                                continue
-                                # return {'message': '{} is not a valid country code'.format(country_code)}, 400
-
-                            if not valid_sex(sex):
-                                continue
-                                # return {'message': '{} is not a valid sex code'.format(sex)}, 400
-
-                            if not valid_year(year):
-                                continue
-                                # return {'message': '{} is not a valid year'.format(year)}, 400
-
-                            if not valid_admin(admin):
-                                continue
-                                # return {'message': '{} is not a admin code'.format(admin)}, 400
-
-                            if not valid_subdiv(subdiv):
-                                continue
-                                # return {'message': '{} is not a subdiv code'.format(subdiv)}, 400
+        # loop over all permutations of list items and validate codes.
+        for country_code in filter(valid_country_code, country_code_list):
+            for year in filter(valid_year, year_list):
+                for sex in filter(valid_sex, sex_code_list):
+                    for admin in filter(valid_admin, admin_code_list):
+                        for subdiv in filter(valid_subdiv, subdiv_code_list):
 
                             # generate query
                             query = {}
