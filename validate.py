@@ -31,12 +31,12 @@ def valid_country_code(country_code):
 
 
 def valid_admin(admin):
-    if AdminModel.find_by_code(admin):
+    if AdminModel.find_by_code(admin) or admin == "":
         return True
     return False
 
 
 def valid_subdiv(subdiv):
-    if SubdivModel.find_by_code(subdiv):
+    if SubdivModel.find_by_code(subdiv) or subdiv == "":
         return True
     return False

@@ -19,7 +19,7 @@ from populate_data_tables import (populate_country_table,
 from models.user import UserModel
 from resources.country import CountryCode, CountryList, CountrySearch, CountryDesc, CountryName
 from resources.sex import SexCode, SexList, SexDesc
-from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange
+from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange, PopulationSearchMultiple
 from resources.admin import Admin, AdminList, AdminCode, AdminDesc
 from resources.subdiv import SubdivCode, SubdivList, SubdivDesc
 from resources.age_format import AgeFormatCode, AgeFormatList
@@ -123,6 +123,7 @@ api.add_resource(PopulationOne, '/api/population-one')
 api.add_resource(PopulationsList, '/api/population-list')
 api.add_resource(
     PopulationChange, '/api/population-change/<string:country_code>/<string:year>/<string:sex>')
+api.add_resource(PopulationSearchMultiple, '/api/population-search-multiple')
 
 # ICD10 code endpoints
 api.add_resource(Icd10, '/api/icd10/<string:code_list>/<string:code>')

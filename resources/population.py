@@ -324,12 +324,16 @@ class PopulationOne(Resource):
                 if not valid_admin(admin):
                     return {'message': 'Please enter a valid admin code'}, 400
                 query['admin'] = admin
+            else:
+                query['admin'] = ""
 
             subdiv = request.args.get('subdiv', type=str)
             if subdiv:
                 if not valid_subdiv(subdiv):
                     return {'message': 'Please enter a valid subdiv code'}, 400
                 query['subdiv'] = subdiv
+            else:
+                query['subdiv'] = ""
 
             result = [entry.json()
                       for entry in PopulationModel.search_populations(query)]
@@ -340,6 +344,95 @@ class PopulationOne(Resource):
                 return {'entry': result[0]}, 200
 
             return {'message': "No populations match your query."}, 404
+
+
+class PopulationSearchMultiple(Resource):
+    # want to accept a list in each of the variables and search each permutation. admin and subdiv need to add "" to list
+    @requireApiKey
+    def get(self):
+        def strip_whitespace(string):
+            return ('').join(string.split(' '))
+        # check all variables given make list of strings from user input. strip all whitespace
+        country_code_input = strip_whitespace(request.args.get(
+            'country', type=str))
+        year_code_input = strip_whitespace(request.args.get('year', type=str))
+        sex_code_input = strip_whitespace(request.args.get('sex', type=str))
+        admin_code_input = request.args.get('admin', type=str)
+        subdiv_code_input = request.args.get('subdiv', type=str)
+
+        if not country_code_input or not year_code_input or not sex_code_input:
+            return {'message': "Please add at least a year, country and sex variable"}, 400
+
+        country_code_list = country_code_input.split(',')
+        year_code_list = year_code_input.split(',')
+        sex_code_list = sex_code_input.split(',')
+
+        # add "" to admin and subdiv lists to ensure some results if no specific code given
+        admin_code_list = []
+        if admin_code_input:
+            admin_code_list = strip_whitespace(admin_code_input).split(',')
+        else:
+            admin_code_list.append("")
+
+        subdiv_code_list = []
+        if subdiv_code_input:
+            subdiv_code_list = strip_whitespace(subdiv_code_input).split(',')
+        else:
+            subdiv_code_list.append("")
+
+        results = []
+        # loop over all permutations of list items.
+        for country_code in country_code_list:
+            for year in year_code_list:
+                for sex in sex_code_list:
+                    for admin in admin_code_list:
+                        for subdiv in subdiv_code_list:
+                            # validate parameteres, continue if not valid
+                            if not valid_country_code(country_code):
+                                continue
+                                # return {'message': '{} is not a valid country code'.format(country_code)}, 400
+
+                            if not valid_sex(sex):
+                                continue
+                                # return {'message': '{} is not a valid sex code'.format(sex)}, 400
+
+                            if not valid_year(year):
+                                continue
+                                # return {'message': '{} is not a valid year'.format(year)}, 400
+
+                            if not valid_admin(admin):
+                                continue
+                                # return {'message': '{} is not a admin code'.format(admin)}, 400
+
+                            if not valid_subdiv(subdiv):
+                                continue
+                                # return {'message': '{} is not a subdiv code'.format(subdiv)}, 400
+
+                            # generate query
+                            query = {}
+                            query['country_code'] = country_code
+                            query['sex'] = sex
+                            query['year'] = year
+                            query['admin'] = admin
+                            query['subdiv'] = subdiv
+
+                            # check only one result for each permutaton of variable. continue if not
+                            result = [entry.json()
+                                      for entry in PopulationModel.search_populations(query)]
+
+                            if result:
+                                if len(result) > 1:
+                                    # return {'message': "More than one population entry was found matching your query."}, 400
+                                    continue
+                                # add all results to a results list
+                                results.append(result[0])
+
+        # if results is a blank list then send an error message for 404 not found
+        if len(results) == 0:
+            return {'message': 'No populations match your search parameters'}, 404
+
+        # return results list to user
+        return {'results': results}, 200
 
 
 class PopulationsList(Resource):
