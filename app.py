@@ -27,8 +27,8 @@ from resources.infant_age_format import InfantAgeFormatCode, InfantAgeFormatList
 from resources.icd10 import Icd10, Icd10List, Icd10Search, Icd10Code, Icd10Desc
 from resources.icd10_lists import Icd10CodeListCode, Icd10CodeListDesc, Icd10AllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange, MortalitySearchMultiple
-from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne
-from blacklist import BLACKLIST
+from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne, MortalityAdjustedSearchMultiple
+# from blacklist import BLACKLIST
 from resources.user import UserRegister, User, UserLogin, UserLogout
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
@@ -145,6 +145,8 @@ api.add_resource(MortalityDataOne, '/api/mortality-data-one')
 api.add_resource(MortalityDataChange,
                  '/api/mortality-data-change/<string:country_code>/<string:year>/<string:sex>/<string:cause>')
 api.add_resource(MortalityAdjustedSearch, '/api/mortality-adj-search')
+api.add_resource(MortalityAdjustedSearchMultiple,
+                 '/api/mortality-adj-search-multiple')
 api.add_resource(MortalityAdjustedOne, '/api/mortality-adj-one')
 api.add_resource(MortalitySearchMultiple, '/api/mortality-search-multiple')
 
