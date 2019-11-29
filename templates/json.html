@@ -138,6 +138,7 @@
         $target = event.target
         var new_input = document.createElement('input');
 
+        // create new text input
         new_input.type = "text";
         new_input.classList.add("form-control")
 
@@ -146,13 +147,11 @@
         new_input.placeholder = capFirstLetter(group)
         new_input.classList.add(group)
 
+        // insert into column of inputs
         $closestDiv = $target.closest('div')
-
-        var numChildren = $closestDiv.children.length
-        var $lastChild = $closestDiv.children[numChildren - 1]
+        var $lastChild = $closestDiv.children[$closestDiv.children.length - 1]
 
         $closestDiv.insertBefore(new_input, $lastChild)
-
     })
 
     // loader image
@@ -185,11 +184,12 @@
             }
         }
 
-        // iterate over formInputLists dictionary and join each one into a string for get variables
+        // iterate over formInputLists dictionary and join each one into a string for get variables.
+        // remove trailing and leading commas to reduce searches
         var urlGetVariables = "";
 
         for (var key in formInputLists) {
-            formInputLists[key] = formInputLists[key].join();
+            formInputLists[key] = formInputLists[key].join().replace(/(^[,\s]+)|([,\s]+$)/g, '');
             urlGetVariables += key + "=" + formInputLists[key] + "&";
         }
 
