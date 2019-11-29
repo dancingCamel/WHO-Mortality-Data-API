@@ -50,7 +50,7 @@ age_format_codes = {
 infant_age_format_codes = {
     '01': ['0_days', '1-6_days', '7-27_days', '28-365_days'],
     '02': ['0-6_days', 'empty2', '7-27_days', '28-365_days'],
-    '03': ['0-365_days', 'empty2', 'empty3', 'empty4']
+    '08': ['0-365_days', 'empty2', 'empty3', 'empty4']
 }
 
 

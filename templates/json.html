@@ -15,30 +15,208 @@
                     <div class="h3">Get WHO Mortality and Population Data as JSON</div>
                     <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
                     <div class="radio mr-2">
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="pop"
-                                name="json-data-choice-radio" class="mr-1">Population</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="mort"
-                                name="json-data-choice-radio" class="mr-1">Mortality</label>
-                        <label class="radio-inline mr-2"><input type="radio" accesskey="pop-adj-mort"
-                                name="json-data-choice-radio" class="mr-1">Population
+                        <label class="radio-inline mr-2"><input type="radio" data-table="population"
+                                name="jsonDataChoiceRadio" class="mr-1">Population</label>
+                        <label class="radio-inline mr-2"><input type="radio" data-table="mortality"
+                                name="jsonDataChoiceRadio" class="mr-1" checked>Mortality</label>
+                        <label class="radio-inline mr-2"><input type="radio" data-table="mortality-adj"
+                                name="jsonDataChoiceRadio" class="mr-1">Population
                             Adjusted
                             Mortality</label>
                     </div>
 
-                    <!-- depending on which radio button is checked, change possible inputs -->
-                    <!-- use inputs to generate get request for search -->
-                    <!-- can return lists of results but must select at least 3 inputs -->
+                    <div class="inputs">
+                        <div class="form-row">
+                            <!-- input for country, age, sex, admin, subdiv, cause. -->
 
-                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+                            <div class="col-sm-2 form-group" id="countryGroup">
+                                <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
+                                <input class="form-control country" type="text" placeholder="Country" required>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="countryGroup"><i
+                                        data-feather="plus-square" data-group="countryGroup"
+                                        class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-2 form-group" id="adminGroup">
+                                <label for="jsonAdmin" class="col-sm-2 col-form-label">Admin</label>
+                                <input class="form-control admin" type="text" placeholder="Admin">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="adminGroup"><i
+                                        data-feather="plus-square" data-group="adminGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-2 form-group" id="subdivGroup">
+                                <label for="jsonSubdiv" class="col-sm-2 col-form-label">Subdiv</label>
+                                <input class="form-control subdiv" type="text" placeholder="Subdiv">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="subdivGroup"><i
+                                        data-feather="plus-square" data-group="subdivGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-2 form-group" id="yearGroup">
+                                <label for="jsonYear" class="col-sm-2 col-form-label">Year</label>
+                                <input class="form-control year" type="text" placeholder="Year" required>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="yearGroup"><i
+                                        data-feather="plus-square" data-group="yearGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-2 form-group" id="sexGroup">
+                                <label for="jsonSex" class="col-sm-2 col-form-label">Sex</label>
+                                <input class="form-control sex" type="text" placeholder="Sex" required>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="sexGroup"><i
+                                        data-feather="plus-square" data-group="sexGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-2 form-group" id="causeGroup">
+                                <label for="jsonCause" class="col-sm-2 col-form-label">Cause</label>
+                                <input class="form-control cause" type="text" placeholder="Cause">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="causeGroup"><i
+                                        data-feather="plus-square" data-group="causeGroup" class="addSvg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-lg btn-primary mb-3" type="submit" id="jsonSearchSubmit">Get JSON</button>
                 </form>
             </div>
         </div>
 
         <div class="row">
-            <div class="col">
-                <!-- alert with json data inside - formatted if possible -->
+            <div class="col-12">
+                <!-- show spinner while performing ajax call -->
+
+                <div class="spinner-border text-primary" role="status" id="spinner"><span class="sr-only">
+                        Loading...</span></div>
+
+                <div id="searchOutput">
+                    <!-- JSON text area goes here -->
+                </div>
             </div>
         </div>
     </div>
 </main>
+{% endblock %}
+
+{% block script %}
+<script>
+    const api_key = $('#apiKeyDiv').html()
+    const jsonSearchBtn = $('#jsonSearchSubmit')
+    const populationRadio = ["population"]
+
+
+    $(document).ready(function () {
+        // add icons from feather and make all parts clickable
+        feather.replace();
+        var svgComponents = $(".addSvg").children()
+
+        // add data-group to rect and line inside plus buttons
+        for (var i = 0; i < svgComponents.length; i++) {
+            if (svgComponents.hasOwnProperty(i)) {
+                var prevObjIndex = Math.floor(i / 3);
+                var group = svgComponents.prevObject[prevObjIndex].getAttribute("data-group")
+                svgComponents[i].setAttribute("data-group", group)
+            }
+        }
+    });
+
+    // function to resize text area
+    function auto_grow(element) {
+        $(element).css("height", ((element[0].scrollHeight) + "px"))
+    }
+    // function to capitalise the first letter in text inputs
+    function capFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    // check if age formats selected to disable description search as age formats don't have descriptions
+    $(window).click(function () {
+        if (populationRadio.includes($('input[name="jsonDataChoiceRadio"]:checked').data('table'))) {
+            $('.cause').attr("disabled", "disabled");
+        }
+        else {
+            $('.cause').removeAttr("disabled");
+        }
+    })
+
+
+
+    // add fields buttons
+    $('.addField').click((event) => {
+        event.preventDefault()
+        $target = event.target
+        var new_input = document.createElement('input');
+
+        new_input.type = "text";
+        new_input.classList.add("form-control")
+
+        // dynamically add group
+        var group = event.target.dataset.group.replace('Group', '')
+        new_input.placeholder = capFirstLetter(group)
+        new_input.classList.add(group)
+
+        $closestDiv = $target.closest('div')
+
+        var numChildren = $closestDiv.children.length
+        var $lastChild = $closestDiv.children[numChildren - 1]
+
+        $closestDiv.insertBefore(new_input, $lastChild)
+
+    })
+
+    // loader image
+    $(document).ajaxStart(function () {
+        // Show spinner
+        $('#spinner').show();
+        $('#searchOutput').html('');
+    });
+    $(document).ajaxComplete(function () {
+        // Hide spinner
+        $("#spinner").hide();
+    });
+
+    // query database with user search terms, return data to textarea
+    $(jsonSearchBtn).click(function () {
+        // prevent sending of form
+        event.preventDefault();
+
+        // check which type of endpoints to send requests to
+        var searchTable = $('input[name="jsonDataChoiceRadio"]:checked').data('table');
+
+        formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
+
+        formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
+
+        var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll('.sex'), document.querySelectorAll('.cause')]
+        for (var i = 0; i < formInputs.length; i++) {
+            for (var j = 0; j < formInputs[i].length; j++) {
+                formInputLists[formVariables[i]].push(formInputs[i][j].value);
+            }
+        }
+
+        // iterate over formInputLists dictionary and join each one into a string for get variables
+        var urlGetVariables = "";
+
+        for (var key in formInputLists) {
+            formInputLists[key] = formInputLists[key].join();
+            urlGetVariables += key + "=" + formInputLists[key] + "&";
+        }
+
+        // generate url depending on endpoint choice, search term and endpoint type
+        var api_url = "/api/" + searchTable + "-search-multiple?" + urlGetVariables;
+
+        $.ajax({
+            url: api_url,
+            dataType: "json",
+            headers: { "api_key": api_key },
+            success: function (result) {
+                console.log(JSON.stringify(result, null, "\t"))
+                result = JSON.stringify(result, null, "\t")
+                // use textarea so json in properly formatted for users
+                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
+                $('#searchOutput').html(output);
+                // resize the textarea
+                auto_grow($('#returnedJson'));
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
+                $('#searchOutput').html(output);
+            }
+        });
+    });
+
+
+
+</script>
 {% endblock %}
