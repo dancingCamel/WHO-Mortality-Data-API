@@ -98,5 +98,5 @@ class CountrySearch(Resource):
         countries = [country.json()
                      for country in CountryModel.search_by_name(search_term)]
         if countries:
-            return {'countries': countries}, 200
+            return {'results': countries}, 200
         return {'message': "No countries match that search term"}, 404
