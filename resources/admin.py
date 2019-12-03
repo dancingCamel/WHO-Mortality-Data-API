@@ -83,6 +83,7 @@ class AdminCode(Resource):
 
 
 class AdminDesc(Resource):
+    # description search endpoint for use in Code page
     @requireApiKey
     def get(self, search_term):
         admins = [admin.json()
@@ -97,3 +98,14 @@ class AdminList(Resource):
     def get(self):
         admins = AdminModel.find_all()
         return [entry.json() for entry in admins], 200
+
+
+class AdminSearch(Resource):
+    # search endpoint for use in JSON and Visualise pages
+    @requireApiKey
+    def get(self, search_term):
+        admins = [admin.json()
+                  for admin in AdminModel.search_by_desc(search_term)]
+        if admins:
+            return {'results': admins}, 200
+        return {'message': "No admins match that search term"}, 404

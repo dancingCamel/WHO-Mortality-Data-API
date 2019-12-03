@@ -20,8 +20,8 @@ from models.user import UserModel
 from resources.country import CountryCode, CountryList, CountrySearch, CountryDesc, CountryName
 from resources.sex import SexCode, SexList, SexDesc
 from resources.population import PopulationSearch, PopulationsList, PopulationOne, PopulationChange, PopulationSearchMultiple
-from resources.admin import Admin, AdminList, AdminCode, AdminDesc
-from resources.subdiv import SubdivCode, SubdivList, SubdivDesc
+from resources.admin import Admin, AdminList, AdminCode, AdminDesc, AdminSearch
+from resources.subdiv import SubdivCode, SubdivList, SubdivDesc, SubdivSearch
 from resources.age_format import AgeFormatCode, AgeFormatList
 from resources.infant_age_format import InfantAgeFormatCode, InfantAgeFormatList
 from resources.icd10 import Icd10, Icd10List, Icd10Search, Icd10Code, Icd10Desc
@@ -103,10 +103,12 @@ api.add_resource(Admin, '/api/admin/<string:admin_code>/<string:country_code>')
 api.add_resource(AdminList, '/api/admin-list')
 api.add_resource(AdminCode, '/api/admin-code/<string:admin_code>')
 api.add_resource(AdminDesc, '/api/admin-desc/<string:search_term>')
+api.add_resource(AdminSearch, '/api/admin-search/<string:search_term>')
 
 # Subdiv endpoints
 api.add_resource(SubdivCode, '/api/subdiv-code/<string:subdiv_code>')
 api.add_resource(SubdivDesc, '/api/subdiv-desc/<string:search_term>')
+api.add_resource(SubdivSearch, '/api/subdiv-search/<string:search_term>')
 api.add_resource(SubdivList, '/api/subdiv-list')
 
 # Age format endpoints

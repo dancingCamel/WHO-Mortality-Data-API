@@ -69,6 +69,7 @@ class SubdivCode(Resource):
 
 
 class SubdivDesc(Resource):
+    # search description endpoint for use in Code page
     @requireApiKey
     def get(self, search_term):
         subdivs = [subdiv.json()
@@ -83,3 +84,14 @@ class SubdivList(Resource):
     def get(self):
         subdivs = [subdiv.json() for subdiv in SubdivModel.find_all()]
         return {'subdivs': subdivs}, 200
+
+
+class SubdivSearch(Resource):
+    # search endpoint for use in JSON and Visualise pages
+    @requireApiKey
+    def get(self, search_term):
+        subdivs = [subdiv.json()
+                   for subdiv in SubdivModel.search_by_desc(search_term)]
+        if subdivs:
+            return {'results': subdivs}, 200
+        return {'message': "No subdivs match that search term"}, 404

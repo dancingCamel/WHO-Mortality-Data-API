@@ -20,7 +20,7 @@ class AdminModel(db.Model):
         if country:
             country = country.json()
 
-        return {'admin': self.admin_code,
+        return {'code': self.admin_code,
                 'country': country,
                 'description': self.description
                 }

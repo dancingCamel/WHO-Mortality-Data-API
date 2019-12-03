@@ -32,3 +32,15 @@ textarea {
 	display: none;
 	margin: 0 auto;
 }
+
+.ui-autocomplete > li {
+	color: grey;
+	border-bottom: 1px solid lightgrey;
+}
+
+.ui-autocomplete {
+	border-radius: 0 0 5px 5px;
+	max-height: 200px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}

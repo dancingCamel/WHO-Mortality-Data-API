@@ -31,20 +31,23 @@
 
                             <div class="col-sm-4 form-group" id="countryGroup">
                                 <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
-                                <input class="form-control country" type="text" placeholder="Country" required>
+                                <input class="form-control country autocomplete" type="text" placeholder="Country"
+                                    data-table="country" id="country" required>
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="countryGroup"><i
                                         data-feather="plus-square" data-group="countryGroup"
                                         class="addSvg"></i></button>
                             </div>
                             <div class="col-sm-4 form-group" id="adminGroup">
                                 <label for="jsonAdmin" class="col-sm-2 col-form-label">Admin</label>
-                                <input class="form-control admin" type="text" placeholder="Admin">
+                                <input class="form-control admin autocomplete" type="text" placeholder="Admin"
+                                    data-table="admin" id="admin">
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="adminGroup"><i
                                         data-feather="plus-square" data-group="adminGroup" class="addSvg"></i></button>
                             </div>
                             <div class="col-sm-4 form-group" id="subdivGroup">
                                 <label for="jsonSubdiv" class="col-sm-2 col-form-label">Subdiv</label>
-                                <input class="form-control subdiv" type="text" placeholder="Subdiv">
+                                <input class="form-control subdiv autocomplete" type="text" placeholder="Subdiv"
+                                    data-table="subdiv" id="subdiv">
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="subdivGroup"><i
                                         data-feather="plus-square" data-group="subdivGroup" class="addSvg"></i></button>
                             </div>
@@ -56,15 +59,39 @@
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="yearGroup"><i
                                         data-feather="plus-square" data-group="yearGroup" class="addSvg"></i></button>
                             </div>
+
                             <div class="col-sm-2 form-group" id="sexGroup">
                                 <label for="jsonSex" class="col-sm-2 col-form-label">Sex</label>
-                                <input class="form-control sex" type="text" placeholder="Sex" required>
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="sexGroup"><i
-                                        data-feather="plus-square" data-group="sexGroup" class="addSvg"></i></button>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="1" id="maleCheck">
+                                    <label class="form-check-label" for="maleCheck">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="2" id="femaleCheck">
+                                    <label class="form-check-label" for="femaleCheck">
+                                        Female
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="9" id="unspecifiedCheck">
+                                    <label class="form-check-label" for="unspecifiedCheck">
+                                        Unspecified
+                                    </label>
+                                </div>
                             </div>
+
+                            <!-- <input class="form-control sex autocomplete" type="text" placeholder="Sex" > -->
+
+
+
+
+
                             <div class="col-sm-8 form-group" id="causeGroup">
-                                <label for="jsonCause" class="col-sm-2 col-form-label">Cause</label>
-                                <input class="form-control cause" type="text" placeholder="Cause">
+                                <label for="jsonCause" class="col-sm-2 col-form-label form-autocomplete">Cause</label>
+                                <input class="form-control cause autocomplete" data-table="icd10" type="text"
+                                    placeholder="Cause" id="cause">
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="causeGroup"><i
                                         data-feather="plus-square" data-group="causeGroup" class="addSvg"></i></button>
                             </div>
@@ -97,11 +124,50 @@
     const jsonSearchBtn = $('#jsonSearchSubmit')
     const populationRadio = ["population"]
 
+    // function to resize text area
+    function auto_grow(element) {
+        $(element).css("height", ((element[0].scrollHeight) + "px"))
+    }
+    // function to capitalise the first letter in text inputs
+    function capFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    // autocomplete function for text inputs
+    function addAutocomplete(element) {
+        element = $(element);
+        element.autocomplete({
+            minLength: 3,
+            source: function (request, response) {
+                var table = element[0].getAttribute('data-table');
+                $.ajax({
+                    url: "/api/" + table + "-search/" + request.term,
+                    dataType: "json",
+                    headers: { "api_key": api_key },
+                    success: function (data) {
+                        // .slice(0, 10) after results to shorted possibilities
+                        response($.map(data['results'], function (item) {
+                            autocomplete_output = item.description + " (" + item.code + ")"
+                            return {
+                                label: autocomplete_output,
+                                value: item.code
+                            }
+                        }))
+                    }
+                });
+            }
+        });
+    }
 
     $(document).ready(function () {
+        // add autocomplete to all text inputs that require it
+        $('input.autocomplete').each(function (i, element) {
+            addAutocomplete(element);
+        });
+
         // add icons from feather and make all parts clickable
         feather.replace();
-        var svgComponents = $(".addSvg").children()
+        var svgComponents = $(".addSvg").children();
 
         // add data-group to rect and line inside plus buttons
         for (var i = 0; i < svgComponents.length; i++) {
@@ -113,31 +179,11 @@
         }
     });
 
-    // function to resize text area
-    function auto_grow(element) {
-        $(element).css("height", ((element[0].scrollHeight) + "px"))
-    }
-    // function to capitalise the first letter in text inputs
-    function capFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    // check if age formats selected to disable description search as age formats don't have descriptions
-    $(window).click(function () {
-        if (populationRadio.includes($('input[name="jsonDataChoiceRadio"]:checked').data('table'))) {
-            $('.cause').attr("disabled", "disabled");
-        }
-        else {
-            $('.cause').removeAttr("disabled");
-        }
-    })
-
-
 
     // add fields buttons
     $('.addField').click((event) => {
         event.preventDefault()
-        $target = event.target
+        click_target = event.target
         var new_input = document.createElement('input');
 
         // create new text input
@@ -148,12 +194,28 @@
         var group = event.target.dataset.group.replace('Group', '')
         new_input.placeholder = capFirstLetter(group)
         new_input.classList.add(group)
+        new_input.classList.add('autocomplete')
 
         // insert into column of inputs
-        $closestDiv = $target.closest('div')
-        var $lastChild = $closestDiv.children[$closestDiv.children.length - 1]
+        var closestDiv = click_target.closest('div')
+        var lastChild = closestDiv.children[closestDiv.children.length - 1]
 
-        $closestDiv.insertBefore(new_input, $lastChild)
+        // dynamically add data-table from first input in group
+        var nearestInput = closestDiv.children[1]
+        new_input.dataset.table = nearestInput.dataset.table
+
+        addAutocomplete(new_input)
+        closestDiv.insertBefore(new_input, lastChild)
+    })
+
+    // check if age formats selected to disable description search as age formats don't have descriptions
+    $(window).click(function () {
+        if (populationRadio.includes($('input[name="jsonDataChoiceRadio"]:checked').data('table'))) {
+            $('.cause').attr("disabled", "disabled");
+        }
+        else {
+            $('.cause').removeAttr("disabled");
+        }
     })
 
     // loader image
@@ -167,6 +229,8 @@
         $("#spinner").hide();
     });
 
+
+
     // query database with user search terms, return data to textarea
     $(jsonSearchBtn).click(function () {
         // prevent sending of form
@@ -179,7 +243,7 @@
 
         formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
 
-        var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll('.sex'), document.querySelectorAll('.cause')]
+        var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
                 formInputLists[formVariables[i]].push(formInputs[i][j].value);
@@ -187,7 +251,7 @@
         }
 
         // iterate over formInputLists dictionary and join each one into a string for get variables.
-        // remove trailing and leading commas to reduce searches
+        // remove trailing and leading commas to reduce search space
         var urlGetVariables = "";
 
         for (var key in formInputLists) {
