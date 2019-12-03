@@ -33,31 +33,34 @@
                                 <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
                                 <input class="form-control country autocomplete" type="text" placeholder="Country"
                                     data-table="country" id="country" required>
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="countryGroup"><i
-                                        data-feather="plus-square" data-group="countryGroup"
-                                        class="addSvg"></i></button>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="countryGroup"><i data-feather="plus-square"
+                                        data-group="countryGroup" class="addSvg"></i></button>
                             </div>
                             <div class="col-sm-4 form-group" id="adminGroup">
                                 <label for="jsonAdmin" class="col-sm-2 col-form-label">Admin</label>
                                 <input class="form-control admin autocomplete" type="text" placeholder="Admin"
                                     data-table="admin" id="admin">
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="adminGroup"><i
-                                        data-feather="plus-square" data-group="adminGroup" class="addSvg"></i></button>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="adminGroup"><i data-feather="plus-square"
+                                        data-group="adminGroup" class="addSvg"></i></button>
                             </div>
                             <div class="col-sm-4 form-group" id="subdivGroup">
                                 <label for="jsonSubdiv" class="col-sm-2 col-form-label">Subdiv</label>
                                 <input class="form-control subdiv autocomplete" type="text" placeholder="Subdiv"
                                     data-table="subdiv" id="subdiv">
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="subdivGroup"><i
-                                        data-feather="plus-square" data-group="subdivGroup" class="addSvg"></i></button>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="subdivGroup"><i data-feather="plus-square"
+                                        data-group="subdivGroup" class="addSvg"></i></button>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col-sm-2 form-group" id="yearGroup">
                                 <label for="jsonYear" class="col-sm-2 col-form-label">Year</label>
                                 <input class="form-control year" type="text" placeholder="Year" required>
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="yearGroup"><i
-                                        data-feather="plus-square" data-group="yearGroup" class="addSvg"></i></button>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="yearGroup"><i data-feather="plus-square"
+                                        data-group="yearGroup" class="addSvg"></i></button>
                             </div>
 
                             <div class="col-sm-2 form-group" id="sexGroup">
@@ -82,18 +85,13 @@
                                 </div>
                             </div>
 
-                            <!-- <input class="form-control sex autocomplete" type="text" placeholder="Sex" > -->
-
-
-
-
-
                             <div class="col-sm-8 form-group" id="causeGroup">
                                 <label for="jsonCause" class="col-sm-2 col-form-label form-autocomplete">Cause</label>
                                 <input class="form-control cause autocomplete" data-table="icd10" type="text"
                                     placeholder="Cause" id="cause">
-                                <button class="btn btn-sm btn-light pd-a mt-1 addField" data-group="causeGroup"><i
-                                        data-feather="plus-square" data-group="causeGroup" class="addSvg"></i></button>
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="causeGroup"><i data-feather="plus-square"
+                                        data-group="causeGroup" class="addSvg"></i></button>
                             </div>
                         </div>
                     </div>
@@ -194,7 +192,10 @@
         var group = event.target.dataset.group.replace('Group', '')
         new_input.placeholder = capFirstLetter(group)
         new_input.classList.add(group)
+
+        // add autocomplete 
         new_input.classList.add('autocomplete')
+        addAutocomplete(new_input)
 
         // insert into column of inputs
         var closestDiv = click_target.closest('div')
@@ -204,7 +205,6 @@
         var nearestInput = closestDiv.children[1]
         new_input.dataset.table = nearestInput.dataset.table
 
-        addAutocomplete(new_input)
         closestDiv.insertBefore(new_input, lastChild)
     })
 
