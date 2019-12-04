@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
+from models.icd10 import Icd10Model
 from validate import *
 from auth import requireApiKey, requireAdmin
 
@@ -77,6 +78,24 @@ class MortalitySearchMultiple(Resource):
         sex_code_list = strip_whitespace(sex_code_input).split(',')
         cause_code_list = strip_whitespace(cause_code_input).split(',')
 
+        # find all codes that have matching description to codes given and search for those, too
+        # that way can compare countries that use different code lists
+        cause_code_list_extended = []
+        for icd_code in cause_code_list:
+            # first get the corresponding description for the code given
+            complete_icd_codes = [code.json()
+                                  for code in Icd10Model.find_by_code(icd_code)]
+            # find other codes with same description
+            for icd_code in complete_icd_codes:
+                matching_codes = [matching_icd_code.json()
+                                  for matching_icd_code in Icd10Model.search(icd_code['description'])]
+                # add to extended code list
+                for matching_code in matching_codes:
+                    cause_code_list_extended.append(matching_code['code'])
+        # get rid of duplicate codes
+        cause_code_list_extended = list(
+            dict.fromkeys(cause_code_list_extended))
+
         # add "" to admin and subdiv lists to ensure some results if no specific code given
         admin_code_list = []
         if admin_code_input:
@@ -106,7 +125,7 @@ class MortalitySearchMultiple(Resource):
         for country_code in filter(valid_country_code, country_code_list):
             for year in filter(valid_year, year_list):
                 for sex in filter(valid_sex, sex_code_list):
-                    for cause in cause_code_list:
+                    for cause in cause_code_list_extended:
                         for admin in filter(valid_admin, admin_code_list):
                             for subdiv in filter(valid_subdiv, subdiv_code_list):
 

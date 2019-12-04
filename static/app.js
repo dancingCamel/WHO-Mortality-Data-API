@@ -65,7 +65,7 @@ function validCause(cause_code) {
 	return false;
 }
 
-// function to resize text area
+// function to resize element
 function auto_grow(element) {
 	$(element).css('height', element[0].scrollHeight + 'px');
 }
@@ -86,7 +86,7 @@ function addAutocomplete(element) {
 				dataType : 'json',
 				headers  : { api_key: api_key },
 				success  : function(data) {
-					// .slice(0, 10) after results to shorted possibilities
+					// .slice(0, 10) after results to shorten possibilities
 					response(
 						$.map(data['results'], function(item) {
 							autocomplete_output = item.description + ' (' + item.code + ')';
