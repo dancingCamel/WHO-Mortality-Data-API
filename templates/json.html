@@ -239,11 +239,18 @@
         // check which type of endpoints to send requests to
         var searchTable = $('input[name="jsonDataChoiceRadio"]:checked').data('table');
 
-        formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
-
-        formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
-
+        // generate url from user inputs
+        var formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
+        var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
         var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
+
+        // remove cause from url generator if population table selected
+        if (searchTable == "population") {
+            formVariables.pop();
+            delete formInputLists['cause'];
+            formInputs.pop();
+        }
+
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
                 formInputLists[formVariables[i]].push(formInputs[i][j].value);
