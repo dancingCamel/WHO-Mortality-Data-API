@@ -280,7 +280,9 @@
             // year between 1950 (just before data begins) and current year
             var start_year = 1950
             var this_year = (new Date()).getFullYear()
-            if (start_year < (Number(year)) < this_year || year == "") {
+            if (start_year < (Number(year)) && (Number(year)) < this_year) {
+                return true
+            } else if (year == "") {
                 return true
             }
             return false
@@ -294,7 +296,7 @@
             } else if (/^[0-9]{4}$/g.test(cause_code)) {
                 //check all 4 numbers
                 return true
-            } else if (/AAA/ig.test(cause_code)) {
+            } else if (/^AAA$/ig.test(cause_code)) {
                 // check if AAA - all causes
                 return true
             } else if (cause_code == "") {
@@ -305,11 +307,66 @@
 
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
-                // validate inputs
                 var group = formVariables[i]
+                var inputValue = formInputs[i][j].value
 
-                // push valid input to arrays for generating url
-                formInputLists[formVariables[i].push(formInputs[i][j].value);
+                switch (group) {
+                    case "country":
+                        // validate inputs
+                        if (validCountry(inputValue)) {
+                            // push valid ones to arrays for generating get url
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#searchOutput').html(output);
+                            return
+                        }
+                        break;
+                    case "admin":
+                        if (validAdmin(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#searchOutput').html(output);
+                            return
+                        }
+                        break;
+                    case "subdiv":
+                        if (validSubdiv(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#searchOutput').html(output);
+                            return
+                        }
+                        break;
+                    case "year":
+                        if (validYear(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#searchOutput').html(output);
+                            return
+                        }
+                        break;
+                    case "cause":
+                        if (validCause(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#searchOutput').html(output);
+                            return
+                        }
+                        break;
+                    case "sex":
+                        formInputLists[group].push(inputValue)
+                        break;
+                }
             }
         }
 
