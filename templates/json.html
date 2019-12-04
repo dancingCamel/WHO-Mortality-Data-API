@@ -251,9 +251,65 @@
             formInputs.pop();
         }
 
+        // form validation functions
+        function validCountry(country_code) {
+            // country code is 4 digit number
+            if (/^[0-9]{4}$/g.test(country_code) || country_code == "") {
+                return true
+            }
+            return false
+        }
+
+        function validAdmin(admin_code) {
+            // admin code is 3 digit number
+            if (/^[0-9]{3}$/g.test(admin_code) || admin_code == "") {
+                return true
+            }
+            return false
+        }
+
+        function validSubdiv(subdiv_code) {
+            // subdiv code is a letter followed by two numbers
+            if (/^[a-zA-z]{1}([\d]{2}$)/g.test(subdiv_code) || subdiv_code == "") {
+                return true
+            }
+            return false
+        }
+
+        function validYear(year) {
+            // year between 1950 (just before data begins) and current year
+            var start_year = 1950
+            var this_year = (new Date()).getFullYear()
+            if (start_year < (Number(year)) < this_year || year == "") {
+                return true
+            }
+            return false
+        }
+
+        function validCause(cause_code) {
+            // cause is either 4 numbers, 3 letters (AAA), 1 letter and 2 numbers or 1 letter and 3 numbers
+            if (/^([a-zA-Z]?)\d{2,3}$/g.test(cause_code)) {
+                // check letter followed by two or three numbers
+                return true
+            } else if (/^[0-9]{4}$/g.test(cause_code)) {
+                //check all 4 numbers
+                return true
+            } else if (/AAA/ig.test(cause_code)) {
+                // check if AAA - all causes
+                return true
+            } else if (cause_code == "") {
+                return true
+            }
+            return false
+        }
+
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
-                formInputLists[formVariables[i]].push(formInputs[i][j].value);
+                // validate inputs
+                var group = formVariables[i]
+
+                // push valid input to arrays for generating url
+                formInputLists[formVariables[i].push(formInputs[i][j].value);
             }
         }
 
