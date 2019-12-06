@@ -2,6 +2,7 @@ from flask_restful import Resource, request
 from models.mortality import MortalityDataModel
 from models.population import PopulationModel
 from models.country import CountryModel
+from models.icd10 import Icd10Model
 from validate import *
 import math
 from auth import requireApiKey

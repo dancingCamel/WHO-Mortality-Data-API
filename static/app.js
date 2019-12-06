@@ -46,9 +46,13 @@ function validYear(year) {
 }
 
 function validCause(cause_code) {
-	// cause is either 4 numbers, 3 letters (AAA), 1 letter and 2 numbers or 1 letter and 3 numbers
+	// cause is either 4 numbers, 3 letters (AAA), 2 letters and 2 numbers, 1 letter and 2 numbers or 1 letter and 3 numbers
 	if (/^([a-zA-Z]?)\d{2,3}$/g.test(cause_code)) {
 		// check letter followed by two or three numbers
+		return true;
+	}
+	else if (/^([a-zA-Z]{2})\d{2}$/g.test(cause_code)) {
+		// check if two letters followed by two numbers
 		return true;
 	}
 	else if (/^[0-9]{4}$/g.test(cause_code)) {
