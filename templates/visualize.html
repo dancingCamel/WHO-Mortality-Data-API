@@ -16,39 +16,839 @@
                     <div class="h3">Visualize WHO Mortality Data with Charts</div>
                     <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
                     <div class="radio mr-2">
-                        <label class="radio-inline mr-2"><input type="radio" name="vis-data-choice-radio"
-                                class="mr-1">Mortality</label>
-                        <label class="radio-inline mr-2"><input type="radio" name="vis-data-choice-radio"
-                                class="mr-1">Population
+                        <label class="radio-inline mr-2"><input type="radio" data-table="mortality"
+                                name="dataChoiceRadio" class="mr-1" checked>Mortality</label>
+                        <label class="radio-inline mr-2"><input type="radio" data-table="mortality-adj"
+                                name="dataChoiceRadio" class="mr-1">Population
                             Adjusted
                             Mortality</label>
                     </div>
 
-                    <!-- use inputs to generate get request for search -->
-                    <!-- all choosing multiple countries, years, genders, causes, admins and subdivs -->
-                    <!-- make string of inputs e.g. country=4038,1020,4308 then use split string to make a list -->
-                    <!-- all inputs required at least one (except admin and subdiv which can be empty and default to "") -->
+                    <div class="inputs">
+                        <div class="form-row">
+                            <!-- input for country, age, sex, admin, subdiv, cause. -->
+                            <div class="col-sm-4 form-group" id="countryGroup">
+                                <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
+                                <input class="form-control country autocomplete" type="text" placeholder="Country"
+                                    data-table="country" id="country">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="countryGroup"><i data-feather="plus-square"
+                                        data-group="countryGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-4 form-group" id="adminGroup">
+                                <label for="jsonAdmin" class="col-sm-2 col-form-label">Admin</label>
+                                <input class="form-control admin autocomplete" type="text" placeholder="Admin"
+                                    data-table="admin" id="admin">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="adminGroup"><i data-feather="plus-square"
+                                        data-group="adminGroup" class="addSvg"></i></button>
+                            </div>
+                            <div class="col-sm-4 form-group" id="subdivGroup">
+                                <label for="jsonSubdiv" class="col-sm-2 col-form-label">Subdiv</label>
+                                <input class="form-control subdiv autocomplete" type="text" placeholder="Subdiv"
+                                    data-table="subdiv" id="subdiv">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="subdivGroup"><i data-feather="plus-square"
+                                        data-group="subdivGroup" class="addSvg"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-sm-2 form-group" id="yearGroup">
+                                <label for="jsonYear" class="col-sm-2 col-form-label">Year</label>
+                                <input class="form-control year" type="text" placeholder="Year">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="yearGroup"><i data-feather="plus-square"
+                                        data-group="yearGroup" class="addSvg"></i></button>
+                            </div>
 
-                    <button class="btn btn-lg btn-primary mb-3" type="submit">Search</button>
+                            <div class="col-sm-2 form-group" id="sexGroup">
+                                <label for="jsonSex" class="col-sm-2 col-form-label">Sex</label>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="1" id="maleCheck">
+                                    <label class="form-check-label" for="maleCheck">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="2" id="femaleCheck">
+                                    <label class="form-check-label" for="femaleCheck">
+                                        Female
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input sex" type="checkbox" value="9" id="unspecifiedCheck">
+                                    <label class="form-check-label" for="unspecifiedCheck">
+                                        Unspecified
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-8 form-group" id="causeGroup">
+                                <label for="jsonCause" class="col-sm-2 col-form-label form-autocomplete">Cause</label>
+                                <input class="form-control cause autocomplete" data-table="icd10" type="text"
+                                    placeholder="Cause" id="cause">
+                                <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
+                                    aria-hidden="true" data-group="causeGroup"><i data-feather="plus-square"
+                                        data-group="causeGroup" class="addSvg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-lg btn-primary mb-3" type="submit" id="searchSubmit">Visualize</button>
                 </form>
             </div>
         </div>
 
-        <div class="row" id="bar-charts">
-            <div class="col">
+        <div class="row">
+            <div class="col-12">
+                <!-- show spinner while performing ajax call -->
+
+                <div class="spinner-border text-primary" role="status" id="spinner"><span class="sr-only">
+                        Loading...</span></div>
 
             </div>
         </div>
-        <div class="row" id="line-charts">
-            <div class="col">
-
+        <div class="row ">
+            <div class="col-12" id="errorMessage">
+                <!-- error message area -->
             </div>
         </div>
-        <div class="row" id="geo-charts">
-            <div class="col">
 
+        <div class="row ">
+            <div class="col-12">
+                <h2 id="byYearTitle">By Year</h2>
+                <div id="barChartContainer">
+                    <canvas id="barChartArea">
+                        <!-- Bar charts - one for each year -->
+                    </canvas>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h2 id="trendsTitle">Trends</h2>
+                <div id="lineChartContainer">
+                    <canvas id="lineChartArea">
+                        <!-- Line chart goes here - one for each year -->
+                    </canvas>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div class="col-12 tableArea">
+                <h2 id=tableTitle>Tables</h2>
+                <!-- Line chart goes here - one for each year -->
+            </div>
+        </div>
+    </div>
+
+    <!-- sample of how it should look -->
+    <div class="container">
+        <div class="row">
+            <div id="chartArea" class="col-sm-12">
+                <!-- charts go here -->
+                <h2>Yearly</h2>
+                <!-- bar charts for each year -->
+                <h3>2011</h3>
+                <canvas id="exampleBar5"></canvas>
+                <hr>
+
+                <h3>2010</h3>
+                <canvas id="exampleBar10"></canvas>
+                <hr>
+            </div>
+
+            <div class="tableArea">
+                <hr>
+                <h2>Tabular Data</h2>
+                <!-- raw data table goes here - country, admin, subdiv year, sex, age, cause, total deaths -->
             </div>
         </div>
     </div>
 </main>
+
+
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    const api_key = $('#apiKeyDiv').html()
+    const searchBtn = $('#searchSubmit')
+
+
+
+    $(document).ready(function () {
+        // add autocomplete to all text inputs that require it
+        $('input.autocomplete').each(function (i, element) {
+            addAutocomplete(element);
+        });
+
+        // add icons from feather and make all parts clickable
+        feather.replace();
+        var svgComponents = $(".addSvg").children();
+
+        // add data-group to rect and line inside plus buttons
+        for (var i = 0; i < svgComponents.length; i++) {
+            if (svgComponents.hasOwnProperty(i)) {
+                var prevObjIndex = Math.floor(i / 3);
+                var group = svgComponents.prevObject[prevObjIndex].getAttribute("data-group")
+                svgComponents[i].setAttribute("data-group", group)
+            }
+        }
+    });
+
+
+    // add fields buttons
+    $('.addField').click((event) => {
+        event.preventDefault()
+        click_target = event.target
+        var new_input = document.createElement('input');
+
+        // create new text input
+        new_input.type = "text";
+        new_input.classList.add("form-control")
+
+        // dynamically add group
+        var group = event.target.dataset.group.replace('Group', '')
+        new_input.placeholder = capFirstLetter(group)
+        new_input.classList.add(group)
+
+        // add autocomplete 
+        new_input.classList.add('autocomplete')
+        addAutocomplete(new_input)
+
+        // insert into column of inputs
+        var closestDiv = click_target.closest('div')
+        var lastChild = closestDiv.children[closestDiv.children.length - 1]
+
+        // dynamically add data-table from first input in group
+        var nearestInput = closestDiv.children[1]
+        new_input.dataset.table = nearestInput.dataset.table
+
+        closestDiv.insertBefore(new_input, lastChild)
+    })
+
+    // loader image
+    $(document).ajaxStart(function () {
+        // Show spinner
+        $('#spinner').show();
+        $('#errorMessage').html('');
+        $('#tableArea').html('');
+        $('#tableTitle').hide()
+        $('#lineChartContainer').html('<canvas id="lineChartArea"></canvas>');
+        $('#lineChartTitle').hide()
+        $('#barChartArea').html('<canvas id="barChartArea"></canvas>');
+        $('barChartTitle').hide()
+    });
+    $(document).ajaxComplete(function () {
+        // Hide spinner
+        $("#spinner").hide();
+    });
+
+    // query database with user search terms, return data to textarea
+    $(searchBtn).click(function () {
+        // prevent sending of form
+        event.preventDefault();
+
+        // check which endpoint to send requests to
+        var searchTable = $('input[name="dataChoiceRadio"]:checked').data('table');
+
+        // variables required for dynamic generation of search url
+        var formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
+        var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
+        var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
+
+        // remove cause from url generator if population table selected
+        if (searchTable == "population") {
+            formVariables.pop();
+            delete formInputLists['cause'];
+            formInputs.pop();
+        }
+
+        // make arrays of valid user inputs
+        for (var i = 0; i < formInputs.length; i++) {
+            for (var j = 0; j < formInputs[i].length; j++) {
+                var group = formVariables[i]
+                var inputValue = formInputs[i][j].value
+
+                switch (group) {
+                    case "country":
+                        // validate inputs
+                        if (validCountry(inputValue)) {
+                            // push valid ones to arrays for generating get url
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#errorMessage').html(output);
+                            return
+                        }
+                        break;
+                    case "admin":
+                        if (validAdmin(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#errorMessage').html(output);
+                            return
+                        }
+                        break;
+                    case "subdiv":
+                        if (validSubdiv(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#errorMessage').html(output);
+                            return
+                        }
+                        break;
+                    case "year":
+                        if (validYear(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#errorMessage').html(output);
+                            return
+                        }
+                        break;
+                    case "cause":
+                        if (validCause(inputValue)) {
+                            formInputLists[group].push(inputValue)
+                        }
+                        else {
+                            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+                            $('#errorMessage').html(output);
+                            return
+                        }
+                        break;
+                    case "sex":
+                        formInputLists[group].push(inputValue)
+                        break;
+                }
+            }
+        }
+
+        // iterate over formInputLists dictionary and join each one into a string for get variables.
+        // remove trailing and leading commas to reduce search space
+        var urlGetVariables = "";
+
+        for (var key in formInputLists) {
+            formInputLists[key] = formInputLists[key].join().replace(/(^[,\s]+)|([,\s]+$)/g, '');
+            urlGetVariables += key + "=" + formInputLists[key] + "&";
+        }
+
+        // generate url depending on endpoint choice, search term and endpoint type
+        var api_url = "/api/" + searchTable + "-search-multiple?" + urlGetVariables;
+
+        var results;
+
+        $.ajax({
+            url: api_url,
+            dataType: "json",
+            headers: { "api_key": api_key },
+            success: function (result) {
+                // save results to variable for processing
+                var results = result.results
+
+                // make year string into array
+                var year_list = formInputLists['year'].split(",")
+                // sort array chronologically 
+                year_list.sort((a, b) => Number(a) - Number(b));
+
+                // for each year in formInputLists['year'] create hybrid bar chart. male blue, female red
+                // add titles to bar charts in html e.g. Overview - 2009, 2010 getting years from formInputLists
+
+
+                // if year list length is >1, make line chart with all data and random colours
+                if (year_list.length > 1) {
+                    $('#lineChartTitle').show()
+                    var lineChartData = {
+                        labels: year_list,
+                        datasets: []
+                    }
+
+                    results.forEach(function (resultsItem, resultsIndex) {
+                        var adminSubdivLabel = " "
+                        if (resultsItem.admin != "None") {
+                            adminSubdivLabel += "(" + resultsItem.admin.description + ")";
+                        }
+                        if (resultsItem.subdiv != "None") {
+                            adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
+                        }
+                        var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel + " - " + resultsItem.sex.description
+
+                        // there are no entries in the dataset object so this code doesn't run at all
+                        // use a exists = false/true check then decide what to do after
+                        var datasetExists = false;
+                        lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                            if (datasetItem.label == dataLabel) {
+                                datasetExists = true;
+                                // add data to the yearData object if it exists
+                                resultYear = resultsItem.year;
+                                datasetItem.yearData[resultYear] = Number(resultsItem.all_ages);
+                            }
+                        })
+                        if (!datasetExists) {
+                            // make new dataset object in the datasets array if doesn't dataset doesn't exist
+                            resultYear = resultsItem.year;
+                            randColor = getRandomColor();
+
+                            var dataset = {};
+                            dataset['label'] = dataLabel;
+                            dataset['fill'] = false;
+                            dataset['borderColor'] = randColor;
+                            dataset['backgroundColor'] = randColor;
+                            dataset['data'] = [];
+                            dataset['yearData'] = {};
+                            dataset['yearData'][resultYear] = Number(resultsItem.all_ages);
+
+                            lineChartData['datasets'].push(dataset);
+                        }
+                    })
+
+                    // after dataset entries made, loop through datasets and create a data array according matching the year_list array order
+                    lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                        // loop through year_list
+                        for (var i = 0; i < year_list.length; i++) {
+                            // if year_list entry is key in datasetItem['yearData'], push value to datasetItem[data]
+                            var year = year_list[i];
+                            if (year in datasetItem['yearData']) {
+                                datasetItem['data'].push(datasetItem['yearData'][year])
+                            } else {
+                                datasetItem['data'].push(null)
+                            }
+                        }
+                    })
+
+                    console.log(lineChartData)
+
+                    // draw chart
+                    var ctx = document.getElementById('lineChartArea').getContext('2d');
+                    window.myBar = new Chart(ctx, {
+                        type: 'line',
+                        data: lineChartData,
+                        options: {
+                            responsive: true,
+                            // title: {
+                            //     display: true,
+                            //     text: 'All Causes'
+                            // },
+                            legend: {
+                                position: 'right'
+                            },
+                            tooltips: {
+                                mode: 'nearest',
+                                intersect: false,
+                            },
+                            hover: {
+                                mode: 'nearest',
+                                intersect: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Year'
+                                    }
+                                }],
+                                yAxes: [{
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Deaths'
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                }
+
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
+                $('#errorMessage').html(output);
+            }
+        });
+    });
+
+    // make charts 
+    // 2011
+    // hybrid
+    // only use this one. string concat to make the labels. 
+    // iteratively add to datasets data endpoint with fixed colours
+    var barChart5Data = {
+        labels: ['Croatia - All Causes', 'United Kingdom - All Causes', 'Croatia - Sum of all accidental deaths', 'United Kingdom - Sum of all accidental deaths'],
+        datasets: [{
+            label: 'Male',
+            backgroundColor: "#0000ff",
+            data: [
+                25184,
+                267491,
+                1,
+                40
+            ]
+        }, {
+            label: 'Female',
+            backgroundColor: "#ff0000",
+            data: [
+                25835,
+                284741,
+                0,
+                22
+            ]
+        }
+        ]
+    };
+
+    // 2010
+    // hybrid
+    // only use this one. string concat to make the labels. 
+    // iteratively add to datasets data endpoint with fixed colours
+    var barChart10Data = {
+        labels: ['Croatia - All Causes', 'United Kingdom - All Causes', 'Croatia - Sum of all accidental deaths', 'United Kingdom - Sum of all accidental deaths'],
+        datasets: [{
+            label: 'Male',
+            backgroundColor: "#0000ff",
+            data: [
+                null,
+                270945,
+                2,
+                44
+            ]
+        }, {
+            label: 'Female',
+            backgroundColor: "#ff0000",
+            data: [
+                26413,
+                290721,
+                0,
+                9
+            ]
+        }
+        ]
+    };
+
+    window.onload = function () {
+        // hybrid bar charts
+        var ctx = document.getElementById('exampleBar5').getContext('2d');
+        window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: barChart5Data,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Combined Country and Cause data'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                responsive: true
+            }
+        });
+
+        var ctx = document.getElementById('exampleBar10').getContext('2d');
+        window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: barChart10Data,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Combined Country and Cause data'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                responsive: true
+            }
+        });
+    };
+
+
+
+
+    // sample json data:
+
+    var example_results = {
+        "results": [
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "267491",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "40",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "284741",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "22",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "270945",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "44",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "290721",
+            },
+            {
+                "country": {
+                    "code": "4308",
+                    "description": "United Kingdom"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "9",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "25184",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "1",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2011",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "25835",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "25683",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "Y349",
+                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
+                },
+                "sex": {
+                    "code": "1",
+                    "description": "Male"
+                },
+                "all_ages": "2",
+            },
+            {
+                "country": {
+                    "code": "4038",
+                    "description": "Croatia"
+                },
+                "admin": "None",
+                "subdiv": "None",
+                "year": "2010",
+                "code_list": "104",
+                "cause": {
+                    "code": "AAA",
+                    "description": "All Causes"
+                },
+                "sex": {
+                    "code": "2",
+                    "description": "Female"
+                },
+                "all_ages": "26413",
+            }
+        ]
+    }
+
+</script>
 {% endblock %}

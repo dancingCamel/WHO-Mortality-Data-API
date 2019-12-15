@@ -100,14 +100,12 @@ class MortalitySearchMultiple(Resource):
         admin_code_list = []
         if admin_code_input:
             admin_code_list = strip_whitespace(admin_code_input).split(',')
-        else:
-            admin_code_list.append("")
+        admin_code_list.append("")
 
         subdiv_code_list = []
         if subdiv_code_input:
             subdiv_code_list = strip_whitespace(subdiv_code_input).split(',')
-        else:
-            subdiv_code_list.append("")
+        subdiv_code_list.append("")
 
         # replace nested for loops with product function? - itertools.product or from itertools import product
         # def product(*args, **kwds):

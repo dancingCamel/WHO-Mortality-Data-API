@@ -168,14 +168,12 @@ class MortalityAdjustedSearchMultiple(Resource):
         admin_code_list = []
         if admin_code_input:
             admin_code_list = strip_whitespace(admin_code_input).split(',')
-        else:
-            admin_code_list.append("")
+        admin_code_list.append("")
 
         subdiv_code_list = []
         if subdiv_code_input:
             subdiv_code_list = strip_whitespace(subdiv_code_input).split(',')
-        else:
-            subdiv_code_list.append("")
+        subdiv_code_list.append("")
 
         # results of each mortality adj search
         results = []
@@ -275,7 +273,7 @@ class MortalityAdjustedSearchMultiple(Resource):
         if len(results) == 0:
             return {'message': "No mortality entries match your query."}, 404
 
-        return {'adjusted_mortalities': results}, 200
+        return {'results': results}, 200
 
 
 class MortalityAdjustedOne(Resource):

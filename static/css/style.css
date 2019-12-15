@@ -44,3 +44,13 @@ textarea {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+
+#byYearTitle {
+	display: none;
+}
+#trendsTitle {
+	display: none;
+}
+#tableTitle {
+	display: none;
+}
