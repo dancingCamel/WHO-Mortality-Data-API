@@ -223,7 +223,13 @@ class MortalityAdjustedSearchMultiple(Resource):
                                     else:
                                         country = CountryModel.find_by_code(
                                             country_code).json()
-                                        return {'message': "No population data available for '{}' in year {} for sex '{}'.".format(country['description'], year, sex)}, 404
+                                        # return {'message': "No population data available for '{}' in year {} for sex '{}'.".format(country['description'], year, sex)}, 404
+                                        del entry['infant_age_breakdown']
+                                        del entry['age_format']
+                                        del entry['infant_age_format']
+                                        del entry['age_breakdown']
+                                        entry['all_ages'] = "No population data."
+                                        continue
 
                                     # remove infant mortality data as no related population data given
                                     del entry['infant_age_breakdown']

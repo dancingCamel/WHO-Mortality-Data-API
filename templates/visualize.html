@@ -369,7 +369,7 @@
 
                 // if year list length is >1, make line chart with all data and random colours
                 if (year_list.length > 1) {
-                    $('#lineChartTitle').show()
+                    $('#trendsTitle').show()
                     var lineChartData = {
                         labels: year_list,
                         datasets: []
@@ -421,14 +421,24 @@
                             // if year_list entry is key in datasetItem['yearData'], push value to datasetItem[data]
                             var year = year_list[i];
                             if (year in datasetItem['yearData']) {
-                                datasetItem['data'].push(datasetItem['yearData'][year])
+                                datasetItem['data'].push(datasetItem['yearData'][year]);
                             } else {
-                                datasetItem['data'].push(null)
+                                datasetItem['data'].push(null);
                             }
                         }
-                    })
+                    });
 
-                    console.log(lineChartData)
+                    // show error message to notify user if some data is missing
+                    lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                        datasetItem['data'].forEach(function (dataItem, dataIndex) {
+                            if (isNaN(dataItem)) {
+                                $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
+                                $('#errorMessage').show();
+                            }
+                        })
+
+
+                    });
 
                     // draw chart
                     var ctx = document.getElementById('lineChartArea').getContext('2d');
