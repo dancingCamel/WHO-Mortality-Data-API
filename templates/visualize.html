@@ -182,32 +182,33 @@
 
     // add fields buttons
     $('.addField').click((event) => {
-        event.preventDefault()
-        click_target = event.target
+        event.preventDefault();
+        click_target = event.target;
         var new_input = document.createElement('input');
 
         // create new text input
         new_input.type = "text";
-        new_input.classList.add("form-control")
+        new_input.classList.add("form-control");
 
         // dynamically add group
-        var group = event.target.dataset.group.replace('Group', '')
-        new_input.placeholder = capFirstLetter(group)
-        new_input.classList.add(group)
+        var group = event.target.dataset.group.replace('Group', '');
+        new_input.placeholder = capFirstLetter(group);
+        new_input.classList.add(group);
 
         // add autocomplete 
-        new_input.classList.add('autocomplete')
-        addAutocomplete(new_input)
+        new_input.classList.add('autocomplete');
+        addAutocomplete(new_input);
 
         // insert into column of inputs
-        var closestDiv = click_target.closest('div')
-        var lastChild = closestDiv.children[closestDiv.children.length - 1]
+        var closestDiv = click_target.closest('div');
+        var lastChild = closestDiv.children[closestDiv.children.length - 1];
 
         // dynamically add data-table from first input in group
-        var nearestInput = closestDiv.children[1]
-        new_input.dataset.table = nearestInput.dataset.table
+        var nearestInput = closestDiv.children[1];
+        new_input.dataset.table = nearestInput.dataset.table;
 
-        closestDiv.insertBefore(new_input, lastChild)
+        closestDiv.insertBefore(new_input, lastChild);
+        new_input.focus();
     })
 
     // loader image
@@ -220,8 +221,6 @@
     $(searchBtn).click(function () {
         // prevent sending of form
         event.preventDefault();
-        // Show spinner
-        $('#spinner').show();
 
         // hide or reset all chart areas
         $('#errorMessage').html('');
@@ -242,12 +241,13 @@
         var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
         var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
 
-        // make arrays of valid user inputs
+        // make arrays of user inputs and validate inputs
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
                 var group = formVariables[i]
                 var inputValue = formInputs[i][j].value
 
+                var error = false;
                 switch (group) {
                     case "country":
                         // validate inputs
@@ -256,6 +256,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#errorMessage').html(output);
                             return
@@ -266,6 +267,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#errorMessage').html(output);
                             return
@@ -276,6 +278,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#errorMessage').html(output);
                             return
@@ -286,6 +289,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#errorMessage').html(output);
                             return
@@ -296,6 +300,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#errorMessage').html(output);
                             return
@@ -306,6 +311,12 @@
                         break;
                 }
             }
+        }
+        if (formInputLists['sex'].length == 0) {
+            error = true;
+            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+            $('#errorMessage').html(output);
+            return
         }
 
         // iterate over formInputLists dictionary and join each one into a string for get variables.
@@ -322,101 +333,55 @@
 
         var results;
 
-        $.ajax({
-            url: api_url,
-            dataType: "json",
-            headers: { "api_key": api_key },
-            success: function (result) {
-                // save results to variable for processing
-                var results = result.results
-                var dataFormat = "";
-                if (searchTable == "mortality") {
-                    dataFormat = "Deaths";
-                } else if (searchTable == "mortality-adj") {
-                    dataFormat = "Deaths(per 100,000)";
-                }
-                // make year string into array
-                var year_list = formInputLists['year'].split(",")
-                // sort array chronologically 
-                year_list.sort((a, b) => Number(a) - Number(b));
-
-                // create area for each bar chart
-                year_list.forEach(function (year, index) {
-                    // show title
-                    $('#byYearTitle').show();
-                    // add year name
-                    $('#barChartContainer').append('<h3>' + year + '</h3>');
-                    // add canvas with unique id
-                    var chartId = "barChart" + year
-                    $('#barChartContainer').append('<canvas id="' + chartId + '"></canvas>');
-                    $('#barChartContainer').append('<hr><br>');
-                    $('#barChartContainer').show();
-                })
-
-                // create unique x axis labels - same for every year
-                var barChartXLabels = [];
-                var hasMale = false;
-                var hasFemale = false;
-                var hasUnspecified = false;
-                results.forEach(function (resultsItem, resultsIndex) {
-                    if (resultsItem.sex.code == 1) {
-                        hasMale = true;
+        if (!error) {
+            // Show spinner
+            $('#spinner').show();
+            $.ajax({
+                url: api_url,
+                dataType: "json",
+                headers: { "api_key": api_key },
+                success: function (result) {
+                    // save results to variable for processing
+                    var results = result.results
+                    var dataFormat = "";
+                    if (searchTable == "mortality") {
+                        dataFormat = "Deaths";
+                    } else if (searchTable == "mortality-adj") {
+                        dataFormat = "Deaths(per 100,000)";
                     }
-                    if (resultsItem.sex.code == 2) {
-                        hasFemale = true;
-                    }
-                    if (resultsItem.sex.code == 9) {
-                        hasUnspecified = true;
-                    }
-                    var adminSubdivLabel = " "
-                    if (resultsItem.admin != "None") {
-                        adminSubdivLabel += "(" + resultsItem.admin.description + ")";
-                    }
-                    if (resultsItem.subdiv != "None") {
-                        adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
-                    }
-                    var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
+                    // make year string into array
+                    var year_list = formInputLists['year'].split(",")
+                    // sort array chronologically 
+                    year_list.sort((a, b) => Number(a) - Number(b));
 
-                    if (barChartXLabels.indexOf(dataLabel) > -1) {
-                        return;
-                    }
+                    // create area for each bar chart
+                    year_list.forEach(function (year, index) {
+                        // show title
+                        $('#byYearTitle').show();
+                        // add year name
+                        $('#barChartContainer').append('<h3>' + year + '</h3>');
+                        // add canvas with unique id
+                        var chartId = "barChart" + year
+                        $('#barChartContainer').append('<canvas id="' + chartId + '"></canvas>');
+                        $('#barChartContainer').append('<hr><br>');
+                        $('#barChartContainer').show();
+                    })
 
-                    barChartXLabels.push(dataLabel);
-                });
-
-                // create bar chart for each year
-                for (var i = 0; i < year_list.length; i++) {
-                    var year = year_list[i];
-
-                    // generate chart data, checking if male/female/unspecified
-                    var barChartData = {
-                        labels: barChartXLabels,
-                        datasets: []
-                    }
-
-                    var maleDataset = {};
-                    if (hasMale) {
-                        maleDataset['label'] = 'Male';
-                        maleDataset['backgroundColor'] = "#0000ff";
-                        maleDataset['data'] = []
-                    }
-
-                    var femaleDataset = {}
-                    if (hasFemale) {
-                        femaleDataset['label'] = 'Female';
-                        femaleDataset['backgroundColor'] = "#ff0000";
-                        femaleDataset['data'] = []
-                    }
-
-                    var unspecifiedDataset = {}
-                    if (hasUnspecified) {
-                        unspecifiedDataset['label'] = 'Unspecified';
-                        unspecifiedDataset['backgroundColor'] = "#ffff00";
-                        unspecifiedDataset['data'] = []
-                    }
-
+                    // create unique x axis labels - same for every year
+                    var barChartXLabels = [];
+                    var hasMale = false;
+                    var hasFemale = false;
+                    var hasUnspecified = false;
                     results.forEach(function (resultsItem, resultsIndex) {
-                        // check datalabel against xAxis labels and find index
+                        if (resultsItem.sex.code == 1) {
+                            hasMale = true;
+                        }
+                        if (resultsItem.sex.code == 2) {
+                            hasFemale = true;
+                        }
+                        if (resultsItem.sex.code == 9) {
+                            hasUnspecified = true;
+                        }
                         var adminSubdivLabel = " "
                         if (resultsItem.admin != "None") {
                             adminSubdivLabel += "(" + resultsItem.admin.description + ")";
@@ -425,89 +390,246 @@
                             adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
                         }
                         var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
-                        var indexOfLabel = barChartXLabels.indexOf(dataLabel);
 
-                        // get sex (1=male, 2=female, 9=unspecified)
-                        var sex = resultsItem.sex.code
-
-                        // splice result into corresponding sex dataset data array at correct position for correct year
-                        switch (sex) {
-                            case "1":
-                                // male
-                                if (resultsItem.year == year) {
-                                    maleDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
-                                }
-                                break;
-                            case "2":
-                                // female
-                                if (resultsItem.year == year) {
-                                    femaleDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
-                                }
-                                break;
-                            case "9":
-                                // unspecified
-                                if (resultsItem.year == year) {
-                                    unspecifiedDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
-                                }
-                                break;
+                        if (barChartXLabels.indexOf(dataLabel) > -1) {
+                            return;
                         }
-                    })
 
-                    // push all datasets to datasets array if exists
-                    if (hasMale) {
-                        barChartData['datasets'].push(maleDataset);
-                    }
-                    if (hasFemale) {
-                        barChartData['datasets'].push(femaleDataset);
-                    }
-                    if (hasUnspecified) {
-                        barChartData['datasets'].push(unspecifiedDataset);
-                    }
+                        barChartXLabels.push(dataLabel);
+                    });
 
-                    // show error message to notify user if some data is missing
-                    barChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
-                        datasetItem['data'].forEach(function (dataItem, dataIndex) {
-                            if (isNaN(dataItem) || dataItem == null) {
-                                $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
-                                $('#errorMessage').show();
+                    // create bar chart for each year
+                    for (var i = 0; i < year_list.length; i++) {
+                        var year = year_list[i];
+
+                        // generate chart data, checking if male/female/unspecified
+                        var barChartData = {
+                            labels: barChartXLabels,
+                            datasets: []
+                        }
+
+                        var maleDataset = {};
+                        if (hasMale) {
+                            maleDataset['label'] = 'Male';
+                            maleDataset['backgroundColor'] = "#0000ff";
+                            maleDataset['data'] = []
+                        }
+
+                        var femaleDataset = {}
+                        if (hasFemale) {
+                            femaleDataset['label'] = 'Female';
+                            femaleDataset['backgroundColor'] = "#ff0000";
+                            femaleDataset['data'] = []
+                        }
+
+                        var unspecifiedDataset = {}
+                        if (hasUnspecified) {
+                            unspecifiedDataset['label'] = 'Unspecified';
+                            unspecifiedDataset['backgroundColor'] = "#ffff00";
+                            unspecifiedDataset['data'] = []
+                        }
+
+                        results.forEach(function (resultsItem, resultsIndex) {
+                            // check datalabel against xAxis labels and find index
+                            var adminSubdivLabel = " "
+                            if (resultsItem.admin != "None") {
+                                adminSubdivLabel += "(" + resultsItem.admin.description + ")";
+                            }
+                            if (resultsItem.subdiv != "None") {
+                                adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
+                            }
+                            var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
+                            var indexOfLabel = barChartXLabels.indexOf(dataLabel);
+
+                            // get sex (1=male, 2=female, 9=unspecified)
+                            var sex = resultsItem.sex.code
+
+                            // splice result into corresponding sex dataset data array at correct position for correct year
+                            switch (sex) {
+                                case "1":
+                                    // male
+                                    if (resultsItem.year == year) {
+                                        maleDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
+                                    }
+                                    break;
+                                case "2":
+                                    // female
+                                    if (resultsItem.year == year) {
+                                        femaleDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
+                                    }
+                                    break;
+                                case "9":
+                                    // unspecified
+                                    if (resultsItem.year == year) {
+                                        unspecifiedDataset['data'].splice(indexOfLabel, 0, resultsItem.all_ages)
+                                    }
+                                    break;
+                            }
+                        })
+
+                        // push all datasets to datasets array if exists
+                        if (hasMale) {
+                            barChartData['datasets'].push(maleDataset);
+                        }
+                        if (hasFemale) {
+                            barChartData['datasets'].push(femaleDataset);
+                        }
+                        if (hasUnspecified) {
+                            barChartData['datasets'].push(unspecifiedDataset);
+                        }
+
+                        // show error message to notify user if some data is missing
+                        barChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                            datasetItem['data'].forEach(function (dataItem, dataIndex) {
+                                if (isNaN(dataItem) || dataItem == null) {
+                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
+                                    $('#errorMessage').show();
+                                }
+                            });
+                        });
+
+                        // draw bar chart
+                        chartId = "barChart" + year
+                        var ctx = document.getElementById(chartId).getContext('2d');
+                        window.myBar = new Chart(ctx, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: {
+                                tooltips: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                responsive: true,
+                                scales: {
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: dataFormat
+                                        }
+                                    }]
+                                }
                             }
                         });
-                    });
-
-                    // draw bar chart
-                    chartId = "barChart" + year
-                    var ctx = document.getElementById(chartId).getContext('2d');
-                    window.myBar = new Chart(ctx, {
-                        type: 'bar',
-                        data: barChartData,
-                        options: {
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false
-                            },
-                            responsive: true,
-                            scales: {
-                                yAxes: [{
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: dataFormat
-                                    }
-                                }]
-                            }
-                        }
-                    });
-                }
-
-                // if year list length is >1, draw line chart with all data
-                if (year_list.length > 1) {
-                    $('#trendsTitle').show();
-                    $('#lineChartContainer').show();
-                    var lineChartData = {
-                        labels: year_list,
-                        datasets: []
                     }
 
+                    // if year list length is >1, draw line chart with all data
+                    if (year_list.length > 1) {
+                        $('#trendsTitle').show();
+                        $('#lineChartContainer').show();
+                        var lineChartData = {
+                            labels: year_list,
+                            datasets: []
+                        }
+
+                        results.forEach(function (resultsItem, resultsIndex) {
+                            var adminSubdivLabel = " "
+                            if (resultsItem.admin != "None") {
+                                adminSubdivLabel += "(" + resultsItem.admin.description + ")";
+                            }
+                            if (resultsItem.subdiv != "None") {
+                                adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
+                            }
+                            var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel + " - " + resultsItem.sex.description
+
+                            // there are no entries in the dataset object so this code doesn't run at all
+                            // use a exists = false/true check then decide what to do after
+                            var datasetExists = false;
+                            lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                                if (datasetItem.label == dataLabel) {
+                                    datasetExists = true;
+                                    // add data to the yearData object if it exists
+                                    resultYear = resultsItem.year;
+                                    datasetItem.yearData[resultYear] = Number(resultsItem.all_ages);
+                                }
+                            })
+                            if (!datasetExists) {
+                                // make new dataset object in the datasets array if doesn't dataset doesn't exist
+                                resultYear = resultsItem.year;
+                                randColor = getRandomColor();
+
+                                var dataset = {};
+                                dataset['label'] = dataLabel;
+                                dataset['fill'] = false;
+                                dataset['borderColor'] = randColor;
+                                dataset['backgroundColor'] = randColor;
+                                dataset['data'] = [];
+                                dataset['yearData'] = {};
+                                dataset['yearData'][resultYear] = Number(resultsItem.all_ages);
+                                dataset['lineTension'] = 0
+
+                                lineChartData['datasets'].push(dataset);
+                            }
+                        })
+
+                        // after dataset entries made, loop through datasets and create a data array according matching the year_list array order
+                        lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                            // loop through year_list
+                            for (var i = 0; i < year_list.length; i++) {
+                                // if year_list entry is key in datasetItem['yearData'], push value to datasetItem[data]
+                                var year = year_list[i];
+                                if (year in datasetItem['yearData']) {
+                                    datasetItem['data'].push(datasetItem['yearData'][year]);
+                                } else {
+                                    datasetItem['data'].push(null);
+                                }
+                            }
+                        });
+
+                        // show error message to notify user if some data is missing
+                        lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
+                            datasetItem['data'].forEach(function (dataItem, dataIndex) {
+                                if (isNaN(dataItem) || dataItem == null) {
+                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
+                                    $('#errorMessage').show();
+                                }
+                            })
+
+
+                        });
+
+                        // draw line chart
+                        var ctx = document.getElementById('lineChartArea').getContext('2d');
+                        window.myBar = new Chart(ctx, {
+                            type: 'line',
+                            data: lineChartData,
+                            options: {
+                                responsive: true,
+                                legend: {
+                                    position: 'right'
+                                },
+                                tooltips: {
+                                    mode: 'nearest',
+                                    intersect: false,
+                                },
+                                hover: {
+                                    mode: 'nearest',
+                                    intersect: false
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: 'Year'
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        display: true,
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: dataFormat
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                    }
+                    $('#lineChartContainer').append('<hr><br>');
+
+                    // draw table
+                    // table: country(admin)(subdiv) | sex | year | deaths(total / per 100,000) 
+                    var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>' + dataFormat + '</th></tr></thead><tbody>';
                     results.forEach(function (resultsItem, resultsIndex) {
                         var adminSubdivLabel = " "
                         if (resultsItem.admin != "None") {
@@ -516,131 +638,24 @@
                         if (resultsItem.subdiv != "None") {
                             adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
                         }
-                        var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel + " - " + resultsItem.sex.description
+                        var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
 
-                        // there are no entries in the dataset object so this code doesn't run at all
-                        // use a exists = false/true check then decide what to do after
-                        var datasetExists = false;
-                        lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
-                            if (datasetItem.label == dataLabel) {
-                                datasetExists = true;
-                                // add data to the yearData object if it exists
-                                resultYear = resultsItem.year;
-                                datasetItem.yearData[resultYear] = Number(resultsItem.all_ages);
-                            }
-                        })
-                        if (!datasetExists) {
-                            // make new dataset object in the datasets array if doesn't dataset doesn't exist
-                            resultYear = resultsItem.year;
-                            randColor = getRandomColor();
-
-                            var dataset = {};
-                            dataset['label'] = dataLabel;
-                            dataset['fill'] = false;
-                            dataset['borderColor'] = randColor;
-                            dataset['backgroundColor'] = randColor;
-                            dataset['data'] = [];
-                            dataset['yearData'] = {};
-                            dataset['yearData'][resultYear] = Number(resultsItem.all_ages);
-                            dataset['lineTension'] = 0
-
-                            lineChartData['datasets'].push(dataset);
-                        }
+                        table += '<tr><td>' + dataLabel + '</td><td>' + resultsItem.sex.description + '</td><td>' + resultsItem.year + '</td><td>' + resultsItem.all_ages + '</td></tr>'
                     })
+                    table += '</tbody></table>';
 
-                    // after dataset entries made, loop through datasets and create a data array according matching the year_list array order
-                    lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
-                        // loop through year_list
-                        for (var i = 0; i < year_list.length; i++) {
-                            // if year_list entry is key in datasetItem['yearData'], push value to datasetItem[data]
-                            var year = year_list[i];
-                            if (year in datasetItem['yearData']) {
-                                datasetItem['data'].push(datasetItem['yearData'][year]);
-                            } else {
-                                datasetItem['data'].push(null);
-                            }
-                        }
-                    });
+                    console.log(table);
 
-                    // show error message to notify user if some data is missing
-                    lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
-                        datasetItem['data'].forEach(function (dataItem, dataIndex) {
-                            if (isNaN(dataItem) || dataItem == null) {
-                                $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
-                                $('#errorMessage').show();
-                            }
-                        })
-
-
-                    });
-
-                    // draw line chart
-                    var ctx = document.getElementById('lineChartArea').getContext('2d');
-                    window.myBar = new Chart(ctx, {
-                        type: 'line',
-                        data: lineChartData,
-                        options: {
-                            responsive: true,
-                            legend: {
-                                position: 'right'
-                            },
-                            tooltips: {
-                                mode: 'nearest',
-                                intersect: false,
-                            },
-                            hover: {
-                                mode: 'nearest',
-                                intersect: false
-                            },
-                            scales: {
-                                xAxes: [{
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Year'
-                                    }
-                                }],
-                                yAxes: [{
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: dataFormat
-                                    }
-                                }]
-                            }
-                        }
-                    });
+                    $('#tableTitle').show();
+                    $('#tableArea').show();
+                    $('#tableArea').html(table);
+                },
+                error: function () {
+                    let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
+                    $('#errorMessage').html(output);
                 }
-                $('#lineChartContainer').append('<hr><br>');
-
-                // draw table
-                // table: country(admin)(subdiv) | sex | year | deaths(total / per 100,000) 
-                var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>' + dataFormat + '</th></tr></thead><tbody>';
-                results.forEach(function (resultsItem, resultsIndex) {
-                    var adminSubdivLabel = " "
-                    if (resultsItem.admin != "None") {
-                        adminSubdivLabel += "(" + resultsItem.admin.description + ")";
-                    }
-                    if (resultsItem.subdiv != "None") {
-                        adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
-                    }
-                    var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
-
-                    table += '<tr><td>' + dataLabel + '</td><td>' + resultsItem.sex.description + '</td><td>' + resultsItem.year + '</td><td>' + resultsItem.all_ages + '</td></tr>'
-                })
-                table += '</tbody></table>';
-
-                console.log(table);
-
-                $('#tableTitle').show();
-                $('#tableArea').show();
-                $('#tableArea').html(table);
-            },
-            error: function () {
-                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
-                $('#errorMessage').html(output);
-            }
-        });
+            });
+        }
     });
 
 </script>
