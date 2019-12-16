@@ -211,9 +211,19 @@
     })
 
     // loader image
-    $(document).ajaxStart(function () {
+    $(document).ajaxComplete(function () {
+        // Hide spinner
+        $("#spinner").hide();
+    });
+
+    // query database with user search terms, return data as charts and table
+    $(searchBtn).click(function () {
+        // prevent sending of form
+        event.preventDefault();
         // Show spinner
         $('#spinner').show();
+
+        // hide or reset all chart areas
         $('#errorMessage').html('');
         $('#tableArea').html('');
         $('#tableTitle').hide()
@@ -223,16 +233,6 @@
         $('#barChartContainer').html('');
         $('#barChartContainer').hide();
         $('#byYearTitle').hide()
-    });
-    $(document).ajaxComplete(function () {
-        // Hide spinner
-        $("#spinner").hide();
-    });
-
-    // query database with user search terms, return data to textarea
-    $(searchBtn).click(function () {
-        // prevent sending of form
-        event.preventDefault();
 
         // check which endpoint to send requests to
         var searchTable = $('input[name="dataChoiceRadio"]:checked').data('table');
