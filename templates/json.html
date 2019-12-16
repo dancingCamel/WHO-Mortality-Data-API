@@ -32,7 +32,7 @@
                             <div class="col-sm-4 form-group" id="countryGroup">
                                 <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
                                 <input class="form-control country autocomplete" type="text" placeholder="Country"
-                                    data-table="country" id="country" required>
+                                    data-table="country" id="country">
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
                                     aria-hidden="true" data-group="countryGroup"><i data-feather="plus-square"
                                         data-group="countryGroup" class="addSvg"></i></button>
@@ -57,7 +57,7 @@
                         <div class="form-row">
                             <div class="col-sm-2 form-group" id="yearGroup">
                                 <label for="jsonYear" class="col-sm-2 col-form-label">Year</label>
-                                <input class="form-control year" type="text" placeholder="Year" required>
+                                <input class="form-control year" type="text" placeholder="Year">
                                 <button class="btn btn-sm btn-light pd-a mt-1 addField" tabindex="500"
                                     aria-hidden="true" data-group="yearGroup"><i data-feather="plus-square"
                                         data-group="yearGroup" class="addSvg"></i></button>
@@ -173,6 +173,7 @@
         new_input.dataset.table = nearestInput.dataset.table
 
         closestDiv.insertBefore(new_input, lastChild)
+        new_input.focus();
     })
 
     // check if age formats selected to disable description search as age formats don't have descriptions
@@ -186,11 +187,6 @@
     })
 
     // loader image
-    $(document).ajaxStart(function () {
-        // Show spinner
-        $('#spinner').show();
-        $('#searchOutput').html('');
-    });
     $(document).ajaxComplete(function () {
         // Hide spinner
         $("#spinner").hide();
@@ -223,7 +219,7 @@
             for (var j = 0; j < formInputs[i].length; j++) {
                 var group = formVariables[i]
                 var inputValue = formInputs[i][j].value
-
+                var error = false;
                 switch (group) {
                     case "country":
                         // validate inputs
@@ -232,6 +228,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#searchOutput').html(output);
                             return
@@ -242,6 +239,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#searchOutput').html(output);
                             return
@@ -252,6 +250,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#searchOutput').html(output);
                             return
@@ -262,6 +261,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#searchOutput').html(output);
                             return
@@ -272,6 +272,7 @@
                             formInputLists[group].push(inputValue)
                         }
                         else {
+                            error = true;
                             let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
                             $('#searchOutput').html(output);
                             return
@@ -282,6 +283,12 @@
                         break;
                 }
             }
+        }
+        if (formInputLists['sex'].length == 0) {
+            error = true;
+            let output = '<div class="alert alert-danger" role="alert">Please check your form inputs.</div>';
+            $('#searchOutput').html(output);
+            return
         }
 
         // iterate over formInputLists dictionary and join each one into a string for get variables.
@@ -295,25 +302,29 @@
 
         // generate url depending on endpoint choice, search term and endpoint type
         var api_url = "/api/" + searchTable + "-search-multiple?" + urlGetVariables;
-
-        $.ajax({
-            url: api_url,
-            dataType: "json",
-            headers: { "api_key": api_key },
-            success: function (result) {
-                console.log(JSON.stringify(result, null, "\t"))
-                result = JSON.stringify(result, null, "\t")
-                // use textarea so json in properly formatted for users
-                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
-                $('#searchOutput').html(output);
-                // resize the textarea
-                auto_grow($('#returnedJson'));
-            },
-            error: function () {
-                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
-                $('#searchOutput').html(output);
-            }
-        });
+        if (!error) {
+            // loader image
+            $('#spinner').show();
+            $('#searchOutput').html('');
+            $.ajax({
+                url: api_url,
+                dataType: "json",
+                headers: { "api_key": api_key },
+                success: function (result) {
+                    console.log(JSON.stringify(result, null, "\t"))
+                    result = JSON.stringify(result, null, "\t")
+                    // use textarea so json in properly formatted for users
+                    output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
+                    $('#searchOutput').html(output);
+                    // resize the textarea
+                    auto_grow($('#returnedJson'));
+                },
+                error: function () {
+                    let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
+                    $('#searchOutput').html(output);
+                }
+            });
+        }
     });
 
 
