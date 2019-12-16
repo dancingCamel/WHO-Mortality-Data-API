@@ -329,7 +329,12 @@
             success: function (result) {
                 // save results to variable for processing
                 var results = result.results
-
+                var dataFormat = "";
+                if (searchTable == "mortality") {
+                    dataFormat = "Deaths";
+                } else if (searchTable == "mortality-adj") {
+                    dataFormat = "Deaths(per 100,000)";
+                }
                 // make year string into array
                 var year_list = formInputLists['year'].split(",")
                 // sort array chronologically 
@@ -480,7 +485,16 @@
                                 mode: 'index',
                                 intersect: false
                             },
-                            responsive: true
+                            responsive: true,
+                            scales: {
+                                yAxes: [{
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: dataFormat
+                                    }
+                                }]
+                            }
                         }
                     });
                 }
@@ -528,6 +542,7 @@
                             dataset['data'] = [];
                             dataset['yearData'] = {};
                             dataset['yearData'][resultYear] = Number(resultsItem.all_ages);
+                            dataset['lineTension'] = 0
 
                             lineChartData['datasets'].push(dataset);
                         }
@@ -589,22 +604,18 @@
                                     display: true,
                                     scaleLabel: {
                                         display: true,
-                                        labelString: 'Deaths'
+                                        labelString: dataFormat
                                     }
                                 }]
                             }
                         }
                     });
                 }
+                $('#lineChartContainer').append('<hr><br>');
+
                 // draw table
-                var dataFormat = "";
-                if (searchTable == "mortality") {
-                    dataFormat = "total";
-                } else if (searchTable == "mortality-adj") {
-                    dataFormat = "per 100,000";
-                }
                 // table: country(admin)(subdiv) | sex | year | deaths(total / per 100,000) 
-                var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>Deaths(' + dataFormat + ')</th></tr></thead><tbody>';
+                var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>' + dataFormat + '</th></tr></thead><tbody>';
                 results.forEach(function (resultsItem, resultsIndex) {
                     var adminSubdivLabel = " "
                     if (resultsItem.admin != "None") {
