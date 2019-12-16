@@ -117,7 +117,7 @@
             <div class="col-12">
                 <h2 id="byYearTitle">By Year</h2>
                 <div id="barChartContainer">
-                    <!-- Bar charts - one for each year. need to add canvases dynamically -->
+                    <!-- Bar charts - one for each year.-->
                 </div>
             </div>
             <hr>
@@ -128,7 +128,7 @@
                 <h2 id="trendsTitle">Trends</h2>
                 <div id="lineChartContainer">
                     <canvas id="lineChartArea">
-                        <!-- Line chart goes here - one for each year -->
+                        <!-- Line chart goes here -->
                     </canvas>
                 </div>
             </div>
@@ -136,9 +136,11 @@
         </div>
 
         <div class="row">
-            <div class="col-12 tableArea">
+            <div class="col-12">
                 <h2 id=tableTitle>Tables</h2>
-                <!-- Line chart goes here - one for each year -->
+                <div class="table-responsive-md" id="tableArea">
+                    <!-- table goes here -->
+                </div>
             </div>
         </div>
     </div>
@@ -239,13 +241,6 @@
         var formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
         var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
         var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
-
-        // remove cause from url generator if population table selected
-        if (searchTable == "population") {
-            formVariables.pop();
-            delete formInputLists['cause'];
-            formInputs.pop();
-        }
 
         // make arrays of valid user inputs
         for (var i = 0; i < formInputs.length; i++) {
@@ -349,7 +344,7 @@
                     // add canvas with unique id
                     var chartId = "barChart" + year
                     $('#barChartContainer').append('<canvas id="' + chartId + '"></canvas>');
-                    $('#barChartContainer').append('<hr>');
+                    $('#barChartContainer').append('<hr><br>');
                     $('#barChartContainer').show();
                 })
 
@@ -488,9 +483,7 @@
                             responsive: true
                         }
                     });
-
                 }
-
 
                 // if year list length is >1, draw line chart with all data
                 if (year_list.length > 1) {
@@ -573,10 +566,6 @@
                         data: lineChartData,
                         options: {
                             responsive: true,
-                            // title: {
-                            //     display: true,
-                            //     text: 'All Causes'
-                            // },
                             legend: {
                                 position: 'right'
                             },
@@ -607,7 +596,34 @@
                         }
                     });
                 }
+                // draw table
+                var dataFormat = "";
+                if (searchTable == "mortality") {
+                    dataFormat = "total";
+                } else if (searchTable == "mortality-adj") {
+                    dataFormat = "per 100,000";
+                }
+                // table: country(admin)(subdiv) | sex | year | deaths(total / per 100,000) 
+                var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>Deaths(' + dataFormat + ')</th></tr></thead><tbody>';
+                results.forEach(function (resultsItem, resultsIndex) {
+                    var adminSubdivLabel = " "
+                    if (resultsItem.admin != "None") {
+                        adminSubdivLabel += "(" + resultsItem.admin.description + ")";
+                    }
+                    if (resultsItem.subdiv != "None") {
+                        adminSubdivLabel += "(" + resultsItem.subdiv.description + ")";
+                    }
+                    var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
 
+                    table += '<tr><td>' + dataLabel + '</td><td>' + resultsItem.sex.description + '</td><td>' + resultsItem.year + '</td><td>' + resultsItem.all_ages + '</td></tr>'
+                })
+                table += '</tbody></table>';
+
+                console.log(table);
+
+                $('#tableTitle').show();
+                $('#tableArea').show();
+                $('#tableArea').html(table);
             },
             error: function () {
                 let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
@@ -615,279 +631,6 @@
             }
         });
     });
-
-
-    // sample json data:
-    var example_results = {
-        "results": [
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "267491",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "40",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "284741",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "22",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "270945",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "44",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "290721",
-            },
-            {
-                "country": {
-                    "code": "4308",
-                    "description": "United Kingdom"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "9",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "25184",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "1",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2011",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "25835",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "25683",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "Y349",
-                    "description": "Sum of all deaths from external causes V00-Y89 (in absense of specific detail)"
-                },
-                "sex": {
-                    "code": "1",
-                    "description": "Male"
-                },
-                "all_ages": "2",
-            },
-            {
-                "country": {
-                    "code": "4038",
-                    "description": "Croatia"
-                },
-                "admin": "None",
-                "subdiv": "None",
-                "year": "2010",
-                "code_list": "104",
-                "cause": {
-                    "code": "AAA",
-                    "description": "All Causes"
-                },
-                "sex": {
-                    "code": "2",
-                    "description": "Female"
-                },
-                "all_ages": "26413",
-            }
-        ]
-    }
 
 </script>
 {% endblock %}
