@@ -18,6 +18,13 @@
         </div>
 
         <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-danger">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
 
         <div class="row">
             <div class="col-12">
@@ -43,12 +50,6 @@
                         Change Password
                     </button>
                 </p>
-                <p>
-                    <button type="button" class="btn btn-danger profileBtn" data-toggle="modal"
-                        data-target="#deleteAccountModal" id="deleteAccountBtn">
-                        Delete Account
-                    </button>
-                </p>
             </div>
         </div>
 
@@ -71,7 +72,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Get New Key</button>
+                        <button type="button" class="btn btn-primary" id="newApiKeyBtn">Get New Key</button>
                     </div>
                 </div>
             </div>
@@ -101,7 +102,8 @@
                                 <label for="password">New Password:</label>
                                 <input type="password" id="password" name="password" class="form-control"
                                     placeholder="New password" required>
-                                <button class="btn btn-lg btn-primary btn-block mt-3 mb-3" type="submit">Change
+                                <button class="btn btn-lg btn-primary btn-block mt-3 mb-3" type="submit"
+                                    id="changePassBtn">Change
                                     Password</button>
                             </form>
                         </p>
@@ -113,32 +115,39 @@
             </div>
         </div>
 
-        <!-- Delete Account Modal -->
-        <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog"
-            aria-labelledby="deleteAccountModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteAccountModalTitle">Delete Account</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            Are you sure?
-                        </p>
-                        <div>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </main>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    const api_key = $('#apiKeyDiv').html()
+    const username = $('#username').html()
+    const newApiKeyBtn = $('#newApiKeyBtn')
+    const changePassBtn = $('#changePassBtn')
+
+    $(newApiKeyBtn).click(function () {
+        // make ajax call to generate new key. pass username and current api key as json object
+        $.ajax({
+            url: "/newApiKey",
+            dataType: "json",
+            headers: { "api_key": api_key, "username": username },
+            success: function (result) {
+                result = JSON.stringify(result, null, "\t")
+                // use textarea so json in properly formatted for users
+                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
+                $('#searchOutput').html(output);
+                // resize the textarea
+                auto_grow($('#returnedJson'));
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
+                $('#searchOutput').html(output);
+            }
+        });
+
+    })
+
+</script>
 {% endblock %}

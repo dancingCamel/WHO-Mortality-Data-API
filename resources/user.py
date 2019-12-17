@@ -2,6 +2,7 @@ from flask import render_template, make_response, url_for, request, redirect, fl
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
+from auth import requireAdmin
 from base64 import b64encode
 from os import urandom
 
@@ -31,11 +32,8 @@ class UserRegister(Resource):
         return make_response(render_template('register.html'), 200, headers)
 
     def post(self):
-        # data = _user_parser.parse_args()
         username = request.form.get("username")
         password = request.form.get("password")
-        # username = data['username']
-        # password = data['password']
 
         # if this returns a user, then the email already exists in database
         user = UserModel.find_by_username(username)
@@ -69,8 +67,6 @@ class UserRegister(Resource):
             flash(message)
         return redirect(url_for('userlogin', message=message))
 
-    # need user put method to change password or api_ley
-
 
 class User(Resource):
     @classmethod
@@ -81,12 +77,61 @@ class User(Resource):
         return user.json()
 
     @classmethod
+    @requireAdmin
     def delete(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
             return {'message': "User not found"}, 404
         user.delete_from_db()
         return {'message': "User deleted"}
+
+
+class UserPassword(Resource):
+    @classmethod
+    def put(cls):
+        # get info from request.form.get('password)
+        # check old pass and new pass match in javascipt and here
+        # check old pass is same as user's password
+        # update password
+        pass
+
+
+class UserApiKey(Resource):
+    # user user_id if can get it from flask_login, else use username
+    @classmethod
+    def put(cls):
+        username = request.headers.get('username')
+        api_key = request.headers.get('api_key')
+
+        user = UserModel.find_by_username(username)
+
+        if not user:
+            flash('User not found. Try logging in again.')
+            # if user doesn't send to login page
+            return redirect(url_for('userlogin'))
+
+        # check current api_key matches one sent by user
+        if user.api_key != api_key:
+            flash('Something wasn\'t right. Try logging in again.')
+            # if don't match, send to login page
+            return redirect(url_for('userlogin'))
+
+        # generate api key and check not already used
+        new_api_key = str(b64encode(urandom(64)).decode('latin1'))
+        while UserModel.find_by_key(new_api_key):
+            new_api_key = str(b64encode(urandom(64)).decode('latin1'))
+
+        # update api key in user database
+        try:
+            user.api_key = new_api_key
+            user.save_to_db()
+        except:
+            message = "Something went wrong generating a new key."
+            flash(message)
+            return redirect(url_for('profile', message=message))
+
+        # return api_key
+        return {'new_api_key': new_api_key}, 201
 
 
 class UserLogin(Resource):
@@ -111,8 +156,6 @@ class UserLogin(Resource):
 
         # if the above check passes, then we know the user has the right credentials
         login_user(user, remember=remember)
-
-        # save api_key to session storage
 
         return redirect(url_for('profile'))
 

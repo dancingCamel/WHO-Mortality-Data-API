@@ -157,6 +157,7 @@
     </footer>
     {% if current_user.is_authenticated %}
     <div id="apiKeyDiv">{{current_user.api_key}}</div>
+    <div id="username">{{current_user.username}}</div>
     {% endif %}
 
     <!-- Bootstrap scripts -->

@@ -29,7 +29,7 @@ from resources.icd10_lists import Icd10CodeListCode, Icd10CodeListDesc, Icd10All
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange, MortalitySearchMultiple
 from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne, MortalityAdjustedSearchMultiple
 # from blacklist import BLACKLIST
-from resources.user import UserRegister, User, UserLogin, UserLogout
+from resources.user import UserRegister, User, UserLogin, UserLogout, UserApiKey
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
 from resources.index import Index
@@ -157,6 +157,7 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
+api.add_resource(UserApiKey, '/newApiKey')
 # api.add_resource(TokenRefresh, '/refresh')
 
 # superuser endpoints
