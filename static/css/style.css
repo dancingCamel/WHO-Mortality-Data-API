@@ -54,3 +54,11 @@ textarea {
 #tableTitle {
 	display: none;
 }
+
+.profileBtn {
+	margin-left: 15px;
+}
+
+#accountSettings {
+	margin-top: 20px;
+}

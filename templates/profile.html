@@ -17,35 +17,123 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-9">
-                <!-- Area for query history -->
-            </div>
-            <!-- Button trigger apikey modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ApiKeyModal">
-                API key
-            </button>
+        <br>
 
-            <!-- Modal -->
-            <div class="modal fade" id="ApiKeyModal" tabindex="-1" role="dialog" aria-labelledby="ApiKeyModalTitle"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="ApiKeyModalTitle">Your API Key</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+        <div class="row">
+            <div class="col-12">
+                <p>Working with custom scripts?</p>
+
+
+                <!-- Button trigger apikey modal -->
+                <button type="button" class="btn btn-primary profileBtn" data-toggle="modal" data-target="#ApiKeyModal"
+                    id="apiKeyBtn">
+                    API key
+                </button>
+
+            </div>
+        </div>
+
+        <div class="row" id="accountSettings">
+            <div class="col-12">
+                <p>Account Settings:</p>
+                <!-- Button trigger change password modal -->
+                <p>
+                    <button type="button" class="btn btn-primary profileBtn" data-toggle="modal"
+                        data-target="#changePassModal" id="changePassBtn">
+                        Change Password
+                    </button>
+                </p>
+                <p>
+                    <button type="button" class="btn btn-danger profileBtn" data-toggle="modal"
+                        data-target="#deleteAccountModal" id="deleteAccountBtn">
+                        Delete Account
+                    </button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <!-- API key Modal -->
+        <div class="modal fade" id="ApiKeyModal" tabindex="-1" role="dialog" aria-labelledby="ApiKeyModalTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ApiKeyModalTitle">Your API Key</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ current_user.api_key }}
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Get New Key</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal fade" id="changePassModal" tabindex="-1" role="dialog" aria-labelledby="changePassModalTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePassModalTitle">Change Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            <!-- Change action -->
+                            <form class="form align-middle" method="POST" action="/login">
+                                <label for="oldPassword">Old Password:</label>
+                                <input type="password" id="oldPassword" name="oldPassword" class="form-control mb-2"
+                                    placeholder="Old password" required>
+                                <label for="oldPassword2">Confirm Old Password:</label>
+                                <input type="password" id="oldPassword2" name="oldPassword2" class="form-control mb-2"
+                                    placeholder="Confirm old password" required>
+                                <label for="password">New Password:</label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                    placeholder="New password" required>
+                                <button class="btn btn-lg btn-primary btn-block mt-3 mb-3" type="submit">Change
+                                    Password</button>
+                            </form>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Account Modal -->
+        <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog"
+            aria-labelledby="deleteAccountModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteAccountModalTitle">Delete Account</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Are you sure?
+                        </p>
+                        <div>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
                         </div>
-                        <div class="modal-body">
-                            <p>
-                                {{ current_user.api_key }}
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Get New Key</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
