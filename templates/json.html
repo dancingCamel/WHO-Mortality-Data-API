@@ -199,8 +199,18 @@
         // prevent sending of form
         event.preventDefault();
 
-        // get_json_data()
+        get_json_data();
+    })
 
+    // run search when hit enter key
+    $(document).keydown(function (event) {
+        if (event.which == 13) {
+            event.preventDefault()
+            get_json_data();
+        }
+    })
+
+    function get_json_data() {
         // check which endpoint to send requests to
         var searchTable = $('input[name="jsonDataChoiceRadio"]:checked').data('table');
 
@@ -326,7 +336,7 @@
                 }
             });
         }
-    });
+    };
 
 
 

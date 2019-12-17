@@ -221,9 +221,18 @@
     $(searchBtn).click(function () {
         // prevent sending of form
         event.preventDefault();
+        visualize();
+    })
 
-        // visualize();
+    // run search when hit enter key
+    $(document).keydown(function (event) {
+        if (event.which == 13) {
+            event.preventDefault()
+            visualize();
+        }
+    })
 
+    function visualize() {
         // hide or reset all chart areas
         $('#errorMessage').html('');
         $('#tableArea').html('');
@@ -356,6 +365,7 @@
                     // sort array chronologically 
                     year_list.sort((a, b) => Number(a) - Number(b));
 
+                    // bar charts
                     // create area for each bar chart
                     year_list.forEach(function (year, index) {
                         // show title
@@ -656,7 +666,7 @@
                 }
             });
         }
-    });
+    };
 
 </script>
 {% endblock %}
