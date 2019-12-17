@@ -18,13 +18,15 @@
         </div>
 
         <br>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert alert-danger">
-            {{ messages[0] }}
+        <div id="errors">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-danger">
+                {{ messages[0] }}
+            </div>
+            {% endif %}
+            {% endwith %}
         </div>
-        {% endif %}
-        {% endwith %}
 
         <div class="row">
             <div class="col-12">
@@ -66,7 +68,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>
+                        <p id="apiKey">
                             {{ current_user.api_key }}
                         </p>
                     </div>
@@ -122,7 +124,7 @@
 
 {% block script %}
 <script>
-    const api_key = $('#apiKeyDiv').html()
+    var api_key = $('#apiKeyDiv').html()
     const username = $('#username').html()
     const newApiKeyBtn = $('#newApiKeyBtn')
     const changePassBtn = $('#changePassBtn')
@@ -131,19 +133,18 @@
         // make ajax call to generate new key. pass username and current api key as json object
         $.ajax({
             url: "/newApiKey",
+            type: 'PUT',
             dataType: "json",
             headers: { "api_key": api_key, "username": username },
             success: function (result) {
-                result = JSON.stringify(result, null, "\t")
-                // use textarea so json in properly formatted for users
-                output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
-                $('#searchOutput').html(output);
-                // resize the textarea
-                auto_grow($('#returnedJson'));
+                var new_api_key = result['new_api_key']
+                $('#apiKey').html(new_api_key);
+                $('#apiKeyDiv').html(new_api_key);
+                api_key = $('#apiKeyDiv').html()
             },
             error: function () {
-                let output = '<div class="alert alert-danger" role="alert">No results match your search term.</div>';
-                $('#searchOutput').html(output);
+                let output = '<div class="alert alert-danger" role="alert">Couldn\'t generate new API key.</div>';
+                $('#errors').html(output);
             }
         });
 
