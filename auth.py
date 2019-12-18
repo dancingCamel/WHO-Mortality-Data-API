@@ -3,6 +3,7 @@ from flask_login import current_user
 from functools import wraps
 from models.user import UserModel
 from models.superuser import SuperuserModel
+from blacklist import BLACKLIST
 
 
 def requireApiKey(view_function):
@@ -11,8 +12,11 @@ def requireApiKey(view_function):
     def decorated_function(*args, **kwargs):
         api_key = request.headers.get('api_key')
         user = UserModel.find_by_key(api_key)
-        # api_key = api_key.replace('Basic ', '', 1)
+
         if api_key and user:
+            # check to see if user is denied access
+            if api_key in BLACKLIST:
+                return abort(401)
             return view_function(*args, **kwargs)
         else:
             abort(401)

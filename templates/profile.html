@@ -73,6 +73,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <p id="apiKeyMessage">
+                            <!-- messages go here -->
+                        </p>
                         <p id="apiKey">
                             {{ current_user.api_key }}
                         </p>
@@ -101,7 +104,6 @@
                             <p id="changePassMessage">
                                 <!-- messages go here -->
                             </p>
-                            <!-- Change action -->
                             <form class="form align-middle" id="changePassForm" method="POST" action="/changePass">
                                 <label for="oldPassword">Old Password:</label>
                                 <input type="password" id="oldPassword" name="oldPassword" class="form-control mb-2"
@@ -149,9 +151,9 @@
                 $('#apiKeyDiv').html(new_api_key);
                 api_key = $('#apiKeyDiv').html()
             },
-            error: function () {
-                let output = '<div role="alert">Couldn\'t generate new API key.</div>';
-                $('#errors').html(output);
+            error: function (xhr, status, error) {
+                let message = '<div class="alert alert-danger" role="alert">' + xhr.responseJSON.message + '</div>';
+                $('#apiKeyMessage').html(message);
             }
         });
     })

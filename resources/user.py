@@ -2,9 +2,10 @@ from flask import render_template, make_response, url_for, request, redirect, fl
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
-from auth import requireAdmin
+from auth import requireAdmin, requireApiKey
 from base64 import b64encode
 from os import urandom
+from blacklist import BLACKLIST
 
 
 from models.user import UserModel
@@ -48,7 +49,7 @@ class UserRegister(Resource):
 
         # generate api key and check not already used
         api_key = str(b64encode(urandom(64)).decode('latin1'))
-        while UserModel.find_by_key(api_key):
+        while UserModel.find_by_key(api_key) or api_key in BLACKLIST:
             api_key = str(b64encode(urandom(64)).decode('latin1'))
 
         # create new user
@@ -123,27 +124,24 @@ class UserPassword(Resource):
 
 class UserApiKey(Resource):
     # user user_id if can get it from flask_login, else use username
-    @classmethod
-    def put(cls):
+    @requireApiKey
+    def put(self):
         username = request.headers.get('username')
         api_key = request.headers.get('api_key')
 
         user = UserModel.find_by_username(username)
 
         if not user:
-            flash('User not found. Try logging in again.')
-            # if user doesn't send to login page
-            return redirect(url_for('userlogin'))
+            return {'message': "User not found. Try loggin in again."}
 
         # check current api_key matches one sent by user
         if user.api_key != api_key:
-            flash('Something wasn\'t right. Try logging in again.')
-            # if don't match, send to login page
-            return redirect(url_for('userlogin'))
+            return {'message': "Something isn't right. Try loggin in again."}
 
-        # generate api key and check not already used
+        # generate api key and check not already used or in blacklist
         new_api_key = str(b64encode(urandom(64)).decode('latin1'))
-        while UserModel.find_by_key(new_api_key):
+
+        while UserModel.find_by_key(new_api_key) or new_api_key in BLACKLIST:
             new_api_key = str(b64encode(urandom(64)).decode('latin1'))
 
         # update api key in user database
@@ -151,11 +149,12 @@ class UserApiKey(Resource):
             user.api_key = new_api_key
             user.save_to_db()
         except:
-            message = "Something went wrong generating a new key."
-            flash(message)
-            return redirect(url_for('profile', message=message))
+            return {'message': "Something went wrong generating a new key. Try again later."}
 
-        # return api_key
+        # blacklist the old api key
+        BLACKLIST.add(api_key)
+
+        # return new api_key
         return {'new_api_key': new_api_key}, 201
 
 
