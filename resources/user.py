@@ -1,30 +1,12 @@
 from flask import render_template, make_response, url_for, request, redirect, flash
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user, login_fresh
 from auth import requireAdmin, requireApiKey
 from base64 import b64encode
 from os import urandom
 from blacklist import BLACKLIST
-
-
 from models.user import UserModel
-from blacklist import BLACKLIST
-
-# reqparse returns python dictionaries.
-_user_parser = reqparse.RequestParser()
-# _user_parser.add_argument('username',
-#                           type=str,
-#                           required=True,
-#                           help="This field cannot be blank.",
-#                           location="form"
-#                           )
-# _user_parser.add_argument('password',
-#                           type=str,
-#                           required=True,
-#                           help="This field cannot be blank.",
-#                           location="form"
-#                           )
 
 
 class UserRegister(Resource):
@@ -71,6 +53,7 @@ class UserRegister(Resource):
 
 class User(Resource):
     @classmethod
+    @requireAdmin
     def get(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
@@ -88,13 +71,18 @@ class User(Resource):
 
 
 class UserPassword(Resource):
-    @classmethod
-    def put(cls):
+    # don't redirect users as json expected as return
+    @login_required
+    def put(self):
         # get info
         old_password = request.headers.get('oldPassword')
         old_password2 = request.headers.get('oldPassword2')
         new_password = request.headers.get('password')
         username = request.headers.get('username')
+
+        fresh = login_fresh()
+        if not fresh:
+            return {'message': "To protect your account, please <a href='/login'>reauthenticate.</a>"}, 401
 
         # check old pass and new pass match
         if old_password != old_password2:
@@ -123,13 +111,17 @@ class UserPassword(Resource):
 
 
 class UserApiKey(Resource):
-    # user user_id if can get it from flask_login, else use username
-    @requireApiKey
+    # don't redirect users as json expected as return
+    @login_required
     def put(self):
         username = request.headers.get('username')
         api_key = request.headers.get('api_key')
 
         user = UserModel.find_by_username(username)
+
+        fresh = login_fresh()
+        if not fresh:
+            return {'message': "To protect your account, please <a href='/login'>reauthenticate.</a>."}, 401
 
         if not user:
             return {'message': "User not found. Try loggin in again."}
@@ -167,7 +159,7 @@ class UserLogin(Resource):
     def post(cls):
         username = request.form.get('username')
         password = request.form.get('password')
-        remember = True if request.form.get('remember') else False
+        rememberBool = True if request.form.get('remember') else False
 
         # find user in db
         user = UserModel.find_by_username(username)
@@ -179,7 +171,7 @@ class UserLogin(Resource):
             return redirect(url_for('userlogin'))
 
         # if the above check passes, then we know the user has the right credentials
-        login_user(user, remember=remember)
+        login_user(user, remember=rememberBool)
 
         return redirect(url_for('profile'))
 

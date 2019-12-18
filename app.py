@@ -57,6 +57,11 @@ api = Api(app)
 login_manager = LoginManager()
 login_manager.login_view = 'userlogin'
 login_manager.init_app(app)
+login_manager.refresh_view = "userlogin"
+login_manager.needs_refresh_message = (
+    u"To protect your account, please reauthenticate."
+)
+login_manager.needs_refresh_message_category = "info"
 
 
 @login_manager.user_loader
