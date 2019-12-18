@@ -18,22 +18,6 @@
         </div>
 
         <br>
-        <div id="messageArea">
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <div class="alert alert-info" id="messages">
-                {{ messages[0] }}
-            </div>
-            {% endif %}
-            {% endwith %}
-
-            {% if error %}
-            <div class="alert alert-danger" id="errors">
-                {{ error }}
-            </div>
-            {% endif %}
-
-        </div>
 
         <div class="row">
             <div class="col-12">
@@ -73,7 +57,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p id="apiKeyMessage">
+                        <p id="apiKeyMessage" class="messages">
                             <!-- messages go here -->
                         </p>
                         <p id="apiKey">
@@ -101,10 +85,11 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            <p id="changePassMessage">
+                            <p id="changePassMessage" class="messages">
                                 <!-- messages go here -->
                             </p>
-                            <form class="form align-middle" id="changePassForm" method="POST" action="/changePass">
+                            <form class="form align-middle" id="changePassForm" method="POST" action="/changePass"
+                                novalidate>
                                 <label for="oldPassword">Old Password:</label>
                                 <input type="password" id="oldPassword" name="oldPassword" class="form-control mb-2"
                                     placeholder="Old password" required>
@@ -120,7 +105,8 @@
                         </p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            id="closePassChangeBtn">Close</button>
                     </div>
                 </div>
             </div>
@@ -181,6 +167,7 @@
         if (oldPassword != oldPassword2) {
             $('#changePassMessage').html('<div class="alert alert-danger" role="alert">Passwords don\'t match.</div>');
             error = true;
+            clearPassInputs();
             return
         }
 
@@ -198,10 +185,24 @@
                 error: function (xhr, status, error) {
                     let message = '<div class="alert alert-danger" role="alert">' + xhr.responseJSON.message + '</div>';
                     $('#changePassMessage').html(message);
+                },
+                complete: function (data) {
+                    clearPassInputs();
                 }
             });
         }
     })
 
+    // clear password inputs
+    function clearPassInputs() {
+        $('#oldPassword').val("");
+        $('#oldPassword2').val("");
+        $('#password').val("");
+    }
+
+    // hide messages when modals are closed
+    $(".modal").on("hidden.bs.modal", function () {
+        $(".messages").html("");
+    });
 </script>
 {% endblock %}
