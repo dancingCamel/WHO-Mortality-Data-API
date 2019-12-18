@@ -22,7 +22,8 @@ class UserRegister(Resource):
         user = UserModel.find_by_username(username)
 
         if user:  # if a user is found, we want to redirect back to signup page so user can try again
-            flash('Email address already exists')
+            message = "Username address already exists"
+            flash(message, 'error')
             return redirect(url_for('userregister'))
 
         # hash password
@@ -41,14 +42,13 @@ class UserRegister(Resource):
         try:
             new_user.save_to_db()
             message = "Registered successfully. Please log in."
+            flash(message, 'info')
         except:
             message = "Something went wrong registering the user."
-            flash(message)
-            return redirect(url_for('userregister', message=message))
+            flash(message, 'error')
+            return redirect(url_for('userregister'))
 
-        if message:
-            flash(message)
-        return redirect(url_for('userlogin', message=message))
+        return redirect(url_for('userlogin'))
 
 
 class User(Resource):
@@ -166,8 +166,9 @@ class UserLogin(Resource):
 
         # check if user actually exists
         if not user or not check_password_hash(user.password, password):
-            flash('Please check your login details and try again.')
             # if user doesn't exist or password is wrong, reload the page
+            message = "Please check your login credentials."
+            flash(message, 'error')
             return redirect(url_for('userlogin'))
 
         # if the above check passes, then we know the user has the right credentials

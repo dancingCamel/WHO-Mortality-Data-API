@@ -12,10 +12,22 @@
             <a class=" h1 mt-5" href="#">
                 WHO Mortality Database
             </a>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <div class="alert alert-info">
-                {{ messages[0] }}
+            {% with info = get_flashed_messages(category_filter=["info"]) %}
+            {% if info %}
+            <div class="alert alert-success mt-3">
+                {%- for msg in info %}
+                {{ msg }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+            {% if errors %}
+            <div class="alert alert-danger mt-3">
+                {%- for msg in errors %}
+                {{ msg }}
+                {% endfor %}
             </div>
             {% endif %}
             {% endwith %}
@@ -28,7 +40,7 @@
                 <input type="password" id="password" name="password" class="form-control mt-3" placeholder="Password"
                     required>
 
-                <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Sign up</button>
+                <button class="btn btn-lg btn-primary btn-block mb-3 mt-3" type="submit">Sign up</button>
                 <div class="text-muted">
                     Already registered? <a href="login">Log in</a>
                 </div>

@@ -14,13 +14,26 @@
                     WHO Mortality Database
                 </a>
                 <h1 class="h3 mb-3 mt-3 font-weight-normal text-wrap">Log in</h1>
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="alert alert-danger">
-                    {{ messages[0] }}
+                {% with info = get_flashed_messages(category_filter=["info"]) %}
+                {% if info %}
+                <div class="alert alert-success mt-3">
+                    {%- for msg in info %}
+                    {{ msg }}
+                    {% endfor %}
                 </div>
                 {% endif %}
                 {% endwith %}
+
+                {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                <div class="alert alert-danger mt-3">
+                    {%- for msg in errors %}
+                    {{ msg }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
                 <label for="username" class="sr-only">Username</label>
                 <input type="text" id="username" name="username" class="form-control mt-3" placeholder="Username"
                     required autofocus="">
