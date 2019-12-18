@@ -37,6 +37,7 @@ from resources.profile import Profile
 from resources.docs import Docs
 from resources.visualize import Visualize
 from resources.codes import Codes
+from resources.contact import Contact
 from resources.json import Json
 
 
@@ -170,6 +171,7 @@ api.add_resource(Docs, '/docs')
 api.add_resource(Json, '/json')
 api.add_resource(Codes, '/codes')
 api.add_resource(Profile, '/profile')
+api.add_resource(Contact, '/contact')
 
 
 if __name__ == '__main__':
