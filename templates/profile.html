@@ -18,21 +18,26 @@
         </div>
 
         <br>
-        <div id="errors">
+        <div id="messageArea">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <div class="alert alert-danger">
+            <div class="alert alert-info" id="messages">
                 {{ messages[0] }}
             </div>
             {% endif %}
             {% endwith %}
+
+            {% if error %}
+            <div class="alert alert-danger" id="errors">
+                {{ error }}
+            </div>
+            {% endif %}
+
         </div>
 
         <div class="row">
             <div class="col-12">
                 <p>Working with custom scripts?</p>
-
-
                 <!-- Button trigger apikey modal -->
                 <button type="button" class="btn btn-primary profileBtn" data-toggle="modal" data-target="#ApiKeyModal"
                     id="apiKeyBtn">
@@ -48,7 +53,7 @@
                 <!-- Button trigger change password modal -->
                 <p>
                     <button type="button" class="btn btn-primary profileBtn" data-toggle="modal"
-                        data-target="#changePassModal" id="changePassBtn">
+                        data-target="#changePassModal" id="openChangePassBtn">
                         Change Password
                     </button>
                 </p>
@@ -93,8 +98,11 @@
                     </div>
                     <div class="modal-body">
                         <p>
+                            <p id="changePassMessage">
+                                <!-- messages go here -->
+                            </p>
                             <!-- Change action -->
-                            <form class="form align-middle" method="POST" action="/login">
+                            <form class="form align-middle" id="changePassForm" method="POST" action="/changePass">
                                 <label for="oldPassword">Old Password:</label>
                                 <input type="password" id="oldPassword" name="oldPassword" class="form-control mb-2"
                                     placeholder="Old password" required>
@@ -104,10 +112,9 @@
                                 <label for="password">New Password:</label>
                                 <input type="password" id="password" name="password" class="form-control"
                                     placeholder="New password" required>
-                                <button class="btn btn-lg btn-primary btn-block mt-3 mb-3" type="submit"
-                                    id="changePassBtn">Change
-                                    Password</button>
                             </form>
+                            <button class="btn btn-lg btn-primary btn-block mt-3 mb-3" id="changePassBtn">Change
+                                Password</button>
                         </p>
                     </div>
                     <div class="modal-footer">
@@ -143,11 +150,55 @@
                 api_key = $('#apiKeyDiv').html()
             },
             error: function () {
-                let output = '<div class="alert alert-danger" role="alert">Couldn\'t generate new API key.</div>';
+                let output = '<div role="alert">Couldn\'t generate new API key.</div>';
                 $('#errors').html(output);
             }
         });
+    })
 
+    $(changePassBtn).click(function (event) {
+        var oldPassword = document.getElementById('oldPassword').value
+        var oldPassword2 = document.getElementById('oldPassword2').value
+        var password = document.getElementById('password').value
+        var error = false;
+
+        // check user has put values in all boxes
+        if (oldPassword == "" || oldPassword2 == "") {
+            $('#changePassMessage').html('<div class="alert alert-danger" role="alert">Please confirm you old password.</div>');
+            error = true;
+            return
+        }
+        if (password == "") {
+            $('#changePassMessage').html('<div class="alert alert-danger" role="alert">Please enter a new password.</div>');
+            error = true;
+            return
+        }
+
+
+        // check oldPassword and oldPassword2 match 
+        if (oldPassword != oldPassword2) {
+            $('#changePassMessage').html('<div class="alert alert-danger" role="alert">Passwords don\'t match.</div>');
+            error = true;
+            return
+        }
+
+        // add passwords to header
+        if (!error) {
+            $.ajax({
+                url: "/changePass",
+                type: 'PUT',
+                dataType: "json",
+                headers: { "username": username, "oldPassword": oldPassword, "oldPassword2": oldPassword2, "password": password },
+                success: function (result) {
+                    let message = '<div class="alert alert-success" role="alert">Password successfully changed.</div>';
+                    $('#changePassMessage').html(message);
+                },
+                error: function (xhr, status, error) {
+                    let message = '<div class="alert alert-danger" role="alert">' + xhr.responseJSON.message + '</div>';
+                    $('#changePassMessage').html(message);
+                }
+            });
+        }
     })
 
 </script>

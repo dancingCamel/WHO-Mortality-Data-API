@@ -89,11 +89,36 @@ class User(Resource):
 class UserPassword(Resource):
     @classmethod
     def put(cls):
-        # get info from request.form.get('password)
-        # check old pass and new pass match in javascipt and here
-        # check old pass is same as user's password
+        # get info
+        old_password = request.headers.get('oldPassword')
+        old_password2 = request.headers.get('oldPassword2')
+        new_password = request.headers.get('password')
+        username = request.headers.get('username')
+
+        # check old pass and new pass match
+        if old_password != old_password2:
+            error = "Please check your credentials - missmatch."
+            return {'message': error}, 401
+
+        # check user exists and password is correct
+        user = UserModel.find_by_username(username)
+
+        if not user or not check_password_hash(user.password, old_password):
+            error = "Please check your credentials."
+            return {'message': error}, 401
+
         # update password
-        pass
+        hashed_new_password = generate_password_hash(
+            new_password, method='pbkdf2:sha256', salt_length=32)
+
+        try:
+            user.password = hashed_new_password
+            user.save_to_db()
+            message = "Successfully updated password."
+            return {'message': message}, 201
+        except:
+            error = "Something went wrong updating your password."
+            return {'message': error}, 500
 
 
 class UserApiKey(Resource):
