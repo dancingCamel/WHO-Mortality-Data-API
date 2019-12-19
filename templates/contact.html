@@ -10,8 +10,37 @@
 
 {% block main %}
 <main>
-    <div class="container mt-3">
-        Just testing - need to put a contact form in here that sends email
+
+
+    <div class="row justify-content-center vertical-center ">
+        <div class="col-6">
+            <form class="form align-middle" method="POST" action="/contact">
+                <a class="h1 mt-5" href="#">
+                    Contact Us
+                </a>
+                <label for="name" class="sr-only">Name</label>
+                <input type="text" id="name" name="name" class="form-control mt-3" placeholder="Name" autofocus="">
+
+                <label for="email" class="sr-only">Email</label>
+                <input type="email" id="email" name="email" class="form-control mt-3" placeholder="Email" required>
+
+                <label for="subject" class="sr-only">Subject</label>
+                <input type="text" id="subject" name="subject" class="form-control mt-3" placeholder="Subject">
+
+                <label for="message" class="sr-only">Message</label>
+                <textarea class="form-control mt-3" id="message" name="message"
+                    placeholder="Enter your massage for us here." rows="7"></textarea>
+
+                <button class="btn btn-lg btn-primary mt-3 " type="submit">Send</button>
+
+            </form>
+        </div>
+    </div>
+
+
+
+
+
     </div>
 </main>
 
