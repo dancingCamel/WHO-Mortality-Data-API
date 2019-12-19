@@ -12,7 +12,6 @@
             <a class=" h1 mt-5" href="#">
                 WHO Mortality Database
             </a>
-<<<<<<< HEAD
             {% with info = get_flashed_messages(category_filter=["info"]) %}
             {% if info %}
             <div class="alert alert-success mt-3">
@@ -29,12 +28,6 @@
                 {%- for msg in errors %}
                 {{ msg }}
                 {% endfor %}
-=======
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <div class="alert alert-info mt-3">
-                {{ messages[0] }}
->>>>>>> contact_page
             </div>
             {% endif %}
             {% endwith %}
