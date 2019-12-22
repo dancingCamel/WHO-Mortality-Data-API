@@ -39,22 +39,23 @@ from resources.visualize import Visualize
 from resources.codes import Codes
 from resources.contact import Contact
 from resources.json import Json
-
+from flask_mail import Mail
+from db import db
 
 app = Flask(__name__)
+api = Api(app)
+
+# Configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # error handling
 app.config['PROPAGATE_EXCEPTIONS'] = True
-
-
 # secret key for development
 app.secret_key = "dev"
 # production
 app.config.from_pyfile('config.py', silent=True)
-app.config.from_pyfile('config.py', silent=True)
 
-api = Api(app)
+# Flask login config
 login_manager = LoginManager()
 login_manager.login_view = 'userlogin'
 login_manager.init_app(app)
@@ -63,6 +64,16 @@ login_manager.needs_refresh_message = (
     u"To protect your account, please reauthenticate."
 )
 login_manager.needs_refresh_message_category = "info"
+
+# mail configuration
+app.config['DEBUG'] = True
+app.config['MAIL_SUPPRESS_SEND'] = False
+app.config['TESTING'] = False
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USERNAME'] = '' get from config file
+# app.config['MAIL_DEFAULT_SENDER'] = '' get from config file
+# app.config['MAIL_PASSWORD'] = 'password' get from config file
 
 
 @login_manager.user_loader
@@ -180,8 +191,20 @@ api.add_resource(Codes, '/codes')
 api.add_resource(Profile, '/profile')
 api.add_resource(Contact, '/contact')
 
+# remove for deployment
+# db.init_app(app)
 
+# allow to run either by flask run or app.py
 if __name__ == '__main__':
-    from db import db
     db.init_app(app)
-    app.run(port=5000, debug=True)
+    with app.app_context():
+        # db.init_app(app)
+        app.run(host="127.0.0.1", port=5000, debug=True)
+
+#  remove this for deployment
+
+
+# def create_app():
+#     with app.app_context():
+#         db.init_app(app)
+#         return app
