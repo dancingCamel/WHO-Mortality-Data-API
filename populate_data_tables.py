@@ -201,8 +201,7 @@ def add_total_population_entries():
 
 
 def add_first_admin():
-    user_id = "1"
-    username = "William"
+    username = "whomortalitydatabase@gmail.com"
 
     superuser = SuperuserModel(username)
     superuser.save_to_db()

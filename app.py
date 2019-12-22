@@ -198,7 +198,6 @@ api.add_resource(Contact, '/contact')
 if __name__ == '__main__':
     db.init_app(app)
     with app.app_context():
-        # db.init_app(app)
         app.run(host="127.0.0.1", port=5000, debug=True)
 
 #  remove this for deployment

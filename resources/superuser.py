@@ -23,10 +23,6 @@ class Superuser(Resource):
 class SuperuserUpdate(Resource):
     @requireAdmin
     def post(self):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-
         data = _superuser_parser.parse_args()
 
         if SuperuserModel.find_by_username(data['username']):
@@ -38,7 +34,7 @@ class SuperuserUpdate(Resource):
 
         user = user.json()
         superuser = SuperuserModel(
-            user_id=user['id'], username=user['username'])
+            username=user['username'])
 
         superuser.save_to_db()
 
