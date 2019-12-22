@@ -2,6 +2,7 @@ from models.sex import SexModel
 from models.country import CountryModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
+from models.icd10 import Icd10Model
 from datetime import datetime
 
 
@@ -38,5 +39,11 @@ def valid_admin(admin):
 
 def valid_subdiv(subdiv):
     if SubdivModel.find_by_code(subdiv) or subdiv == "":
+        return True
+    return False
+
+
+def valid_cause(cause):
+    if Icd10Model.find_by_code(cause):
         return True
     return False

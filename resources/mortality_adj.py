@@ -181,7 +181,7 @@ class MortalityAdjustedSearchMultiple(Resource):
         for country_code in filter(valid_country_code, country_code_list):
             for year in filter(valid_year, year_list):
                 for sex in filter(valid_sex, sex_code_list):
-                    for cause in cause_code_list_extended:
+                    for cause in filter(valid_cause, cause_code_list_extended):
                         for admin in filter(valid_admin, admin_code_list):
                             for subdiv in filter(valid_subdiv, subdiv_code_list):
 
