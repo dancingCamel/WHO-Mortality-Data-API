@@ -15,6 +15,7 @@ class UserRegister(Resource):
         return make_response(render_template('register.html'), 200, headers)
 
     def post(self):
+        # username is just user's email address
         username = request.form.get("username")
         password = request.form.get("password")
 
@@ -22,7 +23,7 @@ class UserRegister(Resource):
         user = UserModel.find_by_username(username)
 
         if user:  # if a user is found, we want to redirect back to signup page so user can try again
-            message = "Username address already exists"
+            message = "Email address already exists"
             flash(message, 'error')
             return redirect(url_for('userregister'))
 
@@ -44,7 +45,7 @@ class UserRegister(Resource):
             message = "Registered successfully. Please log in."
             flash(message, 'info')
         except:
-            message = "Something went wrong registering the user."
+            message = "Something went wrong. Please try again later."
             flash(message, 'error')
             return redirect(url_for('userregister'))
 
@@ -128,7 +129,7 @@ class UserApiKey(Resource):
 
         # check current api_key matches one sent by user
         if user.api_key != api_key:
-            return {'message': "Something isn't right. Try loggin in again."}
+            return {'message': "Something isn't right. Try logging in again."}
 
         # generate api key and check not already used or in blacklist
         new_api_key = str(b64encode(urandom(64)).decode('latin1'))

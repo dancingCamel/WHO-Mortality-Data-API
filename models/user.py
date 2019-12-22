@@ -11,6 +11,7 @@ class UserModel(UserMixin, db.Model):
     api_key = db.Column(db.String(100))
 
     def __init__(self, username, password, api_key):
+        # username is just user's email address
         self.username = username
         self.password = password
         self.api_key = api_key
