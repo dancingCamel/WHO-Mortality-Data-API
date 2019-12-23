@@ -217,13 +217,24 @@
         $("#spinner").hide();
     });
 
+    // run search if hit enter key
+    $(document).keydown(function (event) {
+        if (event.which == 13) {
+            event.preventDefault()
+            visualize();
+        }
+    })
+
     // query database with user search terms, return data as charts and table
     $(searchBtn).click(function () {
         // prevent sending of form
         event.preventDefault();
+        visualize();
+    });
 
-        // visualize();
 
+
+    function visualize() {
         // hide or reset all chart areas
         $('#errorMessage').html('');
         $('#tableArea').html('');
@@ -656,7 +667,7 @@
                 }
             });
         }
-    });
+    }
 
 </script>
 {% endblock %}
