@@ -42,9 +42,11 @@ class MortalityDataSearch(Resource):
             query['subdiv_code'] = subdiv
 
         cause = request.args.get('cause', type=str)
-        # add validation fo cause
         if cause:
-            query['cause'] = cause
+            cause_upper = cause.upper()
+            if not valid_cause(cause_upper):
+                return {'message': 'Please enter a valid cause code'}, 400
+            query['cause'] = cause_upper
 
         results = [entry.json()
                    for entry in MortalityDataModel.search_mortalities(query)]
@@ -77,6 +79,9 @@ class MortalitySearchMultiple(Resource):
         year_list = strip_whitespace(year_input).split(',')
         sex_code_list = strip_whitespace(sex_code_input).split(',')
         cause_code_list = strip_whitespace(cause_code_input).split(',')
+        # make causes uppercase
+        cause_code_list = list(map(
+            lambda x: x.upper(), cause_code_list))
 
         # find all codes that have matching description to codes given and search for those, too
         # that way can compare countries that use different code lists
@@ -192,7 +197,10 @@ class MortalityDataOne(Resource):
 
             cause = request.args.get('cause', type=str)
             if cause:
-                query['cause'] = cause
+                cause_upper = cause.upper()
+                if not valid_cause(cause_upper):
+                    return {'message': 'Please enter a valid cause code'}, 400
+                query['cause'] = cause_upper
 
             result = [entry.json()
                       for entry in MortalityDataModel.search_mortalities(query)]
@@ -259,7 +267,9 @@ class MortalityDataChange(Resource):
         if not valid_sex(sex):
             return {'message': 'Please enter a valid sex code'}, 400
 
-        # Add cause validation
+        cause_upper = cause.upper()
+        if not valid_cause(cause_upper):
+            return {'message': 'Please enter a valid cause code'}, 400
 
         # post_format tells us if we have an admin or subdiv code while allowing us to change their values
         post_format = [0, 0]
@@ -338,7 +348,9 @@ class MortalityDataChange(Resource):
         if not valid_sex(sex):
             return {'message': 'Please enter a valid sex code'}, 400
 
-        # add cause validation
+        cause_upper = cause.upper()
+        if not valid_cause(cause_upper):
+            return {'message': 'Please enter a valid cause code'}, 400
 
         # post_format tells us if we have an admin or subdiv code
         post_format = [0, 0]
@@ -437,7 +449,9 @@ class MortalityDataChange(Resource):
         if not valid_sex(sex):
             return {'message': 'Please enter a valid sex code'}, 400
 
-        # add validate cause
+        cause_upper = cause.upper()
+        if not valid_cause(cause_upper):
+            return {'message': 'Please enter a valid cause code'}, 400
 
         # post_format tells us if we have an admin or subdiv code
         post_format = [0, 0]

@@ -47,9 +47,12 @@ class MortalityAdjustedSearch(Resource):
             query['subdiv_code'] = subdiv
 
         cause = request.args.get('cause', type=str)
-        # add validation fo cause
+
         if cause:
-            query['cause'] = cause
+            cause_upper = cause.upper()
+            if not valid_cause(cause_upper):
+                return {'message': 'Please enter a valid cause code'}, 400
+            query['cause'] = cause_upper
 
         # results of mortality search in list
         results = [entry.json()
@@ -145,6 +148,9 @@ class MortalityAdjustedSearchMultiple(Resource):
         year_list = strip_whitespace(year_input).split(',')
         sex_code_list = strip_whitespace(sex_code_input).split(',')
         cause_code_list = strip_whitespace(cause_code_input).split(',')
+        # make causes uppercase
+        cause_code_list = list(map(
+            lambda x: x.upper(), cause_code_list))
 
         # find all codes that have matching description to codes given and search for those, too
         # that way can compare countries that use different code lists
@@ -321,9 +327,11 @@ class MortalityAdjustedOne(Resource):
             query['subdiv_code'] = subdiv
 
         cause = request.args.get('cause', type=str)
-        # add validation fo cause
         if cause:
-            query['cause'] = cause
+            cause_upper = cause.upper()
+            if not valid_cause(cause_upper):
+                return {'message': 'Please enter a valid cause code'}, 400
+            query['cause'] = cause_upper
 
         # results of mortality search in list
         results = [entry.json()

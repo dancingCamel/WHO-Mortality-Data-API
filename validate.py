@@ -44,6 +44,7 @@ def valid_subdiv(subdiv):
 
 
 def valid_cause(cause):
+    cause = cause.upper()
     if Icd10Model.find_by_code(cause):
         return True
     return False

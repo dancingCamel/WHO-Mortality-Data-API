@@ -68,6 +68,7 @@ class Icd10Code(Resource):
     # get all codes that match a code (list code pairs)
     @requireApiKey
     def get(self, code):
+        code = code.upper()
         entries = Icd10Model.find_by_code(code)
         if entries:
             return {'results': [entry.json() for entry in entries]}, 200
