@@ -80,7 +80,7 @@ class Icd10Desc(Resource):
     @requireApiKey
     def get(self, search_term):
         if len(search_term) < 3:
-            return {'message': "Please search for a term at least 3 characters long."}
+            return {'message': "Please search for a term at least 3 characters long."}, 400
         entries = Icd10Model.search(search_term)
         if entries:
             return {'results': [entry.json() for entry in entries]}, 200

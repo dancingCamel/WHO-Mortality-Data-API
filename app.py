@@ -39,7 +39,9 @@ from resources.visualize import Visualize
 from resources.codes import Codes
 from resources.contact import Contact
 from resources.json import Json
-from flask_mail import Mail
+from resources.info import Info
+from resources.externalDocs import ExternalDocs
+from resources.paths import Paths
 from db import db
 
 app = Flask(__name__)
@@ -69,11 +71,6 @@ login_manager.needs_refresh_message_category = "info"
 app.config['DEBUG'] = True
 app.config['MAIL_SUPPRESS_SEND'] = False
 app.config['TESTING'] = False
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-# app.config['MAIL_USERNAME'] = '' get from config file
-# app.config['MAIL_DEFAULT_SENDER'] = '' get from config file
-# app.config['MAIL_PASSWORD'] = 'password' get from config file
 
 
 @login_manager.user_loader
@@ -156,7 +153,7 @@ api.add_resource(Icd10Code, '/api/icd10-code/<string:code>')
 api.add_resource(Icd10CodeListCode, '/api/icd10-code-list-code/<string:code>')
 api.add_resource(Icd10CodeListDesc,
                  '/api/icd10-code-list-desc/<string:search_term>')
-api.add_resource(Icd10AllCodeLists, '/api/icd10-code-lists')
+api.add_resource(Icd10AllCodeLists, '/api/icd10-code-list-list')
 
 # Mortality data endpoints
 api.add_resource(MortalityDataSearch, '/api/mortality-data-search')
@@ -176,7 +173,6 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 api.add_resource(UserApiKey, '/newApiKey')
 api.add_resource(UserPassword, '/changePass')
-# api.add_resource(TokenRefresh, '/refresh')
 
 # superuser endpoints
 api.add_resource(Superuser, '/superuser/<string:username>')
@@ -190,6 +186,12 @@ api.add_resource(Json, '/json')
 api.add_resource(Codes, '/codes')
 api.add_resource(Profile, '/profile')
 api.add_resource(Contact, '/contact')
+
+# API info endpoinds
+api.add_resource(Info, '/info')
+api.add_resource(ExternalDocs, '/externalDocs')
+api.add_resource(Paths, '/paths')
+
 
 # remove for deployment
 # db.init_app(app)

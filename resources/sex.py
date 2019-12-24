@@ -29,7 +29,7 @@ class SexDesc(Resource):
 
     @requireAdmin
     def post(self, sex):
-        data = Sex.parser.parse_args()
+        data = SexDesc.parser.parse_args()
         if SexModel.find_by_name(sex):
             return {'message': "Sex '{}' already exists.".format(sex)}, 400
 

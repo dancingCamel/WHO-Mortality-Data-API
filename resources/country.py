@@ -38,7 +38,7 @@ class CountryName(Resource):
         if CountryModel.find_by_name(country_name):
             return {'message': "A country with name '{}' already exists.".format(country_name)}, 400
 
-        data = Country.parser.parse_args()
+        data = CountryName.parser.parse_args()
 
         if CountryModel.find_by_code(data['country_code']):
             return {'message': "A country with code '{}' already exists.".format(data['country_code'])}, 400
@@ -54,7 +54,7 @@ class CountryName(Resource):
     @requireAdmin
     # change code of given country
     def put(self, country_name):
-        data = Country.parser.parse_args()
+        data = CountryName.parser.parse_args()
         country = CountryModel.find_by_name(country_name)
 
         if country:
