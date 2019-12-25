@@ -101,7 +101,7 @@ class MortalityDataModel(db.Model):
                        'description': country.country_name}
         else:
             country = "Country with code {} not found.".format(
-                self.country_code)
+                self.country_code), 404
 
         # format admin
         admin = AdminModel.find_by_code_and_country(
@@ -127,7 +127,7 @@ class MortalityDataModel(db.Model):
                      'description': cause.description}
         else:
             cause = "Cause code '{}' not found in list '{}'".format(
-                self.cause, self.code_list)
+                self.cause, self.code_list), 404
 
         # format sex
         sex = SexModel.find_by_code(self.sex)

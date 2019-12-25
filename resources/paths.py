@@ -6,16 +6,6 @@ class Paths(Resource):
     @requireApiKey
     def get(self):
         # object containing swagger style info on all paths we want users to see
-
-        # UserRegister, '/register'
-        # User, '/user/<int:user_id>'
-        # UserLogin, '/login'
-        # UserLogout, '/logout'
-
-        # Info, '/info'
-        # ExternalDocs, '/externalDocs'
-        # Paths, '/paths'
-
         return {
             # '/api/country-code/<string:country_code>'
             "/api/country-code/{country_code}": {
@@ -1771,10 +1761,1033 @@ class Paths(Resource):
             },
             # Mortality data endpoints
             # '/api/mortality-data-search'
+            "/api/mortality-data-search?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return list of all mortality data matching search arguments",
+                    "arguments":
+                    {
+                        "country": "country code string",
+                        "year": "year as string",
+                        "sex": "sex code string",
+                        "admin": "admin code string",
+                        "subdiv": "subdiv code string",
+                        "cause": "cause code string"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A list of mortality data objects.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "schema": {
+                                                "type": "object",
+                                                "items": {
+                                                    'country': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of country",
+                                                                "description": "description of country"
+                                                            }
+                                                        }
+                                                    },
+                                                    'admin': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "admin code",
+                                                                "country":
+                                                                {
+                                                                    "schema": {
+                                                                        "type": "object",
+                                                                        "items": {
+                                                                            "code": "Country code",
+                                                                            "description": "Name of country"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "description for admin code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'subdiv': {
+                                                        "type": "object",
+                                                        "items": {
+                                                            "schema":
+                                                            {
+                                                                "code": "code for subdiv",
+                                                                "description": "description of subdiv"
+                                                            }
+                                                        }
+                                                    },
+                                                    'year': "year",
+                                                    'code_list': "ICD Code list",
+                                                    'cause': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                'list': "code list that contains the code",
+                                                                'code': "ICD code",
+                                                                'description': "description of code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'sex': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of sex",
+                                                                "description": "description of sex"
+                                                            }
+                                                        }
+                                                    },
+                                                    'age_format': "age format code",
+                                                    'infant_age_format': "infant age format code",
+                                                    'all_ages': "total deaths due to given cause",
+                                                    'age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by age format code",
+                                                            }
+                                                        }
+                                                    },
+                                                    'infant_age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by infant age format code",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "User input are invalid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             # '/api/mortality-data-one'
+            "/api/mortality-data-one?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return single mortality data entry matching search arguments",
+                    "arguments":
+                    {
+                        "country": "country code string",
+                        "year": "year as string",
+                        "sex": "sex code string",
+                        "admin": "admin code string",
+                        "subdiv": "subdiv code string",
+                        "cause": "cause code string"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A mortality data object.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                                "items": {
+                                                    'country': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of country",
+                                                                "description": "description of country"
+                                                            }
+                                                        }
+                                                    },
+                                                    'admin': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "admin code",
+                                                                "country":
+                                                                {
+                                                                    "schema": {
+                                                                        "type": "object",
+                                                                        "items": {
+                                                                            "code": "Country code",
+                                                                            "description": "Name of country"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "description for admin code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'subdiv': {
+                                                        "type": "object",
+                                                        "items": {
+                                                            "schema":
+                                                            {
+                                                                "code": "code for subdiv",
+                                                                "description": "description of subdiv"
+                                                            }
+                                                        }
+                                                    },
+                                                    'year': "year",
+                                                    'code_list': "ICD Code list",
+                                                    'cause': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                'list': "code list that contains the code",
+                                                                'code': "ICD code",
+                                                                'description': "description of code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'sex': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of sex",
+                                                                "description": "description of sex"
+                                                            }
+                                                        }
+                                                    },
+                                                    'age_format': "age format code",
+                                                    'infant_age_format': "infant age format code",
+                                                    'all_ages': "total deaths due to given cause",
+                                                    'age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by age format code",
+                                                            }
+                                                        }
+                                                    },
+                                                    'infant_age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by infant age format code",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "User input are invalid"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "More than one matching mortality data entry",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "More than one mortality entry was found matching your query, please be more specific.",
+                                            "entries": {
+                                                "schema": {
+                                                    "type": "array",
+                                                    "items": "A list of mortality data entries."
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             # '/api/mortality-search-multiple'
+            "/api/mortality-search-multiple?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return list of all mortality data matching search arguments",
+                    "arguments":
+                    {
+                        "country": "Comma separated list of country code strings",
+                        "year": "Comma separated list of year as strings",
+                        "sex": "Comma separated list of sex code strings",
+                        "admin": "Comma separated list of admin code strings",
+                        "subdiv": "Comma separated list of subdiv code strings",
+                        "cause": "Comma separated list of cause code strings"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A list of mortality data objects.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "schema": {
+                                                "type": "object",
+                                                "items": {
+                                                    'country': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of country",
+                                                                "description": "description of country"
+                                                            }
+                                                        }
+                                                    },
+                                                    'admin': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "admin code",
+                                                                "country":
+                                                                {
+                                                                    "schema": {
+                                                                        "type": "object",
+                                                                        "items": {
+                                                                            "code": "Country code",
+                                                                            "description": "Name of country"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "description for admin code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'subdiv': {
+                                                        "type": "object",
+                                                        "items": {
+                                                            "schema":
+                                                            {
+                                                                "code": "code for subdiv",
+                                                                "description": "description of subdiv"
+                                                            }
+                                                        }
+                                                    },
+                                                    'year': "year",
+                                                    'code_list': "ICD Code list",
+                                                    'cause': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                'list': "code list that contains the code",
+                                                                'code': "ICD code",
+                                                                'description': "description of code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'sex': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of sex",
+                                                                "description": "description of sex"
+                                                            }
+                                                        }
+                                                    },
+                                                    'age_format': "age format code",
+                                                    'infant_age_format': "infant age format code",
+                                                    'all_ages': "total deaths due to given cause",
+                                                    'age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by age format code",
+                                                            }
+                                                        }
+                                                    },
+                                                    'infant_age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Deaths for all age brackets dictated by infant age format code",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "Please add at least a year, country, sex and cause variable"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             # '/api/mortality-adj-search'
+            "/api/mortality-adj-search?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return list of all population adjusted mortality data matching search arguments",
+                    "arguments":
+                    {
+                        "country": "country code string",
+                        "year": "year as string",
+                        "sex": "sex code string",
+                        "admin": "admin code string",
+                        "subdiv": "subdiv code string",
+                        "cause": "cause code string"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A list of mortality data objects.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "schema": {
+                                                "type": "object",
+                                                "items": {
+                                                    'country': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of country",
+                                                                "description": "description of country"
+                                                            }
+                                                        }
+                                                    },
+                                                    'admin': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "admin code",
+                                                                "country":
+                                                                {
+                                                                    "schema": {
+                                                                        "type": "object",
+                                                                        "items": {
+                                                                            "code": "Country code",
+                                                                            "description": "Name of country"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "description for admin code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'subdiv': {
+                                                        "type": "object",
+                                                        "items": {
+                                                            "schema":
+                                                            {
+                                                                "code": "code for subdiv",
+                                                                "description": "description of subdiv"
+                                                            }
+                                                        }
+                                                    },
+                                                    'year': "year",
+                                                    'code_list': "ICD Code list",
+                                                    'cause': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                'list': "code list that contains the code",
+                                                                'code': "ICD code",
+                                                                'description': "description of code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'sex': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of sex",
+                                                                "description": "description of sex"
+                                                            }
+                                                        }
+                                                    },
+                                                    'age_format': "age format code",
+                                                    'infant_age_format': "infant age format code",
+                                                    'all_ages': "population adjusted total deaths due to given cause",
+                                                    'age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Population adjusted deaths for all age brackets dictated by age format code",
+                                                            }
+                                                        }
+                                                    },
+                                                    'infant_age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Population adjusted deaths for all age brackets dictated by infant age format code",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching population data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No population data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "User input are invalid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             # '/api/mortality-adj-one'
+            "/api/mortality-adj-one?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return single population adjusted mortality data matching search arguments",
+                    "arguments":
+                    {
+                        "country": "country code string",
+                        "year": "year as string",
+                        "sex": "sex code string",
+                        "admin": "admin code string",
+                        "subdiv": "subdiv code string",
+                        "cause": "cause code string"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A population adjusted mortality data object.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            'country': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "code": "code of country",
+                                                        "description": "description of country"
+                                                    }
+                                                }
+                                            },
+                                            'admin': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "code": "admin code",
+                                                        "country":
+                                                        {
+                                                            "schema": {
+                                                                "type": "object",
+                                                                "items": {
+                                                                    "code": "Country code",
+                                                                    "description": "Name of country"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "description for admin code"
+                                                    }
+                                                }
+                                            },
+                                            'subdiv': {
+                                                "type": "object",
+                                                "items": {
+                                                    "schema":
+                                                    {
+                                                        "code": "code for subdiv",
+                                                        "description": "description of subdiv"
+                                                    }
+                                                }
+                                            },
+                                            'year': "year",
+                                            'code_list': "ICD Code list",
+                                            'cause': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        'list': "code list that contains the code",
+                                                        'code': "ICD code",
+                                                        'description': "description of code"
+                                                    }
+                                                }
+                                            },
+                                            'sex': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "code": "code of sex",
+                                                        "description": "description of sex"
+                                                    }
+                                                }
+                                            },
+                                            'age_format': "age format code",
+                                            'infant_age_format': "infant age format code",
+                                            'all_ages': "population adjusted total deaths due to given cause",
+                                            'age_breakdown': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "(age_range)": "Population adjusted deaths for all age brackets dictated by age format code",
+                                                    }
+                                                }
+                                            },
+                                            'infant_age_breakdown': {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "(age_range)": "Population adjusted deaths for all age brackets dictated by infant age format code",
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching population data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No population data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "User input are invalid"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "More than one matching mortality data set",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "More than one population entry was found matching your query"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             # '/api/mortality-adj-search-multiple'
+            "/api/mortality-adj-search-multiple?{search_arguments}": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return list of all population adjusted mortality data matching search arguments",
+                    "arguments":
+                    {
+                        "country": "Comma separated list of country code strings",
+                        "year": "Comma separated list of year as strings",
+                        "sex": "Comma separated list of sex code strings",
+                        "admin": "Comma separated list of admin code strings",
+                        "subdiv": "Comma separated list of subdiv code strings",
+                        "cause": "Comma separated list of cause code strings"
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "A list of mortality data objects.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "array",
+                                        "items": {
+                                            "schema": {
+                                                "type": "object",
+                                                "items": {
+                                                    'country': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of country",
+                                                                "description": "description of country"
+                                                            }
+                                                        }
+                                                    },
+                                                    'admin': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "admin code",
+                                                                "country":
+                                                                {
+                                                                    "schema": {
+                                                                        "type": "object",
+                                                                        "items": {
+                                                                            "code": "Country code",
+                                                                            "description": "Name of country"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "description": "description for admin code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'subdiv': {
+                                                        "type": "object",
+                                                        "items": {
+                                                            "schema":
+                                                            {
+                                                                "code": "code for subdiv",
+                                                                "description": "description of subdiv"
+                                                            }
+                                                        }
+                                                    },
+                                                    'year': "year",
+                                                    'code_list': "ICD Code list",
+                                                    'cause': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                'list': "code list that contains the code",
+                                                                'code': "ICD code",
+                                                                'description': "description of code"
+                                                            }
+                                                        }
+                                                    },
+                                                    'sex': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "code": "code of sex",
+                                                                "description": "description of sex"
+                                                            }
+                                                        }
+                                                    },
+                                                    'age_format': "age format code",
+                                                    'infant_age_format': "infant age format code",
+                                                    'all_ages': "population adjusted total deaths due to given cause",
+                                                    'age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Population adjusted deaths for all age brackets dictated by age format code",
+                                                            }
+                                                        }
+                                                    },
+                                                    'infant_age_breakdown': {
+                                                        "schema": {
+                                                            "type": "object",
+                                                            "items": {
+                                                                "(age_range)": "Population adjusted deaths for all age brackets dictated by infant age format code",
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching mortality data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No mortality data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "404": {
+                            "description": "No matching population data",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "No population data matches your query arguments"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid inputs",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "message": "User input are invalid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
 
+            # Info, '/api/info'
+            "/api/info": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return info about API",
+                    "responses": {
+                        "200": {
+                            "description": "Info about the API.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "title": "API Title",
+                                            "description": "Description of API.",
+                                            "disclaimer": "WHO legal disclaimer",
+                                            "contact": {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "name": "App Support",
+                                                        "url": "url for contact page",
+                                                        "email": "contact email address"
+                                                    }
+                                                }
+                                            },
+                                            "license": {
+                                                "schema": {
+                                                    "type": "object",
+                                                    "items": {
+                                                        "name": "API license",
+                                                        "url": "link to api license"
+                                                    }
+                                                }
+                                            },
+                                            "version": "API version number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            # ExternalDocs, '/api/externalDocs'
+            "/api/externalDocs": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return link to external documentation for API",
+                    "responses": {
+                        "200": {
+                            "description": "link to external documentation",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "description": "external docs description",
+                                            "url": "link to external docs"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            # Paths, '/api/paths'
+            "/api/paths": {
+                "get": {
+                    "security":
+                    {
+                        "type": "apiKey",
+                                "name": "api_key",
+                                "in": "header"
+                    },
+                    "description": "Return info about all API paths",
+                    "responses": {
+                        "200": {
+                            "description": "All API paths.",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "items": {
+                                            "paths": "All paths..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
         }

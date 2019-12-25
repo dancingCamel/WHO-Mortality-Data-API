@@ -188,9 +188,9 @@ api.add_resource(Profile, '/profile')
 api.add_resource(Contact, '/contact')
 
 # API info endpoinds
-api.add_resource(Info, '/info')
-api.add_resource(ExternalDocs, '/externalDocs')
-api.add_resource(Paths, '/paths')
+api.add_resource(Info, '/api/info')
+api.add_resource(ExternalDocs, '/api/externalDocs')
+api.add_resource(Paths, '/api/paths')
 
 
 # remove for deployment
