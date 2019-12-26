@@ -23,10 +23,10 @@
 	display: none;
 }
 
-/* textarea {
+textarea {
 	min-height: 50px;
 	max-height: none;
-} */
+}
 
 #returnedJson {
 	min-height: 50px;

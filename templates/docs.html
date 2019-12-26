@@ -14,31 +14,6 @@
             <h2 class="mb-3">Find out about all our API paths</h2>
             <div id="error"></div>
 
-
-            <!-- everything in this block needs to be dynamically generated -->
-            <div class="apiPath position-relative">
-                <p>
-                    <!-- make the get a button then put border round rest of text. extend/expand the link to cover all-->
-                    <a class="btn btn-primary rounded-0 stretched-link" data-toggle="collapse"
-                        href="#api-mortality-search" role="button" aria-expanded="false">
-                        GET </a><span
-                        class="btn border border-primary rounded-0">/api/mortality-search?{search_terms}</span>
-                    <span class="lead align-middle"> - Description of API path</span>
-                </p>
-                <div class="collapse" id="api-mortality-search">
-                    <div class="card card-body">
-                        <p>
-                            Arguments: (dynamic list here)
-                        </p>
-                        <p>Security: info here</p>
-                        <p class="text-muted bg-light mt-3">
-                            paths 200 response output dynamically added
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
     </div>
 </main>
@@ -72,9 +47,16 @@
                     element_id = element_id.replace(/[./api?]/g, "")
 
                     if (pathObject.hasOwnProperty('get')) {
-
-                        createDocEntry('get', 'primary', pathObject)
-
+                        createDocEntry('get', 'success', pathObject);
+                    }
+                    if (pathObject.hasOwnProperty('post')) {
+                        createDocEntry('post', 'warning', pathObject);
+                    }
+                    if (pathObject.hasOwnProperty('put')) {
+                        createDocEntry('put', 'primary', pathObject);
+                    }
+                    if (pathObject.hasOwnProperty('delete')) {
+                        createDocEntry('delete', 'danger', pathObject);
                     }
                 }
 
@@ -163,7 +145,7 @@
                                         `+ responsesHtml + `
                             </p>
                         </div>
-                                    </div>`
+                    </div>`
 
                     // add to end of page
                     $('#content').append(new_path_dropdown_area);
@@ -184,20 +166,7 @@
                     var nextLineCount = countSubstring(allResponseTextareas[x].innerText, "\n");
                     nextLineCount++
                     allResponseTextareas[x].rows = nextLineCount;
-                    allResponseTextareas[x].style.maxHeight = "null";
-                    console.log(allResponseTextareas[x])
                 }
-
-
-
-                // use .hasOwnElements() to check if have get /post/ put /delete verbs then run generator function
-                // step through responses codes and add to textareas. if 200/201/202 green. else red
-                // add text areas sequentially with a title e.g. 200: <br>textarea
-                // print the exact thing thats written in the response return from paths
-                // check if has arguments etc and add elements (e.g. list) if needed
-
-                // resize text areas
-
 
             },
             error: function () {
