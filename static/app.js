@@ -73,7 +73,7 @@ function validCause(cause_code) {
 function auto_grow(element) {
 	$(element).css('height', element[0].scrollHeight + 'px');
 }
-// function to capitalise the first letter in text inputs
+// function to capitalise the first letter
 function capFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }

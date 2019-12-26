@@ -1,9 +1,7 @@
 from flask_restful import Resource
-from auth import requireApiKey
 
 
 class Paths(Resource):
-    @requireApiKey
     def get(self):
         # object containing swagger style info on all paths we want users to see
         return {
@@ -1061,7 +1059,7 @@ class Paths(Resource):
                                 "name": "api_key",
                                 "in": "header"
                     },
-                    "description": "Return one population matching search term arguments, otherwise return error",
+                    "description": "Return single population entry matching search terms",
                     "arguments":
                     {
                         "country": "country code string",
@@ -1161,19 +1159,6 @@ class Paths(Resource):
                                 }
                             }
                         }
-                    },
-                        "404": {
-                            "description": "No matching populations",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "No populations match your query arguments"
-                                        }
-                                    }
-                                }
-                            }
                     },
                         "400": {
                             "description": "More than one population found",
@@ -1288,10 +1273,10 @@ class Paths(Resource):
                     "security":
                     {
                         "type": "apiKey",
-                                "name": "api_key",
-                                "in": "header"
+                        "name": "api_key",
+                        "in": "header"
                     },
-                    "description": "Return one population matching search term arguments, otherwise return error",
+                    "description": "Return single population matching search term arguments",
                     "arguments":
                     {
                         "country": "comma separated list of country code strings",
@@ -1391,19 +1376,6 @@ class Paths(Resource):
                                 }
                             }
                         }
-                    },
-                        "404": {
-                            "description": "No matching populations",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "No populations match your query arguments"
-                                        }
-                                    }
-                                }
-                            }
                     }
                 }
             },
@@ -2028,26 +2000,13 @@ class Paths(Resource):
                             }
                         },
                         "400": {
-                            "description": "Invalid inputs",
+                            "description": "More than one matching mortality data entry / Invalid inputs",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "items": {
-                                            "message": "User input are invalid"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "400": {
-                            "description": "More than one matching mortality data entry",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "More than one mortality entry was found matching your query, please be more specific.",
+                                            "message": "More than one mortality entry was found matching your query, please be more specific. / Invalid inputs",
                                             "entries": {
                                                 "schema": {
                                                     "type": "array",
@@ -2322,26 +2281,13 @@ class Paths(Resource):
                             }
                         },
                         "404": {
-                            "description": "No matching mortality data",
+                            "description": "No matching mortality / population data",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "items": {
-                                            "message": "No mortality data matches your query arguments"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "404": {
-                            "description": "No matching population data",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "No population data matches your query arguments"
+                                            "message": "No mortality / population data matches your query arguments"
                                         }
                                     }
                                 }
@@ -2474,52 +2420,26 @@ class Paths(Resource):
                             }
                         },
                         "404": {
-                            "description": "No matching mortality data",
+                            "description": "No matching mortality / population data",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "items": {
-                                            "message": "No mortality data matches your query arguments"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "404": {
-                            "description": "No matching population data",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "No population data matches your query arguments"
+                                            "message": "No mortality / population data matches your query arguments"
                                         }
                                     }
                                 }
                             }
                         },
                         "400": {
-                            "description": "Invalid inputs",
+                            "description": "More than one matching mortality data set / Invalid inputs",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "items": {
-                                            "message": "User input are invalid"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "400": {
-                            "description": "More than one matching mortality data set",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "More than one population entry was found matching your query"
+                                            "message": "More than one population entry was found matching your query / Invalid inputs"
                                         }
                                     }
                                 }
@@ -2644,26 +2564,13 @@ class Paths(Resource):
                             }
                         },
                         "404": {
-                            "description": "No matching mortality data",
+                            "description": "No matching mortality / population data",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "items": {
-                                            "message": "No mortality data matches your query arguments"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "404": {
-                            "description": "No matching population data",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "type": "object",
-                                        "items": {
-                                            "message": "No population data matches your query arguments"
+                                            "message": "No mortality / population data matches your query arguments"
                                         }
                                     }
                                 }
@@ -2766,12 +2673,6 @@ class Paths(Resource):
             # Paths, '/api/paths'
             "/api/paths": {
                 "get": {
-                    "security":
-                    {
-                        "type": "apiKey",
-                                "name": "api_key",
-                                "in": "header"
-                    },
                     "description": "Return info about all API paths",
                     "responses": {
                         "200": {

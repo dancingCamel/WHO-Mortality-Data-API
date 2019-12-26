@@ -10,23 +10,35 @@
 {% block main %}
 <main>
     <div class="container mt-3">
-        <div>
-            <h2>Find mortality data using custom query</h2>
-            <p>
-                <!-- make the get a button then put border round rest of text. extend/expand the link to cover all-->
-                <a class="btn btn-primary" data-toggle="collapse" href="#api-mortality-search" role="button"
-                    aria-expanded="false" aria-controls="collapseExample">
-                    GET /api/mortality-search?country=?&sex=?
-                </a>
-            </p>
-            <div class="collapse" id="api-mortality-search">
-                <div class="card card-body">
-                    GET /api/mortality-search?country=4308&sex=1
-                    <p class="text-muted bg-light mt-3" id="getMortalitySearchResult">
-                        { "results":[{"country":"4308","sex": "1"}] }</p>
-                    <p id="test"></p>
+        <div class="content" id="content">
+            <h2 class="mb-3">Find out about all our API paths</h2>
+            <div id="error"></div>
+
+
+            <!-- everything in this block needs to be dynamically generated -->
+            <div class="apiPath position-relative">
+                <p>
+                    <!-- make the get a button then put border round rest of text. extend/expand the link to cover all-->
+                    <a class="btn btn-primary rounded-0 stretched-link" data-toggle="collapse"
+                        href="#api-mortality-search" role="button" aria-expanded="false">
+                        GET </a><span
+                        class="btn border border-primary rounded-0">/api/mortality-search?{search_terms}</span>
+                    <span class="lead align-middle"> - Description of API path</span>
+                </p>
+                <div class="collapse" id="api-mortality-search">
+                    <div class="card card-body">
+                        <p>
+                            Arguments: (dynamic list here)
+                        </p>
+                        <p>Security: info here</p>
+                        <p class="text-muted bg-light mt-3">
+                            paths 200 response output dynamically added
+                        </p>
+                    </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 </main>
@@ -34,4 +46,165 @@
 
 
 
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "api/paths",
+            dataType: "json",
+            success: function (result) {
+                result_string = JSON.stringify(result, null, "\t")
+
+                // make key array from object keys
+                var keys = Object.keys(result);
+
+                // loop over keys creating elements in DOM for each one
+                for (var i = 0; i < keys.length; i++) {
+                    // console.log(result[keys[i]]);
+
+                    var path = keys[i];
+                    var pathObject = result[keys[i]]
+                    var element_id = path.replace(/{.*?}/g, "")
+
+                    // fix this to remove only / and "/api/" at start of string
+                    element_id = element_id.replace(/[./api?]/g, "")
+
+                    if (pathObject.hasOwnProperty('get')) {
+
+                        createDocEntry('get', 'primary', pathObject)
+
+                    }
+                }
+
+                function createDocEntry(verb, colour, object) {
+                    var description = object[verb]['description'];
+
+                    var argumentHtml = "";
+                    if (object[verb].hasOwnProperty('arguments')) {
+
+                        var arguments = object[verb]['arguments'];
+
+                        var argumentKeys = Object.keys(arguments);
+
+                        argumentHtml += "<p>Arguments:<ul>";
+                        for (var j = 0; j < argumentKeys.length; j++) {
+
+                            argumentHtml += '<li class="list-group-item">' + argumentKeys[j] + ' = ' + capFirstLetter(arguments[argumentKeys[j]]) + '</li>';
+
+                        }
+
+                        argumentHtml += "</ul></p>";
+                    }
+
+                    var securityHtml = "";
+                    if (object[verb].hasOwnProperty('security')) {
+
+                        var security = object[verb]['security'];
+
+                        var securityKeys = Object.keys(security);
+
+                        securityHtml += "<p>Security:<ul>";
+                        for (var k = 0; k < securityKeys.length; k++) {
+
+                            securityHtml += '<li class="list-group-item">' + capFirstLetter(securityKeys[k]) + ': ' + security[securityKeys[k]] + '</li>';
+
+                        }
+
+                        securityHtml += "</ul></p>";
+
+                        var security = object[verb]['security'];
+
+
+                    }
+
+                    // TODO: write recursive function to strip out all the "schema" stuff
+                    var responsesHtml = ""
+                    if (object[verb].hasOwnProperty('responses')) {
+                        var responses = object[verb]['responses']
+
+                        responseKeys = Object.keys(responses)
+
+                        responsesHtml += '<p>Responses:';
+
+                        for (var a = 0; a < responseKeys.length; a++) {
+                            var greenResponses = ["200", "201", "202"]
+                            responsesHtml += "<p>" + responseKeys[a] + "</p>"
+                            if (greenResponses.indexOf(responseKeys[a]) > -1) {
+
+                                responsesHtml += '<textarea readonly class="form-control response greenResponse alert alert-success" >' + JSON.stringify(responses[responseKeys[a]], null, "\t") + '</textarea>';
+
+                            } else {
+                                responsesHtml += '<textarea readonly class="response redResponse alert alert-danger" style="display:block;width:100%">' + JSON.stringify(responses[responseKeys[a]], null, "\t") + '</textarea>';
+                            }
+
+                        }
+
+                        responsesHtml += "</p>"
+                    }
+
+                    var new_path_dropdown_area = document.createElement('div');
+                    new_path_dropdown_area.classList.add("apiPath");
+                    new_path_dropdown_area.classList.add("position-relative");
+
+                    new_path_dropdown_area.innerHTML = `
+                    <p>
+                                    <a class="btn btn-`+ colour + ` rounded-0 stretched-link" data-toggle="collapse"
+                                        href="#`+ element_id + `" role="button" aria-expanded="true">
+                                        GET </a><span
+                                            class="btn border border-`+ colour + ` rounded-0">` + path + `</span>
+                                    <span class="lead align-middle"> - `+ description + `</span>
+                                </p>
+                                <div class="collapse" id="`+ element_id + `">
+                                    <div class="card card-body">
+                                        `+ securityHtml + `
+                                        `+ argumentHtml + `
+                                        `+ responsesHtml + `
+                            </p>
+                        </div>
+                                    </div>`
+
+                    // add to end of page
+                    $('#content').append(new_path_dropdown_area);
+
+                    // end create doc entry
+                }
+
+                // use query selector all to resize all response blocks to correct size
+                // count substrings
+                function countSubstring(string, substring) {
+                    var re = new RegExp(substring, 'gi');
+                    return string.match(re).length;
+                }
+
+                var allResponseTextareas = document.querySelectorAll('.response');
+
+                for (var x = 0; x < allResponseTextareas.length; x++) {
+                    var nextLineCount = countSubstring(allResponseTextareas[x].innerText, "\n");
+                    nextLineCount++
+                    allResponseTextareas[x].rows = nextLineCount;
+                    allResponseTextareas[x].style.maxHeight = "null";
+                    console.log(allResponseTextareas[x])
+                }
+
+
+
+                // use .hasOwnElements() to check if have get /post/ put /delete verbs then run generator function
+                // step through responses codes and add to textareas. if 200/201/202 green. else red
+                // add text areas sequentially with a title e.g. 200: <br>textarea
+                // print the exact thing thats written in the response return from paths
+                // check if has arguments etc and add elements (e.g. list) if needed
+
+                // resize text areas
+
+
+            },
+            error: function () {
+                let output = '<div class="alert alert-danger" role="alert">Error retrieving endpoint data.</div>';
+                $('#error').html(output);
+            }
+        });
+    })
+</script>
 {% endblock %}
