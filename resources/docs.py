@@ -4,7 +4,6 @@ from flask_login import login_required
 
 
 class Docs(Resource):
-    @login_required
     def get(self):
         headers = {'Content-Type': 'text/html'}
         return make_response(render_template('docs.html'), 200, headers)

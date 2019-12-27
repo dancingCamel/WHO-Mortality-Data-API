@@ -61,7 +61,7 @@
                     </li>
                     {% endif %}
                     <li class="nav-item m-1">
-                        <a href="docs" class="nav-link">Docs</a>
+                        <a href="docs" class="nav-link">Documentation</a>
                     </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-item m-1">
@@ -127,7 +127,7 @@
                             <a href="/codes" class="text-light">Codes</a>
                         </li>
                         <li>
-                            <a href="/docs" class="text-light">Docs</a>
+                            <a href="/docs" class="text-light">Documentation</a>
                         </li>
                         <li>
                             <a href="/contact" class="text-light">Contact</a>
@@ -167,7 +167,7 @@
     </footer>
     {% if current_user.is_authenticated %}
     <div id="apiKeyDiv">{{current_user.api_key}}</div>
-    <div id="username">{{current_user.username}}</div>
+    <div id="currentUser">{{current_user.username}}</div>
     {% endif %}
 
     <!-- Bootstrap scripts -->

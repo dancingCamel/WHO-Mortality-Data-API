@@ -14,50 +14,80 @@
 
         <div class="row">
             <div class="col-sm">
-                <!-- text describing the project, return json or use online queries to make charts, return json -->
-                <span id="test">Message from server:</span>
-                {% for message in get_flashed_messages() %}
-                {{ message }}
-                {% endfor %}
+                <br>
+                <!-- text describing the project -->
+                <h1>Visualize WHO Mortality Data with Charts!</h1>
+                <br>
+                <p>Having tried to use the official Worly Health Organization mortality data querying and charting
+                    service and finding it
+                    difficult to navigate, unintuitive and uninformative, I decided to make a more modern feeling
+                    version.
+                    Fortunately, all the WHO mortality data is free to download and use.</p>
+                <p>This website and associated API allows simple querying of the WHO mortality data, either returning
+                    data in JSON format (via the <a href="json">JSON page</a> or with custom scripts making calls to our
+                    API endpoints) or as easy-to-understand charts (via the <a href="/visualize">Visualize page</a>)</p>
+                <p>All associated data sets are available for search in the <a href="/codes">Codes page</a>(including a
+                    complete ICD-10 code and description search service)</p>
             </div>
         </div>
-
+        <hr>
         <div class="row">
-            <div class="col-sm" id="chartExampleImg">
-                <img src="..." class="img-fluid" alt="Responsive image">
+            <div class="col-sm-4" id="chartExampleImg">
+                <img src="../static/img/barchart.png" class="img-fluid" alt="Bar Chart">
+                <img src="../static/img/linechart.png" class="img-fluid" alt="Line Chart">
+
             </div>
-            <div>
+            <div class="chartDescription col-sm-8">
                 <!-- text explaining how to use charts and visualize data as population adjusted or raw -->
+                <h2>Charts</h2>
+                <p>In the <a href="/visualize">Visualize page</a> we query the mortality database for you.
+                    and create charts depending on the results. <br>
+                    Each year has a bar chart and trends are shown with line charts.</p>
+                <p>If data is missing or there were no deaths the data point is simply omitted to avoid cluttering the
+                    chart space.</p>
+                <p>Charts can be selected to show either total mortality data or population adjusted mortality data. (if
+                    population data is missing then the data points are omitted.)</p>
+            </div>
+        </div>
+        <hr>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>Sound good?</h2>
+                <p>To start using this service (and get your API key) simply sign up, or log in</p>
+                <div class="row">
+                    <div class="col-sm-6 d-flex justify-content-center mt-2">
+                        <button type="button" class="btn btn-outline-primary btn-lg"
+                            style="width:200px">Sign-up</button>
+                    </div>
+                    <div class="col-sm-6 d-flex justify-content-center mt-2 mb-2">
+                        <button type="button" class="btn btn-primary btn-lg" style="width:200px">Login</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div>
-                <!-- text about helper apis so users can find other data to help them generate custom queries -->
-            </div>
-            <div class="col-sm">
-                <!-- cards with description of icd-10, icd-10 list, sex, admin, subdiv, population -->
-                <!-- each card has a link that goes to codes pages but has different text. selects thing on codes pages they were looking for -->
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-sm">
-                <!-- link to doc and text saying "find out more about sending custom queries to the api in the docs" -->
-            </div>
-        </div>
 
+        <hr>
         <div class="row">
             <div class="col-sm">
-                <!-- for more detail on how the api works, check the github page (link) -->
+                <h2>Using your own scripts?</h2>
+                <p>Check out our complete available path list in the <a href="/docs">Documentation page</a>. Or simply
+                    send a get request to /api/paths.</p>
             </div>
         </div>
-
+        <hr>
         <div class="row">
             <div class="col-sm">
-                <!-- call to action to login or sign up in order to get your API key -->
+                <h2>Open Source</h2>
+                <p>This API is Open Source (the code can be found on <a
+                        href="https://github.com/dancingCamel/WHO-Mortality-Data-API">Github</a>). If
+                    you find any bugs or think of features you would like added, either contact me directly via the <a
+                        href="/contact">contact page</a href="/contact"> or open a ticket on Github. </p>
             </div>
         </div>
+        <hr>
 
     </div>
 </main>
