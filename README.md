@@ -72,10 +72,10 @@ Return all sex codes used in the Mortality Database<br>
 
 #### Find Sex Code for Specific Sex
 Return the code for a know sex<br>
-```GET /api/sex/<sex_name>```
+```GET /api/sex-desc/<sex_name>```
 
 e.g. <br>
-```GET /api/sex/female```
+```GET /api/sex-desc/female```
 >{<br>
 >    "name": "female",<br>
 >    "code": "2"<br>
@@ -132,10 +132,10 @@ Return all age format codes and their year cut-off boundaries used in WHO Mortal
 
 #### Find Age Cut-Off Boundaries for Specific Age Format Code 
 Return the description of a specific age format code.<br>
-```GET /api/age-format/<age_format_code>```
+```GET /api/age-format-code/<age_format_code>```
 
 e.g. <br>
-```GET /api/age-format/08```
+```GET /api/age-format-code/08```
 {<br>
 >    "age_format_code": "08",<br>
 >    "pop2": "0",<br>
@@ -174,10 +174,10 @@ Return all infant age format codes and their day cut-off boundaries used in WHO 
 
 #### Find Age Cut-Off Boundaries for Specific Infant Age Format Code 
 Return the description of a specific infant mortality age format code.<br>
-```GET /api/-infant-age-format/<infant_age_format_code>```
+```GET /api/-infant-age-format-code/<infant_age_format_code>```
 
 e.g. <br>
-```GET /api/infant-age-format/01```
+```GET /api/infant-age-format-code/01```
 
 >{<br>
 >    "infant_age_format_code": "01",<br>
@@ -223,7 +223,7 @@ Endpoints related to the ICD-10 codes including search for descriptions and code
 
 #### All ICD-10 Code Lists used in Mortality Data
 Find descriptions of all different code lists used in Mortality Data.<br>
-``` GET /api/icd10-code-lists```
+``` GET /api/icd10-code-list-list```
 
 #### ICD-10 Code List Description
 Find the description of a specific code list.<br>
@@ -289,7 +289,7 @@ Endpoints related to the WHO Mortality Database. Each mortality database entry d
 
 NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
 
-#### Find Multiple Mortality Entries Using Custom Query:
+#### Find All Mortality Entries Matching Set of Single Search Variables:
 Get raw mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
 
 ``` GET /api/mortality-data-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```<br>
@@ -299,7 +299,7 @@ e.g.
 Return mortality data for males and females in the United Kingdom in 2006 caused by "Airgun discharge (undetermined intent)":<br>
 ``` GET /api/mortality-data-search?country=4308&year=2006&cause=Y240```
 
-#### Find Single Mortality Data Entry Using Custom Query:
+#### Find Single Mortality Data Entry:
 Get raw mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
 Returns data only if only one mortality entry matches the query<br>
 
@@ -308,8 +308,16 @@ Returns data only if only one mortality entry matches the query<br>
 e.g. 
 Return mortality data for only males in the United Kingdom in 2016 caused by "Driver of special agricultural vehicle injured in traffic accident":<br>
 
-``` GET /api/mortality-data-one?country=4308&year=2016&sex=1&cause=V840```
+``` GET /api/mortality-data-one?country=4308&year=2016&sex=1&cause=V840```<br>
 
+
+#### Find All Mortality Entries Matching Lists of Search Variables:
+Get raw mortality data for lists of given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
+
+``` GET /api/mortality-search-multiple?country=<country>,<country>,...&year=<year>,<year>,...&sex=<sex>,<sex>,...&admin=<admin>,<admin>,...&subdiv=<subdiv>,<subdiv>,...&cause=<cause>,<cause>,...```<br>
+
+Return mortality data for males and females in the United Kingdom and Croatia in 2005 and 2006 caused by "Airgun discharge (undetermined intent)":<br>
+```GET /api/mortality-data-search?country=4308,4038&year=2005,2006&cause=Y240&sex=1,2```<br>
 
 ### Mortality Data - adjusted for population
 Endpoints related to the WHO Mortality Database with all mortalities adjusted for population (per 100,000) - also known as ASDR per 100,000. All other factors are the same as for the mortality data detailed above.
@@ -317,7 +325,7 @@ Endpoints related to the WHO Mortality Database with all mortalities adjusted fo
 NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
 NOTE: In some cases there is population data but no mortality data, or vice versa. In these situations the data point is removed so as to avoid confusion due to mixing of age-specific and absolute data.
 
-#### Find Multiple Population Adjusted Mortality Entries Using Custom Query:
+#### Find All Population Adjusted Mortality Entries Matching Set of Single Search Variables:
 Get adjusted mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
 
 ``` GET /api/mortality-adj-search?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```<br>
@@ -325,18 +333,26 @@ Get adjusted mortality data for given country, year, sex, admin or subdiv and ca
 Variables (variable = format): country = country code, year, sex = sex code, admin = admin code, subdiv = subdiv code, cause = cause code. All codes can be found from the respective endpoints <br>
 e.g. 
 Return population adjusted mortality data for males and females in the United Kingdom in 2006 caused by "Airgun discharge (undetermined intent)":<br>
-``` GET /api/mortality-adj-search?country=4308&year=2006&cause=Y240```
+``` GET /api/mortality-adj-search?country=4308&year=2006&cause=Y240```<br>
 
-#### Find Single Population Adjusted Mortality Data Entry Using Custom Query:
+#### Find Single Population Adjusted Mortality Data Entry:
 Get adjusted mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof).
 Returns data only if only one mortality entry matches the query<br>
 
-``` GET /api/mortality-adj-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```
+``` GET /api/mortality-adj-one?country=<country>&year=<year>&sex=<sex>&admin=<admin>&subdiv=<subdiv>&cause=<cause>```<br>
 
 e.g. 
 Return population adjusted mortality data for only males in the United Kingdom in 2016 caused by "Driver of special agricultural vehicle injured in traffic accident":<br>
 
-``` GET /api/mortality-adj-one?country=4308&year=2016&sex=1&cause=V840```
+``` GET /api/mortality-adj-one?country=4308&year=2016&sex=1&cause=V840```<br>
+
+#### Find All Population Adjusted Mortality Entries Matching Lists of Search Variables:
+Get population adjusted mortality data for lists of given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
+
+``` GET /api/mortality-search-multiple?country=<country>,<country>,...&year=<year>,<year>,...&sex=<sex>,<sex>,...&admin=<admin>,<admin>,...&subdiv=<subdiv>,<subdiv>,...&cause=<cause>,<cause>,...```<br>
+
+Return population adjusted mortality data for males and females in the United Kingdom and Croatia in 2005 and 2006 caused by "Airgun discharge (undetermined intent)":<br>
+```GET /api/mortality-data-search?country=4308,4038&year=2005,2006&cause=Y240&sex=1,2```<br>
 
 ### Disclaimer
 Every attempt has been made to keep data true to the original raw data files but veracity cannot be guaranteed. If this is important, download the data directly or use one of the [WHO's data querying services](https://www.who.int/healthinfo/mortality_data/en/)

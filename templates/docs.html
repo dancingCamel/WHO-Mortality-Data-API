@@ -11,8 +11,143 @@
 <main>
     <div class="container mt-3">
         <div class="content" id="content">
-            <h2 class="mb-3">Find out about all our API paths</h2>
+            <h2 class="mb-3">Find out about the API</h2>
             <div id="error"></div>
+
+            <!-- Info about data sources -->
+            <h3>Data Sources</h3>
+            <div>Mortality Data drawn from the WHO ICD-10 (parts 1 and 2) <a
+                    href="https://www.who.int/healthinfo/statistics/mortality_rawdata/en/">raw data
+                    file</a>(accessed November 2019).<br>
+
+                ICD-10 codes taken from the <a
+                    href="https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html">Centers for Medicare &
+                    Medicaid Services
+                    website</a> and the <a href="https://www.who.int/healthinfo/statistics/mortality_rawdata/en/">WHO
+                    Mortality
+                    Database Documentation</a>(accessed November 2019).<br>
+            </div>
+            <hr>
+            <!-- Data available -->
+            <h3>Datasets Available</h3>
+            <p>This API returns data in JSON format with all values as strings.</p>
+
+            <div>
+                <p>The following datasets are available:</p>
+                <ul>
+                    <li>WHO Country codes</li>
+                    <li>WHO 'Sex' codes and their descriptions</li>
+                    <li>WHO 'Admin' codes and their descriptions</li>
+                    <li>WHO 'Subdiv' codes and their descriptions</li>
+                    <li>WHO Age format codes and their descriptions</li>
+                    <li>WHO Infant age format codes and their descriptions</li>
+                    <li>Country populations (from 1950)</li>
+                    <li>ICD-10 codes and descriptions</li>
+                    <li>Mortality (cause of death) statistics (from 2005)</li>
+                    <li>Mortality (cause of death) statistics adjusted for population</li>
+                </ul>
+            </div>
+            <hr>
+
+            <!-- Notes area -->
+            <h3>Notes</h3>
+            <h4>General</h4>
+            <p>All get variables should be written as the associated WHO code. <br>e.g. Male = 1, UK = 4308, All Causes
+                = AAA<br>To
+                find the codes please use the <a href="/codes">codes page</a></p>
+
+            <h4>Population Data</h4>
+            <p>Population and live births are both in units. Population figures are mid-year populations as stated by
+                member countries.</p>
+            <h4>ICD Codes</h4>
+            <p>Y34 and Y349 refer to the sum of all deaths from accidental deaths V00-Y89 for countries reporting with
+                list 103 and 104 respectively.</p>
+            <p>If a country reports with a 4 character code in the 10M list, the death will not be counted in the 3
+                character code total (all numbers are mutually exclusive).</p>
+            <h4>Mortality Data</h4>
+            <p>Some cause of death ICD codes listed in the mortality database do not appear in any official ICD
+                documentation, specifically related to the W## and Y## codes - I have contacted the WHO
+                for clarification on this issue.</p>
+            <h4>Population Adjusted Mortality Data</h4>
+            <p>In some cases there is population data but no mortality data, or vice versa. In these situations the data
+                points are removed so as to avoid confusion due to mixing data formats.</p>
+
+            <hr>
+            <!-- Quick-start Guide -->
+            <h3>Quick Start Guide</h3>
+            <p>To use the API from custom scripts it is likely the endpoint you wish to use requires an API key; To
+                obtain your API key first <a href="/register">sign up</a>. You will then be taken to your profile page -
+                click the API key button.</p>
+            <p>Copy the whole key (being careful not to copy any trailing whitespace) and pass this as a header with key
+                = "api_key" in your API call. </p>
+            <h4>Below are some example paths and the data they will return</h4>
+
+
+            <h5>Search for Countries</h5>
+            <p>e.g. Search for all counties containing string "ka"<br>
+                GET /api/country-search/ka</p>
+
+            <textarea readonly class="exampleDoc alert alert-primary" id="countryExample"
+                style="overflow:hidden;display:block;width:100%">
+            {
+                "id": 145, 
+                "code": "3365",
+                "name": "Sri Lanka"
+            },
+            {
+                "id": 178,
+                "code": "4182",
+                "name": "Kazakhstan"
+            }</textarea>
+
+            <h5>ICD Search</h5>
+            <p>e.g. Search for all ICD codes that contain the string "boil"<br>
+                GET /api/icd10-search/boil</p>
+
+            <textarea readonly class="exampleDoc alert alert-primary" id="icdExample"
+                style="overflow:hidden;display:block;width:100%">
+            {
+                "results": 
+                [
+                    {
+                        "list": "103",
+                        "code": "W35",
+                        "description": "Explosion and rupture of boiler"
+                    },
+                    {
+                        "list": "104",
+                        "code": "W35",
+                        "description": "Explosion and rupture of boiler"
+                    },
+                    {
+                        "list": "10M",
+                        "code": "W35"
+                        "description": "Explosion and rupture of boiler"
+                    }
+                ]
+            }
+            </textarea>
+
+
+            <h5>Find Multiple Mortality Entries</h5>
+            <p>e.g. Return the total deaths for all causes for males in the UK and Algeria in years 2000 and 2002<br>
+                GET /api/mortality-search-multiple?country=4308,1020&year=2000,2002&sex=1&admin=&subdiv=&cause=AAA<br>
+            </p>
+            <textarea readonly class="exampleDoc alert alert-primary"
+                style="display:block;width:100%">(Results too long)</textarea>
+
+            <h5>Find Multiple Population Adjusted Mortality Entries</h5>
+            <p>e.g. Return population adjusted mortality data for males and females in the United Kingdom in 2006 caused
+                by
+                "Airgun discharge (undetermined intent)":<br>
+                GET /api/mortality-adj-search?country=4308&year=2006&cause=Y240</p>
+            <textarea readonly class="exampleDoc alert alert-primary"
+                style="display:block;width:100%">(Results too long)</textarea>
+
+            <hr>
+            <div>
+                <h3>Path list:</h3>
+            </div>
 
         </div>
     </div>
@@ -134,6 +269,7 @@
                     <p>
                                     <a class="btn btn-`+ colour + ` rounded-0 stretched-link" data-toggle="collapse"
                                         href="#`+ element_id + `" role="button" aria-expanded="true">
+                                        
                                         GET </a><span
                                             class="btn border border-`+ colour + ` rounded-0">` + path + `</span>
                                     <span class="lead align-middle"> - `+ description + `</span>
@@ -163,9 +299,12 @@
                 var allResponseTextareas = document.querySelectorAll('.response');
 
                 for (var x = 0; x < allResponseTextareas.length; x++) {
+
                     var nextLineCount = countSubstring(allResponseTextareas[x].innerText, "\n");
                     nextLineCount++
+                    // TODO: need way to responsively make rows number bigger to accommodate wrapping on mobile
                     allResponseTextareas[x].rows = nextLineCount;
+
                 }
 
             },
@@ -174,6 +313,10 @@
                 $('#error').html(output);
             }
         });
+
+
+        auto_grow($('#icdExample'))
+        auto_grow($('#countryExample'))
     })
 </script>
 {% endblock %}
