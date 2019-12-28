@@ -54,8 +54,8 @@ infant_age_format_codes = {
 }
 
 
-icd10_lists = {'101': "Condensed ICD10 tabulation from WHO docs",
-               '103': "3 Character ICD10 codes",
-               '104': "4 Character ICD10 codes",
-               '10M': "3 and 4 Character ICD10 codes",
-               'UE1': "Special Codes for Portugal 2004-2005"}
+icd_lists = {'101': "Condensed ICD10 tabulation from WHO docs",
+             '103': "3 Character ICD10 codes",
+             '104': "4 Character ICD10 codes",
+             '10M': "3 and 4 Character ICD10 codes",
+             'UE1': "Special Codes for Portugal 2004-2005"}

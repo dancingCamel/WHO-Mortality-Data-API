@@ -1,8 +1,8 @@
 from db import db
 
 
-class Icd10Model(db.Model):
-    __tablename__ = 'icd10'
+class IcdModel(db.Model):
+    __tablename__ = 'icd'
 
     id = db.Column(db.Integer, primary_key=True)
     code_list = db.Column(db.String(5))

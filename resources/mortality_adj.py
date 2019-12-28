@@ -2,7 +2,7 @@ from flask_restful import Resource, request
 from models.mortality import MortalityDataModel
 from models.population import PopulationModel
 from models.country import CountryModel
-from models.icd10 import Icd10Model
+from models.icd import IcdModel
 from validate import *
 import math
 from auth import requireApiKey
@@ -158,11 +158,11 @@ class MortalityAdjustedSearchMultiple(Resource):
         for icd_code in cause_code_list:
             # first get the corresponding description for the code given
             complete_icd_codes = [code.json()
-                                  for code in Icd10Model.find_by_code(icd_code)]
+                                  for code in IcdModel.find_by_code(icd_code)]
             # find other codes with same description
             for icd_code in complete_icd_codes:
                 matching_codes = [matching_icd_code.json()
-                                  for matching_icd_code in Icd10Model.search(icd_code['description'])]
+                                  for matching_icd_code in IcdModel.search(icd_code['description'])]
                 # add to extended code list
                 for matching_code in matching_codes:
                     cause_code_list_extended.append(matching_code['code'])

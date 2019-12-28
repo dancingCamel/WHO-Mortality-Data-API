@@ -1,9 +1,9 @@
 from flask_restful import Resource, reqparse
-from models.icd10_lists import Icd10ListsModel
+from models.icd_lists import IcdListsModel
 from auth import requireApiKey, requireAdmin
 
 
-class Icd10CodeListCode(Resource):
+class IcdCodeListCode(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('description',
                         type=str,
@@ -13,7 +13,7 @@ class Icd10CodeListCode(Resource):
 
     @requireApiKey
     def get(self, code):
-        code_list = Icd10ListsModel.find_by_code(code)
+        code_list = IcdListsModel.find_by_code(code)
         if code_list:
             return code_list.json(), 200
         return {'message': "Code list '{}' not found.".format(code)}, 404
@@ -23,11 +23,11 @@ class Icd10CodeListCode(Resource):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
         #     return {'message': 'Admin privilege required'}, 401
-        if Icd10ListsModel.find_by_code(code):
+        if IcdListsModel.find_by_code(code):
             return {'message': "List '{}' already exists.".format(code)}, 404
 
-        data = Icd10CodeList.parser.parse_args()
-        new_list = Icd10ListsModel(code, data['description'])
+        data = IcdCodeList.parser.parse_args()
+        new_list = IcdListsModel(code, data['description'])
         try:
             new_list.save_to_db()
         except:
@@ -39,13 +39,13 @@ class Icd10CodeListCode(Resource):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
         #     return {'message': 'Admin privilege required'}, 401
-        code_list = Icd10ListsModel.find_by_code(code)
+        code_list = IcdListsModel.find_by_code(code)
 
-        data = Icd10CodeList.parser.parse_args()
+        data = IcdCodeList.parser.parse_args()
         if code_list:
             code_list.description = data['description']
         else:
-            code_list = Icd10ListsModel(code, data['description'])
+            code_list = IcdListsModel(code, data['description'])
 
         try:
             code_list.save_to_db()
@@ -58,26 +58,26 @@ class Icd10CodeListCode(Resource):
         # claims = get_jwt_claims()
         # if not claims['is_admin']:
         #     return {'message': 'Admin privilege required'}, 401
-        code_list = Icd10ListsModel.find_by_code(code)
+        code_list = IcdListsModel.find_by_code(code)
         if code_list:
             code_list.delete_from_db()
             return {'message': "List '{}' deleted.".format(code)}, 200
         return {'message': "List '{}' not found.".format(code)}, 404
 
 
-class Icd10CodeListDesc(Resource):
+class IcdCodeListDesc(Resource):
     def get(self, search_term):
-        lists = [icd10list.json()
-                 for icd10list in Icd10ListsModel.search_by_desc(search_term)]
+        lists = [icdlist.json()
+                 for icdlist in IcdListsModel.search_by_desc(search_term)]
         if lists:
             return {'lists': lists}, 200
         return {'message': "No lists match that search term"}, 404
 
 
-class Icd10AllCodeLists(Resource):
+class IcdAllCodeLists(Resource):
     # return all available code lists and their descritpion e.g. 101, 103, 104
     @requireApiKey
     def get(self):
         code_lists = [code_list.json()
-                      for code_list in Icd10ListsModel.find_all()]
+                      for code_list in IcdListsModel.find_all()]
         return {'code_lists': code_lists}

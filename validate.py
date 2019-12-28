@@ -2,7 +2,7 @@ from models.sex import SexModel
 from models.country import CountryModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
-from models.icd10 import Icd10Model
+from models.icd import IcdModel
 from datetime import datetime
 
 
@@ -45,6 +45,6 @@ def valid_subdiv(subdiv):
 
 def valid_cause(cause):
     cause = cause.upper()
-    if Icd10Model.find_by_code(cause):
+    if IcdModel.find_by_code(cause):
         return True
     return False

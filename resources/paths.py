@@ -1379,9 +1379,9 @@ class Paths(Resource):
                     }
                 }
             },
-            # ICD10 code endpoints
-            # '/api/icd10/<string:code_list>/<string:code>'
-            "/api/icd10/{code_list}/{code}": {
+            # ICD code endpoints
+            # '/api/icd/<string:code_list>/<string:code>'
+            "/api/icd/{code_list}/{code}": {
                 "get": {
                     "security":
                     {
@@ -1422,8 +1422,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-list'
-            "/api/icd10-list": {
+            # '/api/icd-list'
+            "/api/icd-list": {
                 "get": {
                     "security":
                     {
@@ -1456,8 +1456,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-search/<string:search_term>'
-            "/api/icd10-search/{search_term}": {
+            # '/api/icd-search/<string:search_term>'
+            "/api/icd-search/{search_term}": {
                 "get": {
                     "security":
                     {
@@ -1503,8 +1503,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-desc/<string:search_term>'
-            "/api/icd10-desc/{search_term}": {
+            # '/api/icd-desc/<string:search_term>'
+            "/api/icd-desc/{search_term}": {
                 "get": {
                     "security":
                     {
@@ -1563,8 +1563,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-code/<string:code>'
-            "/api/icd10-code/{code}": {
+            # '/api/icd-code/<string:code>'
+            "/api/icd-code/{code}": {
                 "get": {
                     "security":
                     {
@@ -1611,8 +1611,8 @@ class Paths(Resource):
                 }
             },
             # ICD code list endpoints
-            # '/api/icd10-code-list-code/<string:code>'
-            "/api/icd10-code-list-code/{code}": {
+            # '/api/icd-code-list-code/<string:code>'
+            "/api/icd-code-list-code/{code}": {
                 "get": {
                     "security":
                     {
@@ -1652,8 +1652,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-code-list-desc/<string:search_term>'
-            "/api/icd10-code-list-desc/{search_term}": {
+            # '/api/icd-code-list-desc/<string:search_term>'
+            "/api/icd-code-list-desc/{search_term}": {
                 "get": {
                     "security":
                     {
@@ -1698,8 +1698,8 @@ class Paths(Resource):
                     }
                 }
             },
-            # '/api/icd10-code-lists'
-            "/api/icd10-code-list-list": {
+            # '/api/icd-code-lists'
+            "/api/icd-code-list-list": {
                 "get": {
                     "security":
                     {

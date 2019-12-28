@@ -2,7 +2,7 @@ from db import db
 from models.country import CountryModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
-from models.icd10 import Icd10Model
+from models.icd import IcdModel
 from models.sex import SexModel
 from models.age_format import AgeFormatModel
 from models.infant_age_format import InfantAgeFormatModel
@@ -121,7 +121,7 @@ class MortalityDataModel(db.Model):
             subdiv = 'None'
 
         # format cause
-        cause = Icd10Model.find_by_list_and_code(self.code_list, self.cause)
+        cause = IcdModel.find_by_list_and_code(self.code_list, self.cause)
         if cause:
             cause = {'code': cause.code,
                      'description': cause.description}

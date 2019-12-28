@@ -9,12 +9,12 @@ from populate_data_tables import (populate_country_table,
                                   populate_subdiv_table,
                                   populate_age_format_table,
                                   populate_infant_age_format_table,
-                                  populate_icd10_table_101,
-                                  populate_icd10_table_103,
-                                  populate_icd10_table_104,
-                                  populate_icd10_table_10M,
-                                  populate_icd10_table_UE1,
-                                  populate_icd10_code_lists_table,
+                                  populate_icd_table_101,
+                                  populate_icd_table_103,
+                                  populate_icd_table_104,
+                                  populate_icd_table_10M,
+                                  populate_icd_table_UE1,
+                                  populate_icd_code_lists_table,
                                   populate_mortality_table)
 from models.user import UserModel
 from resources.country import CountryCode, CountryList, CountrySearch, CountryDesc, CountryName
@@ -24,8 +24,8 @@ from resources.admin import Admin, AdminList, AdminCode, AdminDesc, AdminSearch
 from resources.subdiv import SubdivCode, SubdivList, SubdivDesc, SubdivSearch
 from resources.age_format import AgeFormatCode, AgeFormatList
 from resources.infant_age_format import InfantAgeFormatCode, InfantAgeFormatList
-from resources.icd10 import Icd10, Icd10List, Icd10Search, Icd10Code, Icd10Desc
-from resources.icd10_lists import Icd10CodeListCode, Icd10CodeListDesc, Icd10AllCodeLists
+from resources.icd import Icd, IcdList, IcdSearch, IcdCode, IcdDesc
+from resources.icd_lists import IcdCodeListCode, IcdCodeListDesc, IcdAllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange, MortalitySearchMultiple
 from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne, MortalityAdjustedSearchMultiple
 # from blacklist import BLACKLIST
@@ -89,12 +89,12 @@ def create_tables():
     populate_subdiv_table()
     populate_age_format_table()
     populate_infant_age_format_table()
-    populate_icd10_table_101()
-    populate_icd10_table_103()
-    populate_icd10_table_104()
-    populate_icd10_table_10M()
-    populate_icd10_table_UE1()
-    populate_icd10_code_lists_table()
+    populate_icd_table_101()
+    populate_icd_table_103()
+    populate_icd_table_104()
+    populate_icd_table_10M()
+    populate_icd_table_UE1()
+    populate_icd_code_lists_table()
     # mortality data csv is too large. need to use sqlite3 .import function
     # populate_mortality_table()
 
@@ -141,19 +141,19 @@ api.add_resource(
     PopulationChange, '/api/population-change/<string:country_code>/<string:year>/<string:sex>')
 api.add_resource(PopulationSearchMultiple, '/api/population-search-multiple')
 
-# ICD10 code endpoints
-api.add_resource(Icd10, '/api/icd10/<string:code_list>/<string:code>')
-api.add_resource(Icd10List, '/api/icd10-list')
-api.add_resource(Icd10Search, '/api/icd10-search/<string:search_term>')
-# ICD10 endpoints specifically for browser based search
-api.add_resource(Icd10Desc, '/api/icd10-desc/<string:search_term>')
-api.add_resource(Icd10Code, '/api/icd10-code/<string:code>')
+# ICD code endpoints
+api.add_resource(Icd, '/api/icd/<string:code_list>/<string:code>')
+api.add_resource(IcdList, '/api/icd-list')
+api.add_resource(IcdSearch, '/api/icd-search/<string:search_term>')
+# ICD endpoints specifically for browser based search
+api.add_resource(IcdDesc, '/api/icd-desc/<string:search_term>')
+api.add_resource(IcdCode, '/api/icd-code/<string:code>')
 
 # ICD code list endpoints
-api.add_resource(Icd10CodeListCode, '/api/icd10-code-list-code/<string:code>')
-api.add_resource(Icd10CodeListDesc,
-                 '/api/icd10-code-list-desc/<string:search_term>')
-api.add_resource(Icd10AllCodeLists, '/api/icd10-code-list-list')
+api.add_resource(IcdCodeListCode, '/api/icd-code-list-code/<string:code>')
+api.add_resource(IcdCodeListDesc,
+                 '/api/icd-code-list-desc/<string:search_term>')
+api.add_resource(IcdAllCodeLists, '/api/icd-code-list-list')
 
 # Mortality data endpoints
 api.add_resource(MortalityDataSearch, '/api/mortality-data-search')

@@ -6,8 +6,8 @@ from models.admin import AdminModel
 from models.subdiv import SubdivModel
 from models.age_format import AgeFormatModel
 from models.infant_age_format import InfantAgeFormatModel
-from models.icd10 import Icd10Model
-from models.icd10_lists import Icd10ListsModel
+from models.icd import IcdModel
+from models.icd_lists import IcdListsModel
 from models.mortality import MortalityDataModel
 from models.superuser import SuperuserModel
 from codes import *
@@ -97,87 +97,87 @@ def populate_infant_age_format_table():
         new_infant_age_format.save_to_db()
 
 
-def populate_icd10_table_101():
+def populate_icd_table_101():
     with open('./raw_data/icd10-code-lists/101.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = 101
-            new_icd10_object = Icd10Model(code_list, *row)
+            new_icd_object = IcdModel(code_list, *row)
 
-            entry = Icd10Model.find_by_list_and_code(
-                new_icd10_object.code_list, new_icd10_object.code)
+            entry = IcdModel.find_by_list_and_code(
+                new_icd_object.code_list, new_icd_object.code)
             if entry:
                 break
 
-            new_icd10_object.save_to_db()
+            new_icd_object.save_to_db()
 
 
-def populate_icd10_table_103():
+def populate_icd_table_103():
     with open('./raw_data/icd10-code-lists/103.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = 103
-            new_icd10_object = Icd10Model(code_list, *row)
+            new_icd_object = IcdModel(code_list, *row)
 
-            entry = Icd10Model.find_by_list_and_code(
-                new_icd10_object.code_list, new_icd10_object.code)
+            entry = IcdModel.find_by_list_and_code(
+                new_icd_object.code_list, new_icd_object.code)
             if entry:
                 break
 
-            new_icd10_object.save_to_db()
+            new_icd_object.save_to_db()
 
 
-def populate_icd10_table_104():
+def populate_icd_table_104():
     with open('./raw_data/icd10-code-lists/104.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = 104
-            new_icd10_object = Icd10Model(code_list, *row)
+            new_icd_object = IcdModel(code_list, *row)
 
-            entry = Icd10Model.find_by_list_and_code(
-                new_icd10_object.code_list, new_icd10_object.code)
+            entry = IcdModel.find_by_list_and_code(
+                new_icd_object.code_list, new_icd_object.code)
             if entry:
                 break
 
-            new_icd10_object.save_to_db()
+            new_icd_object.save_to_db()
 
 
-def populate_icd10_table_10M():
+def populate_icd_table_10M():
     with open('./raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "10M"
-            new_icd10_object = Icd10Model(code_list, *row)
+            new_icd_object = IcdModel(code_list, *row)
 
-            entry = Icd10Model.find_by_list_and_code(
-                new_icd10_object.code_list, new_icd10_object.code)
+            entry = IcdModel.find_by_list_and_code(
+                new_icd_object.code_list, new_icd_object.code)
             if entry:
                 break
 
-            new_icd10_object.save_to_db()
+            new_icd_object.save_to_db()
 
 
-def populate_icd10_table_UE1():
+def populate_icd_table_UE1():
     with open('./raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "UE1"
-            new_icd10_object = Icd10Model(code_list, *row)
+            new_icd_object = IcdModel(code_list, *row)
 
-            entry = Icd10Model.find_by_list_and_code(
-                new_icd10_object.code_list, new_icd10_object.code)
+            entry = IcdModel.find_by_list_and_code(
+                new_icd_object.code_list, new_icd_object.code)
             if entry:
                 break
 
-            new_icd10_object.save_to_db()
+            new_icd_object.save_to_db()
 
 
-def populate_icd10_code_lists_table():
-    for code, description in icd10_lists.items():
-        if Icd10ListsModel.find_by_code(code):
+def populate_icd_code_lists_table():
+    for code, description in icd_lists.items():
+        if IcdListsModel.find_by_code(code):
             break
 
-        new_list = Icd10ListsModel(code, description)
+        new_list = IcdListsModel(code, description)
         new_list.save_to_db()
 
 

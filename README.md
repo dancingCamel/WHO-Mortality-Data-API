@@ -220,33 +220,33 @@ Return population data for only males in the United Kingdom in 1989:<br>
 
 
 
-### ICD-10 Codes (including condensed form)
-Endpoints related to the ICD-10 codes including search for descriptions and codes across multiple list versions used by WHO in mortality data.
+### ICD Codes (including condensed form)
+Endpoints related to the ICD codes including search for descriptions and codes across multiple list versions used by WHO in mortality data.
 
-#### All ICD-10 Code Lists used in Mortality Data
+#### All ICD Code Lists used in Mortality Data
 Find descriptions of all different code lists used in Mortality Data.<br>
-``` GET /api/icd10-code-list-list```
+``` GET /api/icd-code-list-list```
 
-#### ICD-10 Code List Description
+#### ICD Code List Description
 Find the description of a specific code list.<br>
-``` GET /api/icd10-code-list/<code>```
+``` GET /api/icd-code-list/<code>```
 
 e.g. <br>
-```GET /api/icd10-code-list/103```
+```GET /api/icd-code-list/103```
 
 >{<br>
 >    "list": "103",<br>
 >    "description": "3 Character ICD10 codes"<br>
 >}<br>
 
-### ICD-10 Code Description
-Find the description of a certain code in a certain list. (If list is unknown use the ICD-10 Search endpoint.)<br>
+### ICD Code Description
+Find the description of a certain code in a certain list. (If list is unknown use the ICD Search endpoint.)<br>
 NOTE 1: Y34 and Y349 respectively refer to the sum of all deaths from accidental deaths V00-Y89 for countries reporting with list 103 and 104 respectively<br>
 NOTE 2: If a country reports with a 4 character code in the 10M list, the death will not be counted in the 3 character code total (all numbers are mutually exclusive).<br>
-``` GET /api/icd10/<list>/<code>```
+``` GET /api/icd/<list>/<code>```
 
 e.g.<br>
-```GET /api/icd10/104/Y25```
+```GET /api/icd/104/Y25```
 
 >{<br>
 >    "list": "104",<br>
@@ -254,12 +254,12 @@ e.g.<br>
 >    "description": "Contact with explosive material (undetermined intent)"<br>
 >}<br>
 
-#### ICD-10 Search
-Search the ICD-10 with a search term (searches both codes and description)<br>
-``` GET /api/icd10-search/<search_term>```
+#### ICD Search
+Search the ICD with a search term (searches both codes and description)<br>
+``` GET /api/icd-search/<search_term>```
 
 e.g.<br>
-```GET /api/icd10-search/boil```
+```GET /api/icd-search/boil```
 
 >{<br>
 >    "results": [<br>
@@ -281,15 +281,15 @@ e.g.<br>
 >    ]<br>
 >}<br>
 
-#### ICD-10 List
-Return all ICD-10 codes and their descriptions in all lists used in Mortality Database<br>
-``` GET /api/icd10-list```
+#### ICD List
+Return all ICD codes and their descriptions in all lists used in Mortality Database<br>
+``` GET /api/icd-list```
 
 
 ### Mortality Data
-Endpoints related to the WHO Mortality Database. Each mortality database entry details the number of deaths in a given country in any given year for any given sex from a certain cause. When searching with a cause of death icd10 code the code must be in the correct format for that countries mortality data. Mortality data starts in 2005. 
+Endpoints related to the WHO Mortality Database. Each mortality database entry details the number of deaths in a given country in any given year for any given sex from a certain cause. Mortality data starts in 2005. 
 
-NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
+NOTE: Some cause of death ICD codes listed in the mortality database do not appear in any official ICD documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
 
 #### Find All Mortality Entries Matching Set of Single Search Variables:
 Get raw mortality data for given country, year, sex, admin or subdiv and cause (or any combination thereof). Response returned as a list and multiple entries are allowed. <br>
@@ -324,7 +324,7 @@ Return mortality data for males and females in the United Kingdom and Croatia in
 ### Mortality Data - adjusted for population
 Endpoints related to the WHO Mortality Database with all mortalities adjusted for population (per 100,000) - also known as ASDR per 100,000. All other factors are the same as for the mortality data detailed above.
 
-NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD-10 documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
+NOTE: Some cause of death ICD-10 codes listed in the mortality database do not appear in any official ICD documentation, specifically related to the W.. and Y.. cause of death codes. I have contacted the WHO for clarification on this issue.
 NOTE: In some cases there is population data but no mortality data, or vice versa. In these situations the data point is removed so as to avoid confusion due to mixing of age-specific and absolute data.
 
 #### Find All Population Adjusted Mortality Entries Matching Set of Single Search Variables:
