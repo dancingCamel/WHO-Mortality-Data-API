@@ -7,6 +7,7 @@ from base64 import b64encode
 from os import urandom
 from blacklist import BLACKLIST
 from models.user import UserModel
+import re
 
 
 class UserRegister(Resource):
@@ -18,6 +19,18 @@ class UserRegister(Resource):
         # username is just user's email address
         username = request.form.get("username")
         password = request.form.get("password")
+
+        # check username is an email address
+        def valid_username(username):
+            pattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+            if re.match(pattern, username):
+                return True
+            return False
+
+        if not valid_username(username):
+            message = "Please enter a valid email address as your username."
+            flash(message, 'error')
+            return redirect(url_for('userregister'))
 
         # if this returns a user, then the email already exists in database
         user = UserModel.find_by_username(username)

@@ -1,11 +1,10 @@
 from flask import render_template, make_response, request, current_app, flash, redirect, url_for
 from flask_restful import Resource
-from flask_mail import Mail, Message
-# from pprint import pprint
 import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from jinja2 import utils
 
 
 class Contact(Resource):
@@ -19,6 +18,11 @@ class Contact(Resource):
         message = request.form.get("message")
         name = request.form.get("name")
         email = request.form.get("email")
+
+        subject = str(utils.escape(subject))
+        message = str(utils.escape(message))
+        name = str(utils.escape(name))
+        email = str(utils.escape(email))
 
         # set up email config
         smtp_server = current_app.config['MAIL_SERVER']

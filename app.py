@@ -38,7 +38,7 @@ from resources.docs import Docs
 from resources.visualize import Visualize
 from resources.codes import Codes
 from resources.contact import Contact
-from resources.json import Json
+from resources.jsonpage import Json
 from resources.info import Info
 from resources.externalDocs import ExternalDocs
 from resources.paths import Paths
