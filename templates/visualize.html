@@ -495,7 +495,7 @@
                         barChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
                             datasetItem['data'].forEach(function (dataItem, dataIndex) {
                                 if (isNaN(dataItem) || dataItem == null) {
-                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
+                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable or there were no deaths for some combinations of search inputs.</div>');
                                     $('#errorMessage').show();
                                 }
                             });
@@ -519,6 +519,9 @@
                                         scaleLabel: {
                                             display: true,
                                             labelString: dataFormat
+                                        },
+                                        ticks: {
+                                            precision: 0,
                                         }
                                     }]
                                 }
@@ -593,12 +596,10 @@
                         lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
                             datasetItem['data'].forEach(function (dataItem, dataIndex) {
                                 if (isNaN(dataItem) || dataItem == null) {
-                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable.</div>');
+                                    $('#errorMessage').html('<div class="alert alert-danger" role="alert">Warning: Some of the data you requested is unavailable or there were no deaths for some combinations of search inputs.</div>');
                                     $('#errorMessage').show();
                                 }
                             })
-
-
                         });
 
                         // draw line chart
@@ -632,6 +633,9 @@
                                         scaleLabel: {
                                             display: true,
                                             labelString: dataFormat
+                                        },
+                                        ticks: {
+                                            precision: 0,
                                         }
                                     }]
                                 }

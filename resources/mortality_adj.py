@@ -114,14 +114,14 @@ class MortalityAdjustedSearch(Resource):
                             if pop == "0":
                                 continue
                             entry[key][age_range] = str(
-                                round_up(int(value)/int(pop)*100000, 3))
+                                round_up(int(float(value))/int(float(pop))*100000, 3))
                         if pop == None:
                             ages_to_delete.append(age_range)
                     for index in ages_to_delete:
                         del entry[key][index]
                 else:
                     entry[key] = str(
-                        round_up(int(value)/int(pop_data[key])*100000, 3))
+                        round_up(int(float(value))/int(float(pop_data[key]))*100000, 3))
 
         return {'adjusted_entries': results}, 200
 
@@ -267,7 +267,7 @@ class MortalityAdjustedSearchMultiple(Resource):
                                                     if pop == "0":
                                                         continue
                                                     entry[key][age_range] = str(
-                                                        round_up(int(value)/int(pop)*100000, 3))
+                                                        round_up(int(float(value))/int(float(pop))*100000, 3))
                                                 if pop == None:
                                                     ages_to_delete.append(
                                                         age_range)
@@ -275,7 +275,7 @@ class MortalityAdjustedSearchMultiple(Resource):
                                                 del entry[key][index]
                                         else:
                                             entry[key] = str(
-                                                round_up(int(value)/int(pop_data[key])*100000, 3))
+                                                round_up(int(float(value))/int(float(pop_data[key]))*100000, 3))
 
                                 # append to results list if anything found
                                 if result:
@@ -396,13 +396,14 @@ class MortalityAdjustedOne(Resource):
                                 if pop == "0":
                                     continue
                                 entry[key][age_range] = str(
-                                    round_up(int(value)/int(pop)*100000, 3))
+                                    round_up(int(float(value))/int(float(pop))*100000, 3))
                             if pop == None:
                                 ages_to_delete.append(age_range)
                         for index in ages_to_delete:
                             del entry[key][index]
                     else:
                         entry[key] = str(
-                            round_up(int(value)/int(pop_data[key])*100000, 3))
+                            round_up(int(float(value)) /
+                                     int(float(pop_data[key]))*100000, 3))
 
             return {'adjusted_entries': results}, 200
