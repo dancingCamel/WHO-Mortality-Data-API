@@ -7,7 +7,7 @@ class IcdModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code_list = db.Column(db.String(5))
     code = db.Column(db.String(5))
-    description = db.Column(db.String(150))
+    description = db.Column(db.String(220))
 
     def __init__(self, code_list, code, description):
         self.code_list = code_list

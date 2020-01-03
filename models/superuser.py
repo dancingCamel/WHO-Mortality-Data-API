@@ -4,7 +4,7 @@ from db import db
 
 
 class SuperuserModel(db.Model):
-    __tablename__: 'superusers'
+    __tablename__ = 'superusers'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))

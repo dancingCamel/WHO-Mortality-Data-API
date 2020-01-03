@@ -20,7 +20,7 @@ class UserRegister(Resource):
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # check username is an email address
+        # validate username and password
         def valid_username(username):
             pattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
             if re.match(pattern, username):
@@ -32,7 +32,17 @@ class UserRegister(Resource):
             flash(message, 'error')
             return redirect(url_for('userregister'))
 
-        # if this returns a user, then the email already exists in database
+        if len(username) > 80:
+            message = "Username too long."
+            flash(message, 'error')
+            return redirect(url_for('userregister'))
+
+        if len(password) == 0:
+            message = "Please enter a password."
+            flash(message, 'error')
+            return redirect(url_for('userregister'))
+
+        # check to see if username already exists
         user = UserModel.find_by_username(username)
 
         if user:  # if a user is found, we want to redirect back to signup page so user can try again
@@ -45,9 +55,9 @@ class UserRegister(Resource):
             password, method='pbkdf2:sha256', salt_length=32)
 
         # generate api key and check not already used
-        api_key = str(b64encode(urandom(64)).decode('latin1'))
+        api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
         while UserModel.find_by_key(api_key) or api_key in BLACKLIST:
-            api_key = str(b64encode(urandom(64)).decode('latin1'))
+            api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         # create new user
         new_user = UserModel(username, hashed_password, api_key)
@@ -145,10 +155,10 @@ class UserApiKey(Resource):
             return {'message': "Something isn't right. Try logging in again."}
 
         # generate api key and check not already used or in blacklist
-        new_api_key = str(b64encode(urandom(64)).decode('latin1'))
+        new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         while UserModel.find_by_key(new_api_key) or new_api_key in BLACKLIST:
-            new_api_key = str(b64encode(urandom(64)).decode('latin1'))
+            new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         # update api key in user database
         try:

@@ -17,7 +17,9 @@ from codes import *
 
 
 def populate_country_table():
-    with open('./raw_data/country_codes.csv', 'r') as country_code_file:
+    # when working locally use ./raw_data for relative file path.
+    # when running on remote server use abolute file path
+    with open('/var/www/html/items-rest/raw_data/country_codes.csv', 'r') as country_code_file:
         country_reader = csv.reader(country_code_file)
         for row in country_reader:
             # make it a CountryModel object
@@ -27,7 +29,7 @@ def populate_country_table():
             country = CountryModel.find_by_code(
                 new_country_object.country_code)
             if country:
-                break
+                continue
             else:
                 if new_country_object.country_name == "name":
                     continue
@@ -35,7 +37,7 @@ def populate_country_table():
 
 
 def populate_population_table():
-    with open('./raw_data/populations.csv', 'r') as population_file:
+    with open('/var/www/html/items-rest/raw_data/populations.csv', 'r') as population_file:
         pop_reader = csv.reader(population_file)
         for row in pop_reader:
 
@@ -48,7 +50,7 @@ def populate_population_table():
             population = PopulationModel.find_by_cysas(new_population_object.country_code, new_population_object.year,
                                                        new_population_object.sex, new_population_object.admin, new_population_object.subdiv)
             if population:
-                break
+                continue
 
             # can't check if in table as don't have unique identifiers
             new_population_object.save_to_db()
@@ -57,7 +59,7 @@ def populate_population_table():
 def populate_sex_table():
     for sex, sex_code in sex_codes.items():
         if SexModel.find_by_name(sex):
-            break
+            continue
         new_sex_object = SexModel(sex, sex_code)
         new_sex_object.save_to_db()
 
@@ -66,14 +68,14 @@ def populate_admin_table():
     for row in admin_codes:
         new_admin_model = AdminModel(*row)
         if AdminModel.find_by_code_and_country(new_admin_model.admin_code, new_admin_model.country_code):
-            break
+            continue
         new_admin_model.save_to_db()
 
 
 def populate_subdiv_table():
     for subdiv_code, description in subdiv_codes.items():
         if SubdivModel.find_by_code(subdiv_code):
-            break
+            continue
         new_subdiv_object = SubdivModel(subdiv_code, description)
         new_subdiv_object.save_to_db()
 
@@ -81,7 +83,7 @@ def populate_subdiv_table():
 def populate_age_format_table():
     for age_format_code, format_list in age_format_codes.items():
         if AgeFormatModel.find_by_code(age_format_code):
-            break
+            continue
 
         new_age_format = AgeFormatModel(age_format_code, *format_list)
         new_age_format.save_to_db()
@@ -90,7 +92,7 @@ def populate_age_format_table():
 def populate_infant_age_format_table():
     for infant_age_format_code, format_list in infant_age_format_codes.items():
         if InfantAgeFormatModel.find_by_code(infant_age_format_code):
-            break
+            continue
 
         new_infant_age_format = InfantAgeFormatModel(
             infant_age_format_code, *format_list)
@@ -98,52 +100,52 @@ def populate_infant_age_format_table():
 
 
 def populate_icd_table_101():
-    with open('./raw_data/icd10-code-lists/101.csv', 'r') as code_file:
+    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/101.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
-            code_list = 101
+            code_list = '101'
             new_icd_object = IcdModel(code_list, *row)
 
             entry = IcdModel.find_by_list_and_code(
                 new_icd_object.code_list, new_icd_object.code)
             if entry:
-                break
+                continue
 
             new_icd_object.save_to_db()
 
 
 def populate_icd_table_103():
-    with open('./raw_data/icd10-code-lists/103.csv', 'r') as code_file:
+    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/103.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
-            code_list = 103
+            code_list = '103'
             new_icd_object = IcdModel(code_list, *row)
 
             entry = IcdModel.find_by_list_and_code(
                 new_icd_object.code_list, new_icd_object.code)
             if entry:
-                break
+                continue
 
             new_icd_object.save_to_db()
 
 
 def populate_icd_table_104():
-    with open('./raw_data/icd10-code-lists/104.csv', 'r') as code_file:
+    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/104.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
-            code_list = 104
+            code_list = '104'
             new_icd_object = IcdModel(code_list, *row)
 
             entry = IcdModel.find_by_list_and_code(
                 new_icd_object.code_list, new_icd_object.code)
             if entry:
-                break
+                continue
 
             new_icd_object.save_to_db()
 
 
 def populate_icd_table_10M():
-    with open('./raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
+    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "10M"
@@ -152,13 +154,13 @@ def populate_icd_table_10M():
             entry = IcdModel.find_by_list_and_code(
                 new_icd_object.code_list, new_icd_object.code)
             if entry:
-                break
+                continue
 
             new_icd_object.save_to_db()
 
 
 def populate_icd_table_UE1():
-    with open('./raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
+    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "UE1"
@@ -167,7 +169,7 @@ def populate_icd_table_UE1():
             entry = IcdModel.find_by_list_and_code(
                 new_icd_object.code_list, new_icd_object.code)
             if entry:
-                break
+                continue
 
             new_icd_object.save_to_db()
 
@@ -175,14 +177,14 @@ def populate_icd_table_UE1():
 def populate_icd_code_lists_table():
     for code, description in icd_lists.items():
         if IcdListsModel.find_by_code(code):
-            break
+            continue
 
         new_list = IcdListsModel(code, description)
         new_list.save_to_db()
 
 
 def populate_mortality_table():
-    with open('./raw_data/Mort-ICD10.csv', 'r') as mort_file:
+    with open('/var/www/html/items-rest/raw_data/Mort-ICD10.csv', 'r') as mort_file:
         mort_reader = csv.reader(mort_file)
         for row in mort_reader:
             new_mortality_entry = MortalityDataModel(*row)

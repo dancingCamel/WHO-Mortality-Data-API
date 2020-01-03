@@ -3,12 +3,12 @@ from models.country import CountryModel
 
 
 class AdminModel(db.Model):
-    __tablename__: 'adminCodes'
+    __tablename__ = 'admin_codes'
 
     id = db.Column(db.Integer, primary_key=True)
     admin_code = db.Column(db.String(5))
     country_code = db.Column(db.String(5))
-    description = db.Column(db.String(30))
+    description = db.Column(db.String(80))
 
     def __init__(self, admin_code, country_code, description):
         self.admin_code = admin_code

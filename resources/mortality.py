@@ -146,11 +146,10 @@ class MortalitySearchMultiple(Resource):
                                           for entry in MortalityDataModel.search_mortalities(query)]
 
                                 if result:
-                                    if len(result) > 1:
-                                        # return {'message': "More than one population entry was found matching your query."}, 400
-                                        continue
-                                    # add all results to a results list
-                                    results.append(result[0])
+                                    if len(result) == 1:
+                                        results.append(result[0])
+
+                                continue
 
         # if results is a blank list then send an error message for 404 not found
         if len(results) == 0:

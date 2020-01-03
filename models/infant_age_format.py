@@ -2,7 +2,7 @@ from db import db
 
 
 class InfantAgeFormatModel(db.Model):
-    __tablename__ = 'infantAgeFormat'
+    __tablename__ = 'infant_age_format'
 
     id = db.Column(db.Integer, primary_key=True)
     infant_age_format_code = db.Column(db.String(5))

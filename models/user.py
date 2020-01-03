@@ -7,7 +7,7 @@ class UserModel(UserMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(120))
     api_key = db.Column(db.String(100))
 
     def __init__(self, username, password, api_key):

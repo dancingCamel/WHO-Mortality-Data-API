@@ -43,12 +43,14 @@ from resources.info import Info
 from resources.externalDocs import ExternalDocs
 from resources.paths import Paths
 from db import db
+import os
 
 app = Flask(__name__)
 api = Api(app)
 
 # Configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # error handling
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -77,26 +79,23 @@ app.config['TESTING'] = False
 def load_user(user_id):
     return UserModel.find_by_id(user_id)
 
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
-    # populate table function. auto skips if table exists
-    populate_country_table()
-    populate_population_table()
-    populate_sex_table()
-    populate_admin_table()
-    populate_subdiv_table()
-    populate_age_format_table()
-    populate_infant_age_format_table()
-    populate_icd_table_101()
-    populate_icd_table_103()
-    populate_icd_table_104()
-    populate_icd_table_10M()
-    populate_icd_table_UE1()
-    populate_icd_code_lists_table()
-    # mortality data csv is too large. need to use sqlite3 .import function
-    # populate_mortality_table()
+# moved to run file for production
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
+#     populate_country_table()
+#     populate_population_table()
+#     populate_sex_table()
+#     populate_admin_table()
+#     populate_subdiv_table()
+#     populate_age_format_table()
+#     populate_infant_age_format_table()
+#     populate_icd_table_101()
+#     populate_icd_table_103()
+#     populate_icd_table_104()
+#     populate_icd_table_10M()
+#     populate_icd_table_UE1()
+#     populate_icd_code_lists_table()
 
 
 # Country endpoints

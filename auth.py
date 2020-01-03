@@ -17,11 +17,22 @@ def requireApiKey(view_function):
         if api_key and user:
             # check to see if user is denied access
             if api_key in BLACKLIST:
-                return abort(401)
+                abort(401)
             return view_function(*args, **kwargs)
         else:
             abort(401)
     return decorated_function
+
+
+def valid_api_key(api_key):
+    user = UserModel.find_by_key(api_key)
+    if api_key and user:
+        # check to see if user is denied access
+        if api_key in BLACKLIST:
+            return False
+    else:
+        return False
+    return True
 
 
 def requireAdmin(view_function):

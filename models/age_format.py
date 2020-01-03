@@ -2,7 +2,7 @@ from db import db
 
 
 class AgeFormatModel(db.Model):
-    __tablename__ = 'ageFormat'
+    __tablename__ = 'age_format'
 
     id = db.Column(db.Integer, primary_key=True)
     age_format_code = db.Column(db.String(5))
