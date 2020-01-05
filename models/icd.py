@@ -39,6 +39,10 @@ class IcdModel(db.Model):
         return cls.query.filter(cls.description.ilike('%' + search_term + '%') | cls.code.ilike('%' + search_term + '%')).all()
 
     @classmethod
+    def search_specific(cls, search_term):
+        return cls.query.filter_by(description=search_term)
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
 

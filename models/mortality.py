@@ -1,4 +1,5 @@
 from db import db
+from sqlalchemy import func
 from models.country import CountryModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel
@@ -138,7 +139,13 @@ class MortalityDataModel(db.Model):
 
         # format age to remove blanks
         age_breakdown_format = AgeFormatModel.find_by_code(
-            self.age_format).json()
+            self.age_format)
+
+        if age_breakdown_format:
+            age_breakdown_format = age_breakdown_format.json()
+        else:
+            return {'message': "No age breakdown found for code '{}'.".format(self.age_format)}, 404
+
         deaths = [
             self.deaths2,
             self.deaths3,
@@ -297,6 +304,17 @@ class MortalityDataModel(db.Model):
     @classmethod
     def find_by_casysc(cls, country_code, admin_code, subdiv_code, year, sex, cause):
         return cls.query.filter_by(country_code=country_code, admin_code=admin_code, subdiv_code=subdiv_code, year=year, sex=sex, cause=cause).all()
+
+    # use in populate_code_list_reference
+    @classmethod
+    def find_all_years(cls):
+        query = cls.query.with_entities(cls.year).all()
+        years = [int(row.year) for row in query]
+        return years
+
+    @classmethod
+    def find_by_year(cls, year):
+        return cls.query.filter_by(year=year).all()
 
     def save_to_db(self):
         db.session.add(self)

@@ -15,7 +15,8 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd_table_10M,
                                   populate_icd_table_UE1,
                                   populate_icd_code_lists_table,
-                                  populate_mortality_table)
+                                  populate_mortality_table,
+                                  populate_code_list_reference)
 from models.user import UserModel
 from resources.country import CountryCode, CountryList, CountrySearch, CountryDesc, CountryName
 from resources.sex import SexCode, SexList, SexDesc
@@ -80,25 +81,26 @@ def load_user(user_id):
     return UserModel.find_by_id(user_id)
 
 # moved to run file for production
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-#     populate_country_table()
-#     populate_population_table()
-#     populate_sex_table()
-#     populate_admin_table()
-#     populate_subdiv_table()
-#     populate_age_format_table()
-#     populate_infant_age_format_table()
-#     populate_icd_table_101()
-#     populate_icd_table_103()
-#     populate_icd_table_104()
-#     populate_icd_table_10M()
-#     populate_icd_table_UE1()
-#     populate_icd_code_lists_table()
+@app.before_first_request
+def create_tables():
+    db.create_all()
+    # populate_code_list_reference()
+    # populate_country_table()
+    # populate_population_table()
+    # populate_sex_table()
+    # populate_admin_table()
+    # populate_subdiv_table()
+    # populate_age_format_table()
+    # populate_infant_age_format_table()
+    #     populate_icd_table_101()
+    #     populate_icd_table_103()
+    #     populate_icd_table_104()
+    #     populate_icd_table_10M()
+    #     populate_icd_table_UE1()
+    # populate_icd_code_lists_table()
 
 
-# Country endpoints
+    # Country endpoints
 api.add_resource(CountryCode, '/api/country-code/<string:country_code>')
 api.add_resource(CountryName, '/api/country-name/<string:country_name>')
 api.add_resource(CountryList, '/api/country-list')

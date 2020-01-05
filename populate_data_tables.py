@@ -1,4 +1,5 @@
 import csv
+import json
 from models.country import CountryModel
 from models.population import PopulationModel
 from models.sex import SexModel
@@ -10,16 +11,46 @@ from models.icd import IcdModel
 from models.icd_lists import IcdListsModel
 from models.mortality import MortalityDataModel
 from models.superuser import SuperuserModel
+from models.code_list_ref import CodeListRefModel
 from codes import *
 
 # use break instead of continue - if it finds an entry the table exists. Skip populating that table
 # assume our data sets have no duplicates
 
 
+def populate_code_list_reference():
+    data = {}
+
+    year_list = MortalityDataModel.find_all_years()
+    min_year = min(year_list)
+    max_year = max(year_list)
+
+    # make dictionary so don't get duplicate entries
+    for year in range(min_year, max_year):
+        year_data = MortalityDataModel.find_by_year(str(year))
+
+        individual_year_object = {}
+        for row in year_data:
+            if row.country_code in individual_year_object:
+                continue
+            individual_year_object[row.country_code] = row.code_list
+
+        data[str(year)] = individual_year_object
+
+    print(type(data), data)
+    # extract each item in dictionary and save it to db
+    for year, year_data in data.items():
+        for country_code, code_list in year_data.items():
+            entry = CodeListRefModel(
+                year=year, country_code=country_code, code_list=code_list)
+            entry.save_to_db()
+
+
 def populate_country_table():
     # when working locally use ./raw_data for relative file path.
     # when running on remote server use abolute file path
-    with open('/var/www/html/items-rest/raw_data/country_codes.csv', 'r') as country_code_file:
+    # with open('/var/www/html/items-rest/raw_data/country_codes.csv', 'r') as country_code_file:
+    with open('./raw_data/country_codes.csv', 'r') as country_code_file:
         country_reader = csv.reader(country_code_file)
         for row in country_reader:
             # make it a CountryModel object
@@ -37,7 +68,9 @@ def populate_country_table():
 
 
 def populate_population_table():
-    with open('/var/www/html/items-rest/raw_data/populations.csv', 'r') as population_file:
+    # with open('/var/www/html/items-rest/raw_data/populations.csv', 'r') as population_file:
+    with open('./raw_data/populations.csv', 'r') as population_file:
+
         pop_reader = csv.reader(population_file)
         for row in pop_reader:
 
@@ -100,7 +133,9 @@ def populate_infant_age_format_table():
 
 
 def populate_icd_table_101():
-    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/101.csv', 'r') as code_file:
+    # with open('/var/www/html/items-rest/raw_data/icd10-code-lists/101.csv', 'r') as code_file:
+    with open('./raw_data/icd10-code-lists/101.csv', 'r') as code_file:
+
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = '101'
@@ -115,7 +150,8 @@ def populate_icd_table_101():
 
 
 def populate_icd_table_103():
-    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/103.csv', 'r') as code_file:
+    # with open('/var/www/html/items-rest/raw_data/icd10-code-lists/103.csv', 'r') as code_file:
+    with open('./raw_data/icd10-code-lists/103.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = '103'
@@ -130,7 +166,8 @@ def populate_icd_table_103():
 
 
 def populate_icd_table_104():
-    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/104.csv', 'r') as code_file:
+    # with open('/var/www/html/items-rest/raw_data/icd10-code-lists/104.csv', 'r') as code_file:
+    with open('./raw_data/icd10-code-lists/104.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = '104'
@@ -145,7 +182,9 @@ def populate_icd_table_104():
 
 
 def populate_icd_table_10M():
-    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
+    # with open('/var/www/html/items-rest/raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
+    with open('./raw_data/icd10-code-lists/10M.csv', 'r') as code_file:
+
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "10M"
@@ -160,7 +199,8 @@ def populate_icd_table_10M():
 
 
 def populate_icd_table_UE1():
-    with open('/var/www/html/items-rest/raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
+    # with open('/var/www/html/items-rest/raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
+    with open('./raw_data/icd10-code-lists/UE1.csv', 'r') as code_file:
         code_reader = csv.reader(code_file)
         for row in code_reader:
             code_list = "UE1"
@@ -184,7 +224,8 @@ def populate_icd_code_lists_table():
 
 
 def populate_mortality_table():
-    with open('/var/www/html/items-rest/raw_data/Mort-ICD10.csv', 'r') as mort_file:
+    # with open('/var/www/html/items-rest/raw_data/Mort-ICD10.csv', 'r') as mort_file:
+    with open('./raw_data/Mort-ICD10.csv', 'r') as mort_file:
         mort_reader = csv.reader(mort_file)
         for row in mort_reader:
             new_mortality_entry = MortalityDataModel(*row)

@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse, request
 from models.mortality import MortalityDataModel
+from models.code_list_ref import CodeListRefModel
 from models.icd import IcdModel
 from validate import *
 from auth import requireApiKey, requireAdmin
@@ -85,21 +86,26 @@ class MortalitySearchMultiple(Resource):
 
         # find all codes that have matching description to codes given and search for those, too
         # that way can compare countries that use different code lists
-        cause_code_list_extended = []
-        for icd_code in cause_code_list:
+        cause_code_list_extended = {}
+        for icd_code in filter(valid_cause, cause_code_list):
             # first get the corresponding description for the code given
             complete_icd_codes = [code.json()
                                   for code in IcdModel.find_by_code(icd_code)]
             # find other codes with same description
             for icd_code in complete_icd_codes:
                 matching_codes = [matching_icd_code.json()
-                                  for matching_icd_code in IcdModel.search(icd_code['description'])]
+                                  for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
+                unspecified_code = icd_code['description'] + " (unspecified)"
+                unspecified_codes = [matching_icd_code.json(
+                ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
+
                 # add to extended code list
                 for matching_code in matching_codes:
-                    cause_code_list_extended.append(matching_code['code'])
-        # get rid of duplicate codes
-        cause_code_list_extended = list(
-            dict.fromkeys(cause_code_list_extended))
+                    cause_code_list_extended[matching_code['list']
+                                             ] = matching_code['code']
+                for matching_code in unspecified_codes:
+                    cause_code_list_extended[matching_code['list']
+                                             ] = matching_code['code']
 
         # add "" to admin and subdiv lists to ensure some results if no specific code given
         admin_code_list = []
@@ -124,15 +130,24 @@ class MortalitySearchMultiple(Resource):
         #         yield tuple(prod)
 
         results = []
+
         # loop over all permutations of list items and validate codes.
         for country_code in filter(valid_country_code, country_code_list):
             for year in filter(valid_year, year_list):
                 for sex in filter(valid_sex, sex_code_list):
-                    for cause in filter(valid_cause, cause_code_list_extended):
+                    for cause in filter(valid_cause, cause_code_list):
                         for admin in filter(valid_admin, admin_code_list):
                             for subdiv in filter(valid_subdiv, subdiv_code_list):
 
                                 # generate query
+                                code_list_entry = CodeListRefModel.find_by_year_and_country(
+                                    year, country_code)
+
+                                try:
+                                    cause = cause_code_list_extended[code_list_entry.code_list]
+                                except:
+                                    continue
+
                                 query = {}
                                 query['country_code'] = country_code
                                 query['sex'] = sex
