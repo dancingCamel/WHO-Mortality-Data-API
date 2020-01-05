@@ -308,9 +308,14 @@ class MortalityDataModel(db.Model):
     # use in populate_code_list_reference
     @classmethod
     def find_all_years(cls):
-        query = cls.query.with_entities(cls.year).all()
+
+        query = cls.query.with_entities(cls.year).distinct().all()
         years = [int(row.year) for row in query]
         return years
+
+    @classmethod
+    def find_by_cy(cls, country_code, year):
+        return cls.query.filter_by(country_code=country_code, year=year).first()
 
     @classmethod
     def find_by_year(cls, year):

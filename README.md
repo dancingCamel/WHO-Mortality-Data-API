@@ -19,8 +19,8 @@ The following datasets are available:
 - WHO Age format codes and their meanings
 - WHO Infant age format codes and their meanings
 - Country populations (from 1950)
-- ICD-10 codes and description
-- Mortality (cause of death) statistics (from 2005)
+- ICD codes and description (currently only ICD-10)
+- Mortality (cause of death) statistics (from 1998 for certain countries)
 - Mortality (cause of death) statistics adjusted for population
 
 

@@ -13,7 +13,8 @@ from populate_data_tables import (populate_country_table,
                                   populate_icd_table_10M,
                                   populate_icd_table_UE1,
                                   populate_icd_code_lists_table,
-                                  populate_mortality_table)
+                                  populate_mortality_table,
+                                  populate_code_list_reference)
 
 db.init_app(app)
 
@@ -21,7 +22,7 @@ db.init_app(app)
 @app.before_first_request
 def create_tables():
     db.create_all()
-    # don't run populate table functions on remote server as timeout
+    populate_code_list_reference()
     populate_country_table()
     populate_population_table()
     populate_sex_table()

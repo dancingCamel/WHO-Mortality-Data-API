@@ -37,13 +37,60 @@ def populate_code_list_reference():
 
         data[str(year)] = individual_year_object
 
-    print(type(data), data)
     # extract each item in dictionary and save it to db
     for year, year_data in data.items():
         for country_code, code_list in year_data.items():
             entry = CodeListRefModel(
-                year=year, country_code=country_code, code_list=code_list)
+                year=str(year), country_code=country_code, code_list=code_list)
             entry.save_to_db()
+
+
+def populate_code_list_reference():
+    # alternate function that uses less memory - doesn't work
+    year_list = MortalityDataModel.find_all_years()
+    min_year = min(year_list)
+    max_year = max(year_list)
+
+    countries = [country.json() for country in CountryModel.find_all()]
+
+    for year in range(min_year, max_year):
+        individual_year_object = {}
+        for country in countries:
+            country_code = country['code']
+
+            code_list_ref_entry = CodeListRefModel.find_by_year_and_country(
+                year=str(year), country_code=country_code)
+            if code_list_ref_entry:
+                continue
+
+            # this takes way too long - leads to timeout
+            mortality_entry = MortalityDataModel.find_by_cy(
+                country_code=country_code, year=str(year))
+
+            if mortality_entry:
+                new_entry = CodeListRefModel(
+                    year=str(year), country_code=country_code, code_list=mortality_entry.code_list)
+                new_entry.save_to_db()
+            continue
+
+# alternative version using csv file
+
+
+def populate_country_table():
+    # with open('/var/www/html/items-rest/raw_data/code_list_ref.csv', 'r') as code_file:
+    with open('./raw_data/code_list_ref.csv', 'r') as code_file:
+        code_list_ref_reader = csv.reader(code_file)
+        for row in code_list_ref_reader:
+            new_entry = CodeListRefModel(*row)
+
+            entry = CodeListRefModel.find_by_year_and_country(
+                new_entry.year, new_entry.country_code)
+            if entry:
+                continue
+            else:
+                if new_entry.country_code == "country_code":
+                    continue
+                new_entry.save_to_db()
 
 
 def populate_country_table():

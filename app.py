@@ -80,7 +80,8 @@ app.config['TESTING'] = False
 def load_user(user_id):
     return UserModel.find_by_id(user_id)
 
-# moved to run file for production
+# uncomment these to populate all tables first time run programme
+# moved to run file for production.
 @app.before_first_request
 def create_tables():
     db.create_all()
