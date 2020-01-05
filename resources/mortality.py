@@ -3,6 +3,7 @@ from models.mortality import MortalityDataModel
 from models.code_list_ref import CodeListRefModel
 from models.icd import IcdModel
 from validate import *
+import re
 from auth import requireApiKey, requireAdmin
 
 
@@ -95,17 +96,52 @@ class MortalitySearchMultiple(Resource):
             for icd_code in complete_icd_codes:
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
-                unspecified_code = icd_code['description'] + " (unspecified)"
-                unspecified_codes = [matching_icd_code.json(
-                ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
+                # try to make it possible to compare countries that use different code lists
+                # check if contains "unspecified". if not, add it and search again. else remove "(unspecified)"
+                # TODO: in case that unspecified doesn't match. sum up all instances of code + extra digit.
+                # e.g. A02 input by user. if code list is 104, sum all A020, A021, ...A029. return sum
+                # TODO: if user input is 4 digit cause code, remove last digit and search for 103 code list with that
+                unspecified_codes = []
+                generic_codes = []
+
+                pattern = "unspecified"
+                match = re.search(pattern, icd_code['description'])
+                if not match:
+                    unspecified_code = icd_code['description'] + \
+                        " (unspecified)"
+                    unspecified_codes = [matching_icd_code.json(
+                    ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
+                else:
+                    # remove unspecified from description
+
+                    position = match.span()
+                    start = position[0] - 2
+                    end = position[1] + 1
+
+                    generic_code = icd_code['description'][0:start] + \
+                        icd_code['description'][end:]
+                    generic_codes = [matching_icd_code.json(
+                    ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
                 # add to extended code list
                 for matching_code in matching_codes:
                     cause_code_list_extended[matching_code['list']
                                              ] = matching_code['code']
-                for matching_code in unspecified_codes:
-                    cause_code_list_extended[matching_code['list']
-                                             ] = matching_code['code']
+
+                if generic_codes:
+                    for matching_code in generic_codes:
+                        cause_code_list_extended[matching_code['list']
+                                                 ] = matching_code['code']
+                if unspecified_codes:
+                    for matching_code in unspecified_codes:
+                        cause_code_list_extended[matching_code['list']
+                                                 ] = matching_code['code']
+
+                if "103" not in cause_code_list_extended:
+                    try:
+                        cause_code_list_extended['103'] = cause_code_list_extended['104'][:-1]
+                    except:
+                        pass
 
         # add "" to admin and subdiv lists to ensure some results if no specific code given
         admin_code_list = []
@@ -160,11 +196,20 @@ class MortalitySearchMultiple(Resource):
                                 result = [entry.json()
                                           for entry in MortalityDataModel.search_mortalities(query)]
 
+                                if code_list_entry.code_list == "104" and len(result) == 0:
+                                    cause = cause + "9"
+                                    query['cause'] = cause
+                                    result = [entry.json()
+                                              for entry in MortalityDataModel.search_mortalities(query)]
+
                                 if result:
                                     if len(result) == 1:
                                         results.append(result[0])
 
                                 continue
+
+        # debug
+        # return {'start': start, 'end': end, 'code': generic_code, 'lists': str(cause_code_list_extended)}
 
         # if results is a blank list then send an error message for 404 not found
         if len(results) == 0:
