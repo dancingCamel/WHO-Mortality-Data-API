@@ -10,7 +10,6 @@ from auth import requireApiKey, requireAdmin
 class MortalityDataSearch(Resource):
     @requireApiKey
     def get(self):
-        # use get_args() for variables. search with dict. return all()
         query = {}
         # Validate request and add to query
         country_code = request.args.get('country', type=str)
@@ -48,13 +47,88 @@ class MortalityDataSearch(Resource):
             cause_upper = cause.upper()
             if not valid_cause(cause_upper):
                 return {'message': 'Please enter a valid cause code'}, 400
-            query['cause'] = cause_upper
 
+            cause_code_list_extended = {}
+            # first get the corresponding description for the code given
+            icd_codes = [code.json()
+                         for code in IcdModel.find_by_code(cause_upper)]
+            for icd_code in icd_codes:
+                # find other codes with same description
+                matching_codes = [matching_icd_code.json()
+                                  for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
+            unspecified_codes = []
+            generic_codes = []
+
+            pattern = "unspecified"
+            match = re.search(pattern, icd_code['description'])
+            if not match:
+                unspecified_code = icd_code['description'] + \
+                    " (unspecified)"
+                unspecified_codes = [matching_icd_code.json(
+                ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
+            else:
+                # remove unspecified from description
+                position = match.span()
+                start = position[0] - 2
+                end = position[1] + 1
+
+                generic_code = icd_code['description'][0:start] + \
+                    icd_code['description'][end:]
+                generic_codes = [matching_icd_code.json(
+                ) for matching_icd_code in IcdModel.search_specific(generic_code)]
+
+            # add to extended code list
+            for matching_code in matching_codes:
+                cause_code_list_extended[matching_code['list']
+                                         ] = matching_code['code']
+
+            if generic_codes:
+                for matching_code in generic_codes:
+                    cause_code_list_extended[matching_code['list']
+                                             ] = matching_code['code']
+            if unspecified_codes:
+                for matching_code in unspecified_codes:
+                    cause_code_list_extended[matching_code['list']
+                                             ] = matching_code['code']
+
+            if "103" not in cause_code_list_extended:
+                try:
+                    cause_code_list_extended['103'] = cause_code_list_extended['104'][:-1]
+                except:
+                    pass
+
+            code_list_entry = CodeListRefModel.find_by_year_and_country(
+                year, country_code)
+
+            try:
+                cause = cause_code_list_extended[code_list_entry.code_list]
+            except:
+                return {'message': "Can't find matching cause code for the specified country."}, 400
+
+            query['cause'] = cause
+
+        results = []
         results = [entry.json()
                    for entry in MortalityDataModel.search_mortalities(query)]
 
+        if cause and code_list_entry.code_list == "104" and len(cause_code_list_extended[code_list_entry.code_list]) == 3:
+            cause = cause + "9"
+            query['cause'] = cause
+            extra_result = [entry.json()
+                            for entry in MortalityDataModel.search_mortalities(query)]
+            for row in extra_result:
+                results.append(row)
+
+        if cause and code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 3:
+            cause = cause + "9"
+            query['cause'] = cause
+            extra_result = [entry.json()
+                            for entry in MortalityDataModel.search_mortalities(query)]
+            for row in extra_result:
+                results.append(row)
+
         if results:
-            return {'entries': results}
+            return {'entries': results}, 200
         return {'message': "No mortality entries match your query."}, 404
 
 
@@ -196,7 +270,13 @@ class MortalitySearchMultiple(Resource):
                                 result = [entry.json()
                                           for entry in MortalityDataModel.search_mortalities(query)]
 
-                                if code_list_entry.code_list == "104" and len(result) == 0:
+                                if code_list_entry.code_list == "104" and len(cause_code_list_extended[code_list_entry.code_list]) == 3 and len(result) == 0:
+                                    cause = cause + "9"
+                                    query['cause'] = cause
+                                    result = [entry.json()
+                                              for entry in MortalityDataModel.search_mortalities(query)]
+
+                                if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 3 and len(result) == 0:
                                     cause = cause + "9"
                                     query['cause'] = cause
                                     result = [entry.json()
@@ -259,10 +339,79 @@ class MortalityDataOne(Resource):
                 cause_upper = cause.upper()
                 if not valid_cause(cause_upper):
                     return {'message': 'Please enter a valid cause code'}, 400
-                query['cause'] = cause_upper
+                cause_code_list_extended = {}
+                # first get the corresponding description for the code given
+                icd_codes = [code.json()
+                             for code in IcdModel.find_by_code(cause_upper)]
+                # find other codes with same description
+                for icd_code in icd_codes:
+                    matching_codes = [matching_icd_code.json()
+                                      for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
+                unspecified_codes = []
+                generic_codes = []
+
+                pattern = "unspecified"
+                match = re.search(pattern, icd_code['description'])
+                if not match:
+                    unspecified_code = icd_code['description'] + \
+                        " (unspecified)"
+                    unspecified_codes = [matching_icd_code.json(
+                    ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
+                else:
+                    # remove unspecified from description
+                    position = match.span()
+                    start = position[0] - 2
+                    end = position[1] + 1
+
+                    generic_code = icd_code['description'][0:start] + \
+                        icd_code['description'][end:]
+                    generic_codes = [matching_icd_code.json(
+                    ) for matching_icd_code in IcdModel.search_specific(generic_code)]
+
+                # add to extended code list
+                for matching_code in matching_codes:
+                    cause_code_list_extended[matching_code['list']
+                                             ] = matching_code['code']
+
+                if generic_codes:
+                    for matching_code in generic_codes:
+                        cause_code_list_extended[matching_code['list']
+                                                 ] = matching_code['code']
+                if unspecified_codes:
+                    for matching_code in unspecified_codes:
+                        cause_code_list_extended[matching_code['list']
+                                                 ] = matching_code['code']
+
+                if "103" not in cause_code_list_extended:
+                    try:
+                        cause_code_list_extended['103'] = cause_code_list_extended['104'][:-1]
+                    except:
+                        pass
+
+                code_list_entry = CodeListRefModel.find_by_year_and_country(
+                    year, country_code)
+
+                try:
+                    cause = cause_code_list_extended[code_list_entry.code_list]
+                except:
+                    return {'message': "Can't find matching cause code for the specified country."}, 400
+
+                query['cause'] = cause
 
             result = [entry.json()
                       for entry in MortalityDataModel.search_mortalities(query)]
+
+            if code_list_entry.code_list == "104" and len(cause_code_list_extended[code_list_entry.code_list]) == 3 and len(result) == 0:
+                cause = cause + "9"
+                query['cause'] = cause
+                result = [entry.json()
+                          for entry in MortalityDataModel.search_mortalities(query)]
+
+            if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 3 and len(result) == 0:
+                cause = cause + "9"
+                query['cause'] = cause
+                result = [entry.json()
+                          for entry in MortalityDataModel.search_mortalities(query)]
 
             if result:
                 if len(result) > 1:
@@ -284,7 +433,7 @@ class MortalityDataChange(Resource):
 
     parser.add_argument('code_list',
                         type=str,
-                        default="10M",
+                        default="104",
                         )
 
     parser.add_argument('age_format',
@@ -383,18 +532,24 @@ class MortalityDataChange(Resource):
         entry = MortalityDataModel(country_code, admin_code,
                                    subdiv_code, year, code_list, cause, sex, **data)
 
+        new_code_list_ref = CodeListRefModel(year, country_code, code_list)
+
         try:
+            code_list_ref = CodeListRefModel.find_by_year_and_country(
+                year, country_code)
+            if code_list_ref.code_list != code_list:
+                code_list_ref.code_list = code_list
+                code_list_ref.save_to_db()
+            else:
+                new_code_list_ref.save_to_db()
             entry.save_to_db()
         except:
-            return {"message": "An error occurred inserting the item."}, 500
+            return {"message": "An error occurred inserting the data."}, 500
 
         return entry.json(), 201
 
     @requireAdmin
     def put(self, country_code, year, sex, cause):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation
@@ -447,8 +602,10 @@ class MortalityDataChange(Resource):
             entry = MortalityDataModel.find_by_cysc(
                 country_code, year, sex, cause)
 
+        code_list = data['code_list']
+
         if entry:
-            entry.code_list = data['code_list']
+            entry.code_list = code_list
             entry.age_format = data['age_format']
             entry.infant_age_format = data['infant_age_format']
             entry.deaths1 = data['deaths1']
@@ -483,19 +640,28 @@ class MortalityDataChange(Resource):
             entry.infant_deaths4 = data['infant_deaths4']
 
         else:
-            code_list = data['code_list']
             del data['code_list']
             entry = MortalityDataModel(
                 country_code, admin_code, subdiv_code, year, code_list, cause, sex, **data)
 
-        entry.save_to_db()
-        return entry.json()
+        new_code_list_ref = CodeListRefModel(year, country_code, code_list)
+
+        try:
+            code_list_ref = CodeListRefModel.find_by_year_and_country(
+                year, country_code)
+            if code_list_ref.code_list != code_list:
+                code_list_ref.code_list = code_list
+                code_list_ref.save_to_db()
+            else:
+                new_code_list_ref.save_to_db()
+            entry.save_to_db()
+        except:
+            return {"message": "An error occurred inserting the data."}, 500
+
+        return entry.json(), 201
 
     @requireAdmin
     def delete(self, country_code, year, sex, cause):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = MortalityDataChange.parser.parse_args()
 
         # validation

@@ -18,65 +18,65 @@ from codes import *
 # assume our data sets have no duplicates
 
 
-def populate_code_list_reference():
-    data = {}
+# def populate_code_list_reference():
+#     data = {}
 
-    year_list = MortalityDataModel.find_all_years()
-    min_year = min(year_list)
-    max_year = max(year_list)
+#     year_list = MortalityDataModel.find_all_years()
+#     min_year = min(year_list)
+#     max_year = max(year_list)
 
-    # make dictionary so don't get duplicate entries
-    for year in range(min_year, max_year):
-        year_data = MortalityDataModel.find_by_year(str(year))
+#     # make dictionary so don't get duplicate entries
+#     for year in range(min_year, max_year):
+#         year_data = MortalityDataModel.find_by_year(str(year))
 
-        individual_year_object = {}
-        for row in year_data:
-            if row.country_code in individual_year_object:
-                continue
-            individual_year_object[row.country_code] = row.code_list
+#         individual_year_object = {}
+#         for row in year_data:
+#             if row.country_code in individual_year_object:
+#                 continue
+#             individual_year_object[row.country_code] = row.code_list
 
-        data[str(year)] = individual_year_object
+#         data[str(year)] = individual_year_object
 
-    # extract each item in dictionary and save it to db
-    for year, year_data in data.items():
-        for country_code, code_list in year_data.items():
-            entry = CodeListRefModel(
-                year=str(year), country_code=country_code, code_list=code_list)
-            entry.save_to_db()
+#     # extract each item in dictionary and save it to db
+#     for year, year_data in data.items():
+#         for country_code, code_list in year_data.items():
+#             entry = CodeListRefModel(
+#                 year=str(year), country_code=country_code, code_list=code_list)
+#             entry.save_to_db()
 
 
-def populate_code_list_reference():
-    # alternate function that uses less memory - doesn't work
-    year_list = MortalityDataModel.find_all_years()
-    min_year = min(year_list)
-    max_year = max(year_list)
+# def populate_code_list_reference():
+#     # alternate function that uses less memory - doesn't work
+#     year_list = MortalityDataModel.find_all_years()
+#     min_year = min(year_list)
+#     max_year = max(year_list)
 
-    countries = [country.json() for country in CountryModel.find_all()]
+#     countries = [country.json() for country in CountryModel.find_all()]
 
-    for year in range(min_year, max_year):
-        individual_year_object = {}
-        for country in countries:
-            country_code = country['code']
+#     for year in range(min_year, max_year):
+#         individual_year_object = {}
+#         for country in countries:
+#             country_code = country['code']
 
-            code_list_ref_entry = CodeListRefModel.find_by_year_and_country(
-                year=str(year), country_code=country_code)
-            if code_list_ref_entry:
-                continue
+#             code_list_ref_entry = CodeListRefModel.find_by_year_and_country(
+#                 year=str(year), country_code=country_code)
+#             if code_list_ref_entry:
+#                 continue
 
-            # this takes way too long - leads to timeout
-            mortality_entry = MortalityDataModel.find_by_cy(
-                country_code=country_code, year=str(year))
+#             # this takes way too long - leads to timeout
+#             mortality_entry = MortalityDataModel.find_by_cy(
+#                 country_code=country_code, year=str(year))
 
-            if mortality_entry:
-                new_entry = CodeListRefModel(
-                    year=str(year), country_code=country_code, code_list=mortality_entry.code_list)
-                new_entry.save_to_db()
-            continue
+#             if mortality_entry:
+#                 new_entry = CodeListRefModel(
+#                     year=str(year), country_code=country_code, code_list=mortality_entry.code_list)
+#                 new_entry.save_to_db()
+#             continue
 
 # alternative version using csv file
 
 
-def populate_country_table():
+def populate_code_list_reference():
     # with open('/var/www/html/items-rest/raw_data/code_list_ref.csv', 'r') as code_file:
     with open('./raw_data/code_list_ref.csv', 'r') as code_file:
         code_list_ref_reader = csv.reader(code_file)
