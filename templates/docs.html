@@ -179,7 +179,8 @@
                     var element_id = path.replace(/{.*?}/g, "")
 
                     // fix this to remove only / and "/api/" at start of string
-                    element_id = element_id.replace(/[./api?]/g, "")
+                    element_id = element_id.replace("/api/", "")
+                    element_id = element_id.replace("?", "")
 
                     if (pathObject.hasOwnProperty('get')) {
                         createDocEntry('get', 'success', pathObject);
