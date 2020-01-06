@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user, l
 from auth import requireAdmin, requireApiKey
 from base64 import b64encode
 from os import urandom
-from blacklist import BLACKLIST
+from models.blacklist import BlacklistModel
 from models.user import UserModel
 import re
 
@@ -56,7 +56,9 @@ class UserRegister(Resource):
 
         # generate api key and check not already used
         api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
-        while UserModel.find_by_key(api_key) or api_key in BLACKLIST:
+        all_blacklist = [
+            blacklist.api_key for blacklist in BlacklistModel.find_all()]
+        while UserModel.find_by_key(api_key) or api_key in all_blacklist:
             api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         # create new user
@@ -157,18 +159,19 @@ class UserApiKey(Resource):
         # generate api key and check not already used or in blacklist
         new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
-        while UserModel.find_by_key(new_api_key) or new_api_key in BLACKLIST:
+        all_blacklist = [
+            blacklist.api_key for blacklist in BlacklistModel.find_all()]
+        while UserModel.find_by_key(new_api_key) or new_api_key in all_blacklist:
             new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         # update api key in user database
         try:
+            blacklist_entry = BlacklistModel(api_key)
+            blacklist_entry.save_to_db()
             user.api_key = new_api_key
             user.save_to_db()
         except:
             return {'message': "Something went wrong generating a new key. Try again later."}
-
-        # blacklist the old api key
-        BLACKLIST.add(api_key)
 
         # return new api_key
         return {'new_api_key': new_api_key}, 201

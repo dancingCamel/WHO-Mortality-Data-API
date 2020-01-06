@@ -4,7 +4,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 from models.user import UserModel
 from models.superuser import SuperuserModel
-from blacklist import BLACKLIST
+from models.blacklist import BlacklistModel
 
 
 def requireApiKey(view_function):
@@ -14,9 +14,11 @@ def requireApiKey(view_function):
         api_key = request.headers.get('api_key')
         user = UserModel.find_by_key(api_key)
 
+        blacklisted = BlacklistModel.find_by_api_key(api_key=api_key)
+
         if api_key and user:
             # check to see if user is denied access
-            if api_key in BLACKLIST:
+            if blacklisted:
                 abort(401)
             return view_function(*args, **kwargs)
         else:
@@ -26,9 +28,10 @@ def requireApiKey(view_function):
 
 def valid_api_key(api_key):
     user = UserModel.find_by_key(api_key)
+    blacklisted = BlacklistModel.find_by_api_key(api_key=api_key)
     if api_key and user:
         # check to see if user is denied access
-        if api_key in BLACKLIST:
+        if blacklisted:
             return False
     else:
         return False

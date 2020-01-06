@@ -29,7 +29,7 @@ from resources.icd import Icd, IcdList, IcdSearch, IcdCode, IcdDesc
 from resources.icd_lists import IcdCodeListCode, IcdCodeListDesc, IcdAllCodeLists
 from resources.mortality import MortalityDataSearch, MortalityDataOne, MortalityDataChange, MortalitySearchMultiple
 from resources.mortality_adj import MortalityAdjustedSearch, MortalityAdjustedOne, MortalityAdjustedSearchMultiple
-# from blacklist import BLACKLIST
+from models.blacklist import BlacklistModel
 from resources.user import UserRegister, User, UserLogin, UserLogout, UserApiKey, UserPassword
 from resources.superuser import Superuser, SuperuserUpdate
 from models.superuser import SuperuserModel
