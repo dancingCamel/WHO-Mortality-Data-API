@@ -127,6 +127,14 @@ class MortalityDataSearch(Resource):
             for row in extra_result:
                 results.append(row)
 
+        if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 4:
+            cause = cause[:-1]
+            query['cause'] = cause
+            extra_result = [entry.json()
+                            for entry in MortalityDataModel.search_mortalities(query)]
+            for row in extra_result:
+                results.append(row)
+
         if results:
             return {'entries': results}, 200
         return {'message': "No mortality entries match your query."}, 404
@@ -282,6 +290,12 @@ class MortalitySearchMultiple(Resource):
                                     result = [entry.json()
                                               for entry in MortalityDataModel.search_mortalities(query)]
 
+                                if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 4 and len(result) == 0:
+                                    cause = cause[:-1]
+                                    query['cause'] = cause
+                                    result = [entry.json()
+                                              for entry in MortalityDataModel.search_mortalities(query)]
+
                                 if result:
                                     if len(result) == 1:
                                         results.append(result[0])
@@ -409,6 +423,12 @@ class MortalityDataOne(Resource):
 
             if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 3 and len(result) == 0:
                 cause = cause + "9"
+                query['cause'] = cause
+                result = [entry.json()
+                          for entry in MortalityDataModel.search_mortalities(query)]
+
+            if code_list_entry.code_list == "10M" and len(cause_code_list_extended[code_list_entry.code_list]) == 4 and len(result) == 0:
+                cause = cause[:-1]
                 query['cause'] = cause
                 result = [entry.json()
                           for entry in MortalityDataModel.search_mortalities(query)]
