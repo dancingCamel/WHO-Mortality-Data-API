@@ -18,7 +18,7 @@
                 <!-- text describing the project -->
                 <h1>Visualize WHO Mortality Data with Charts!</h1>
                 <br>
-                <p>Having tried to use the official Worly Health Organization mortality data querying and charting
+                <p>Having tried to use the official World Health Organization mortality data querying and charting
                     service and finding it
                     difficult to navigate, unintuitive and uninformative, I decided to make a more modern feeling
                     version.
@@ -33,8 +33,8 @@
         <hr>
         <div class="row">
             <div class="col-sm-4" id="chartExampleImg">
-                <img src="../static/img/barchart.png" class="img-fluid" alt="Bar Chart">
-                <img src="../static/img/linechart.png" class="img-fluid" alt="Line Chart">
+                <img src="../static/img/barchart.png" class="img-fluid" alt="Bar_Chart">
+                <img src="../static/img/linechart.png" class="img-fluid" alt="Line_Chart">
 
             </div>
             <div class="chartDescription col-sm-8">
@@ -52,8 +52,31 @@
         <hr>
 
         <div class="row">
+
+            <div class="chartDescription col-sm-7">
+                <!-- text explaining how to use charts and visualize data as population adjusted or raw -->
+                <h2>JSON</h2>
+                <p>If you prefer to see more detailed data (including age breakdowns), we can query the mortality
+                    database for you in the <a href="/json">JSON page</a>.</p>
+                <p>In this case, the data is returned as formatted JSON which can be copied and pasted into your own
+                    projects. It outputs the data as it appears in the WHO Mortality Database raw data, with extra
+                    formatting to bring meaning to the esoteric codes.</p>
+                <p>If no data is found you will receive an error message. In the event of multiple entries they will be
+                    in an array inside the "results" object.</p>
+                <p>You have the option to select the mortality data, population adjusted mortality data, or just the WHO
+                    population data (going back to around 1950).</p>
+            </div>
+
+            <div class="col-sm-5" id="jsonExampleImg">
+                <img src="../static/img/json.png" class="img-fluid" alt="json_img">
+            </div>
+
+        </div>
+        <hr>
+
+        <div class="row">
             <div class="col-sm-12">
-                <h2>Sound good?</h2>
+                <h2>Sound useful?</h2>
                 <p>To start using this service (and get your API key) simply sign up, or log in</p>
                 <div class="row">
                     <div class="col-sm-6 d-flex justify-content-center mt-2">

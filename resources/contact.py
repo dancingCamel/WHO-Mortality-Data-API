@@ -57,11 +57,11 @@ class Contact(Resource):
                 server.login(mail_username, password)
                 server.send_message(msg,
                                     sender_email, receiver_email)
-                message = "Thank you for your message. We'll get back to you as soon as possible."
+                message = "Thank you for your message. We'll get back to you as soon as possible. <a href=\"/\">Home</a>"
                 flash(message, 'info')
             except Exception as e:
                 # except Exception as e:
-                error = "Sorry, your message could not be sent. Please try again later."
+                error = "Sorry, your message could not be sent. Please try again later. <a href=\"/\">Home</a>"
                 flash(error, 'error')
 
         return redirect(url_for('contact'))
