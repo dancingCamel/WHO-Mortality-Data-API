@@ -68,6 +68,10 @@
             <p>Some cause of death ICD codes listed in the mortality database do not appear in any official ICD
                 documentation, specifically related to the W## and Y## codes - I have contacted the WHO
                 for clarification on this issue.</p>
+            <p>The mortality search algorithms also try to find matching descriptions in other code lists if the one
+                specified by the user doesn't exist for specified countries (including adding / removing "unspecified"
+                from the description) .This allows users to compare matching or similar data (if an exact match doesn't
+                exist).</p>
             <h4>Population Adjusted Mortality Data</h4>
             <p>In some cases there is population data but no mortality data, or vice versa. In these situations the data
                 points are removed so as to avoid confusion due to mixing data formats.</p>
