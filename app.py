@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask
 from flask_restful import Api
 from flask_login import LoginManager
 from db import db
@@ -42,7 +42,6 @@ from resources.jsonpage import Json
 from resources.info import Info
 from resources.externalDocs import ExternalDocs
 from resources.paths import Paths
-from db import db
 import os
 
 app = Flask(__name__)

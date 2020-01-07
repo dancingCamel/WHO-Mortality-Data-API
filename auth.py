@@ -1,5 +1,4 @@
 from flask import request, abort
-from flask_login import current_user
 from functools import wraps
 from werkzeug.security import check_password_hash
 from models.user import UserModel

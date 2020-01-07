@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
 from models.country import CountryModel
-from sqlalchemy import func
 from flask_login import login_required
 from auth import requireApiKey, requireAdmin
 

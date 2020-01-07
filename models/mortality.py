@@ -1,5 +1,4 @@
 from db import db
-from sqlalchemy import func
 from models.country import CountryModel
 from models.admin import AdminModel
 from models.subdiv import SubdivModel

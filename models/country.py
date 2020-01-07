@@ -1,5 +1,4 @@
 from db import db
-from sqlalchemy import func
 
 
 class CountryModel(db.Model):

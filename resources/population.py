@@ -1,7 +1,7 @@
 from flask_restful import Resource, request, reqparse
 from validate import *
 from models.population import PopulationModel
-from auth import requireApiKey, requireAdmin, valid_api_key
+from auth import requireApiKey, requireAdmin
 from models.user import UserModel
 
 

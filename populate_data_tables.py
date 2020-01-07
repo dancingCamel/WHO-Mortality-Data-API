@@ -1,5 +1,4 @@
 import csv
-import json
 from models.country import CountryModel
 from models.population import PopulationModel
 from models.sex import SexModel
