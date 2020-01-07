@@ -20,10 +20,7 @@ class InfantAgeFormatCode(Resource):
 
     @requireAdmin
     def post(self, infant_age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = InfantAgeFormat.parser.parse_args()
+        data = InfantAgeFormatCode.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
         if infant_age_format:
@@ -38,10 +35,7 @@ class InfantAgeFormatCode(Resource):
 
     @requireAdmin
     def put(self, infant_age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = InfantAgeFormat.parser.parse_args()
+        data = InfantAgeFormatCode.parser.parse_args()
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
 
@@ -56,14 +50,11 @@ class InfantAgeFormatCode(Resource):
         try:
             infant_age_format.save_to_db()
         except:
-            return {'message': "An error occured inserting the infant age format."}, 500
+            return {'message': "An error occurred inserting the infant age format."}, 500
         return infant_age_format.json(), 201
 
     @requireAdmin
     def delete(self, infant_age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         infant_age_format = InfantAgeFormatModel.find_by_code(
             infant_age_format_code)
         if infant_age_format:

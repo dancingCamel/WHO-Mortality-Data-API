@@ -1,6 +1,3 @@
-<!-- list of all endpoints available to API -->
-<!-- can see this page whether logged in or not -->
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -33,7 +30,7 @@
             <p>This API returns data in JSON format with all values as strings.</p>
 
             <div>
-                <p>The following datasets are available:</p>
+                <p>The following data-sets are available:</p>
                 <ul>
                     <li>WHO Country codes</li>
                     <li>WHO 'Sex' codes and their descriptions</li>
@@ -171,18 +168,15 @@
             success: function (result) {
                 result_string = JSON.stringify(result, null, "\t")
 
-                // make key array from object keys
                 var keys = Object.keys(result);
 
                 // loop over keys creating elements in DOM for each one
                 for (var i = 0; i < keys.length; i++) {
-                    // console.log(result[keys[i]]);
 
                     var path = keys[i];
                     var pathObject = result[keys[i]]
                     var element_id = path.replace(/{.*?}/g, "")
 
-                    // fix this to remove only / and "/api/" at start of string
                     element_id = element_id.replace("/api/", "")
                     element_id = element_id.replace("?", "")
 
@@ -288,14 +282,10 @@
                         </div>
                     </div>`
 
-                    // add to end of page
                     $('#content').append(new_path_dropdown_area);
 
-                    // end create doc entry
                 }
 
-                // use query selector all to resize all response blocks to correct size
-                // count substrings
                 function countSubstring(string, substring) {
                     var re = new RegExp(substring, 'gi');
                     return string.match(re).length;
@@ -318,7 +308,6 @@
                 $('#error').html(output);
             }
         });
-
 
         auto_grow($('#icdExample'))
         auto_grow($('#countryExample'))

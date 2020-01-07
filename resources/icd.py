@@ -4,7 +4,6 @@ from auth import requireApiKey, requireAdmin
 
 
 class Icd(Resource):
-    # look for specific ICD entry given code_list and code
     parser = reqparse.RequestParser()
     parser.add_argument('description',
                         type=str,
@@ -20,9 +19,7 @@ class Icd(Resource):
 
     @requireAdmin
     def post(self, code_list, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
+
         if IcdModel.find_by_list_and_code(code_list, code):
             return {'message': "A '{}' code already exists in list '{}'.".format(code, code_list)}, 400
 
@@ -38,9 +35,7 @@ class Icd(Resource):
 
     @requireAdmin
     def put(self, code_list, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
+
         entry = IcdModel.find_by_list_and_code(code_list, code)
 
         data = Icd.parser.parse_args()
@@ -65,7 +60,6 @@ class Icd(Resource):
 
 
 class IcdCode(Resource):
-    # get all codes that match a code (list code pairs)
     @requireApiKey
     def get(self, code):
         code = code.upper()
@@ -76,7 +70,6 @@ class IcdCode(Resource):
 
 
 class IcdDesc(Resource):
-    # search for codes using a case insensitive partial description or code
     @requireApiKey
     def get(self, search_term):
         if len(search_term) < 3:
@@ -88,7 +81,6 @@ class IcdDesc(Resource):
 
 
 class IcdSearch(Resource):
-    # search for codes using a case insensitive partial description or code
     @requireApiKey
     def get(self, search_term):
         entries = IcdModel.search(search_term)
@@ -98,7 +90,6 @@ class IcdSearch(Resource):
 
 
 class IcdList(Resource):
-    # return whole icd list in json format
     @requireApiKey
     def get(self):
         entries = [entry.json() for entry in IcdModel.find_all()]

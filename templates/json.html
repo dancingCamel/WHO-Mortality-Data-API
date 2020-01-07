@@ -1,5 +1,3 @@
-<!-- users get data from custom queries returned in JSON Format -->
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -13,7 +11,6 @@
             <div class="col">
                 <form class="form">
                     <div class="h3">Get WHO Mortality and Population Data as JSON</div>
-                    <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
                     <div class="radio mr-2">
                         <label class="radio-inline mr-2"><input type="radio" data-table="population"
                                 name="jsonDataChoiceRadio" class="mr-1">Population</label>
@@ -27,8 +24,6 @@
 
                     <div class="inputs">
                         <div class="form-row">
-                            <!-- input for country, age, sex, admin, subdiv, cause. -->
-
                             <div class="col-sm-4 form-group" id="countryGroup">
                                 <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
                                 <input class="form-control country autocomplete" type="text" placeholder="Country"
@@ -151,24 +146,19 @@
         click_target = event.target
         var new_input = document.createElement('input');
 
-        // create new text input
         new_input.type = "text";
         new_input.classList.add("form-control")
 
-        // dynamically add group
         var group = event.target.dataset.group.replace('Group', '')
         new_input.placeholder = capFirstLetter(group)
         new_input.classList.add(group)
 
-        // add autocomplete 
         new_input.classList.add('autocomplete')
         addAutocomplete(new_input)
 
-        // insert into column of inputs
         var closestDiv = click_target.closest('div')
         var lastChild = closestDiv.children[closestDiv.children.length - 1]
 
-        // dynamically add data-table from first input in group
         var nearestInput = closestDiv.children[1]
         new_input.dataset.table = nearestInput.dataset.table
 
@@ -176,7 +166,6 @@
         new_input.focus();
     })
 
-    // check if age formats selected to disable description search as age formats don't have descriptions
     $(window).click(function () {
         if (populationRadio.includes($('input[name="jsonDataChoiceRadio"]:checked').data('table'))) {
             $('.cause').attr("disabled", "disabled");
@@ -193,7 +182,6 @@
     });
 
 
-    // run search if hit enter key
     $(document).keydown(function (event) {
         if (event.which == 13) {
             event.preventDefault()
@@ -201,31 +189,27 @@
         }
     })
 
-    // query database with user search terms, return data to textarea
+
     $(jsonSearchBtn).click(function () {
-        // prevent sending of form
         event.preventDefault();
         get_json_data()
 
     })
 
     function get_json_data() {
-        // check which endpoint to send requests to
+
         var searchTable = $('input[name="jsonDataChoiceRadio"]:checked').data('table');
 
-        // variables required for dynamic generation of search url
         var formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
         var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
         var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
 
-        // remove cause from url generator if population table selected
         if (searchTable == "population") {
             formVariables.pop();
             delete formInputLists['cause'];
             formInputs.pop();
         }
 
-        // make arrays of valid user inputs
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
                 var group = formVariables[i]
@@ -233,9 +217,8 @@
                 var error = false;
                 switch (group) {
                     case "country":
-                        // validate inputs
+
                         if (validCountry(inputValue)) {
-                            // push valid ones to arrays for generating get url
                             formInputLists[group].push(inputValue)
                         }
                         else {
@@ -302,8 +285,6 @@
             return
         }
 
-        // iterate over formInputLists dictionary and join each one into a string for get variables.
-        // remove trailing and leading commas to reduce search space
         var urlGetVariables = "";
 
         for (var key in formInputLists) {
@@ -311,7 +292,6 @@
             urlGetVariables += key + "=" + formInputLists[key] + "&";
         }
 
-        // generate url depending on endpoint choice, search term and endpoint type
         var api_url = "/api/" + searchTable + "-search-multiple?" + urlGetVariables;
         if (!error) {
             // loader image
@@ -323,10 +303,8 @@
                 headers: { "api_key": api_key },
                 success: function (result) {
                     result = JSON.stringify(result, null, "\t")
-                    // use textarea so json in properly formatted for users
                     output = '<textarea readonly class="form-control alert alert-success block" role="alert" id="returnedJson">' + result + '</textarea>';
                     $('#searchOutput').html(output);
-                    // resize the textarea
                     auto_grow($('#returnedJson'));
                 },
                 error: function () {
@@ -336,8 +314,6 @@
             });
         }
     };
-
-
 
 </script>
 {% endblock %}

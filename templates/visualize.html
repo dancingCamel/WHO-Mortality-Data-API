@@ -1,6 +1,3 @@
-<!-- after user logged in they see this page. it's where they can make requests to the api and get data returned in charts -->
-<!-- can only see this page if logged in -->
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -14,7 +11,6 @@
             <div class="col">
                 <form class="form">
                     <div class="h3">Visualize WHO Mortality Data with Charts</div>
-                    <!-- use radio format on bootstrap to remake this part https://getbootstrap.com/docs/4.0/components/forms/ -->
                     <div class="radio mr-2">
                         <label class="radio-inline mr-2"><input type="radio" data-table="mortality"
                                 name="dataChoiceRadio" class="mr-1" checked>Mortality</label>
@@ -26,7 +22,6 @@
 
                     <div class="inputs">
                         <div class="form-row">
-                            <!-- input for country, age, sex, admin, subdiv, cause. -->
                             <div class="col-sm-4 form-group" id="countryGroup">
                                 <label for="jsonCountry" class="col-sm-2 col-form-label">Country</label>
                                 <input class="form-control country autocomplete" type="text" placeholder="Country"
@@ -157,8 +152,6 @@
     const api_key = $('#apiKeyDiv').html()
     const searchBtn = $('#searchSubmit')
 
-
-
     $(document).ready(function () {
         // add autocomplete to all text inputs that require it
         $('input.autocomplete').each(function (i, element) {
@@ -186,24 +179,19 @@
         click_target = event.target;
         var new_input = document.createElement('input');
 
-        // create new text input
         new_input.type = "text";
         new_input.classList.add("form-control");
 
-        // dynamically add group
         var group = event.target.dataset.group.replace('Group', '');
         new_input.placeholder = capFirstLetter(group);
         new_input.classList.add(group);
 
-        // add autocomplete 
         new_input.classList.add('autocomplete');
         addAutocomplete(new_input);
 
-        // insert into column of inputs
         var closestDiv = click_target.closest('div');
         var lastChild = closestDiv.children[closestDiv.children.length - 1];
 
-        // dynamically add data-table from first input in group
         var nearestInput = closestDiv.children[1];
         new_input.dataset.table = nearestInput.dataset.table;
 
@@ -217,7 +205,6 @@
         $("#spinner").hide();
     });
 
-    // run search if hit enter key
     $(document).keydown(function (event) {
         if (event.which == 13) {
             event.preventDefault()
@@ -225,9 +212,7 @@
         }
     })
 
-    // query database with user search terms, return data as charts and table
     $(searchBtn).click(function () {
-        // prevent sending of form
         event.preventDefault();
         visualize();
     });
@@ -235,7 +220,6 @@
 
 
     function visualize() {
-        // hide or reset all chart areas
         $('#errorMessage').html('');
         $('#tableArea').html('');
         $('#tableTitle').hide()
@@ -246,15 +230,12 @@
         $('#barChartContainer').hide();
         $('#byYearTitle').hide()
 
-        // check which endpoint to send requests to
         var searchTable = $('input[name="dataChoiceRadio"]:checked').data('table');
 
-        // variables required for dynamic generation of search url
         var formVariables = ["country", "admin", "subdiv", "year", "sex", "cause"];
         var formInputLists = { "country": [], "admin": [], "subdiv": [], "year": [], "sex": [], "cause": [] };
         var formInputs = [document.querySelectorAll('.country'), document.querySelectorAll('.admin'), document.querySelectorAll('.subdiv'), document.querySelectorAll('.year'), document.querySelectorAll(".sex:checked"), document.querySelectorAll('.cause')]
 
-        // make arrays of user inputs and validate inputs
         for (var i = 0; i < formInputs.length; i++) {
             for (var j = 0; j < formInputs[i].length; j++) {
                 var group = formVariables[i]
@@ -263,9 +244,7 @@
                 var error = false;
                 switch (group) {
                     case "country":
-                        // validate inputs
                         if (validCountry(inputValue)) {
-                            // push valid ones to arrays for generating get url
                             formInputLists[group].push(inputValue)
                         }
                         else {
@@ -332,8 +311,6 @@
             return
         }
 
-        // iterate over formInputLists dictionary and join each one into a string for get variables.
-        // remove trailing and leading commas to reduce search space
         var urlGetVariables = "";
 
         for (var key in formInputLists) {
@@ -341,20 +318,17 @@
             urlGetVariables += key + "=" + formInputLists[key] + "&";
         }
 
-        // generate url depending on endpoint choice, search term and endpoint type
         var api_url = "/api/" + searchTable + "-search-multiple?" + urlGetVariables;
 
         var results;
 
         if (!error) {
-            // Show spinner
             $('#spinner').show();
             $.ajax({
                 url: api_url,
                 dataType: "json",
                 headers: { "api_key": api_key },
                 success: function (result) {
-                    // save results to variable for processing
                     var results = result.results
                     var dataFormat = "";
                     if (searchTable == "mortality") {
@@ -362,25 +336,19 @@
                     } else if (searchTable == "mortality-adj") {
                         dataFormat = "Deaths(per 100,000)";
                     }
-                    // make year string into array
+
                     var year_list = formInputLists['year'].split(",")
-                    // sort array chronologically 
                     year_list.sort((a, b) => Number(a) - Number(b));
 
-                    // create area for each bar chart
                     year_list.forEach(function (year, index) {
-                        // show title
                         $('#byYearTitle').show();
-                        // add year name
                         $('#barChartContainer').append('<h3>' + year + '</h3>');
-                        // add canvas with unique id
                         var chartId = "barChart" + year
                         $('#barChartContainer').append('<canvas id="' + chartId + '"></canvas>');
                         $('#barChartContainer').append('<hr><br>');
                         $('#barChartContainer').show();
                     })
 
-                    // create unique x axis labels - same for every year
                     var barChartXLabels = [];
                     var hasMale = false;
                     var hasFemale = false;
@@ -411,11 +379,9 @@
                         barChartXLabels.push(dataLabel);
                     });
 
-                    // create bar chart for each year
                     for (var i = 0; i < year_list.length; i++) {
                         var year = year_list[i];
 
-                        // generate chart data, checking if male/female/unspecified
                         var barChartData = {
                             labels: barChartXLabels,
                             datasets: []
@@ -443,7 +409,6 @@
                         }
 
                         results.forEach(function (resultsItem, resultsIndex) {
-                            // check datalabel against xAxis labels and find index
                             var adminSubdivLabel = " "
                             if (resultsItem.admin != "None") {
                                 adminSubdivLabel += "(" + resultsItem.admin.description + ")";
@@ -454,10 +419,8 @@
                             var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel
                             var indexOfLabel = barChartXLabels.indexOf(dataLabel);
 
-                            // get sex (1=male, 2=female, 9=unspecified)
                             var sex = resultsItem.sex.code
 
-                            // splice result into corresponding sex dataset data array at correct position for correct year
                             switch (sex) {
                                 case "1":
                                     // male
@@ -480,7 +443,6 @@
                             }
                         })
 
-                        // push all datasets to datasets array if exists
                         if (hasMale) {
                             barChartData['datasets'].push(maleDataset);
                         }
@@ -491,7 +453,6 @@
                             barChartData['datasets'].push(unspecifiedDataset);
                         }
 
-                        // show error message to notify user if some data is missing
                         barChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
                             datasetItem['data'].forEach(function (dataItem, dataIndex) {
                                 if (isNaN(dataItem) || dataItem == null) {
@@ -548,8 +509,6 @@
                             }
                             var dataLabel = resultsItem.cause.description + " - " + resultsItem.country.description + adminSubdivLabel + " - " + resultsItem.sex.description
 
-                            // there are no entries in the dataset object so this code doesn't run at all
-                            // use a exists = false/true check then decide what to do after
                             var datasetExists = false;
                             lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
                                 if (datasetItem.label == dataLabel) {
@@ -560,7 +519,6 @@
                                 }
                             })
                             if (!datasetExists) {
-                                // make new dataset object in the datasets array if doesn't dataset doesn't exist
                                 resultYear = resultsItem.year;
                                 randColor = getRandomColor();
 
@@ -578,11 +536,10 @@
                             }
                         })
 
-                        // after dataset entries made, loop through datasets and create a data array according matching the year_list array order
                         lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
-                            // loop through year_list
+
                             for (var i = 0; i < year_list.length; i++) {
-                                // if year_list entry is key in datasetItem['yearData'], push value to datasetItem[data]
+
                                 var year = year_list[i];
                                 if (year in datasetItem['yearData']) {
                                     datasetItem['data'].push(datasetItem['yearData'][year]);
@@ -592,7 +549,6 @@
                             }
                         });
 
-                        // show error message to notify user if some data is missing
                         lineChartData['datasets'].forEach(function (datasetItem, datasetIndex) {
                             datasetItem['data'].forEach(function (dataItem, dataIndex) {
                                 if (isNaN(dataItem) || dataItem == null) {
@@ -645,7 +601,6 @@
                     $('#lineChartContainer').append('<hr><br>');
 
                     // draw table
-                    // table: country(admin)(subdiv) | sex | year | deaths(total / per 100,000) 
                     var table = '<table class="table table-hover"><thead><tr class="table-primary"><th>Cause - Country(admin)(subdiv)</th><th>Sex</th><th>Year</th><th>' + dataFormat + '</th></tr></thead><tbody>';
                     results.forEach(function (resultsItem, resultsIndex) {
                         var adminSubdivLabel = " "

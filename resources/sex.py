@@ -43,7 +43,7 @@ class SexDesc(Resource):
 
     @requireAdmin
     def put(self, sex):
-        data = Sex.parser.parse_args()
+        data = SexDesc.parser.parse_args()
         entry = SexModel.find_by_name(sex)
 
         if entry:
@@ -67,7 +67,6 @@ class SexDesc(Resource):
 
 
 class SexList(Resource):
-    # return list of all sexes and their codes
     @requireApiKey
     def get(self):
         sexes = [sex.json() for sex in SexModel.find_all()]

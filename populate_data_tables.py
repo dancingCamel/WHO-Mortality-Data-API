@@ -13,10 +13,6 @@ from models.superuser import SuperuserModel
 from models.code_list_ref import CodeListRefModel
 from codes import *
 
-# use break instead of continue - if it finds an entry the table exists. Skip populating that table
-# assume our data sets have no duplicates
-
-
 # def populate_code_list_reference():
 #     data = {}
 
@@ -99,10 +95,8 @@ def populate_country_table():
     with open('./raw_data/country_codes.csv', 'r') as country_code_file:
         country_reader = csv.reader(country_code_file)
         for row in country_reader:
-            # make it a CountryModel object
             new_country_object = CountryModel(*row)
 
-            # check if it's in the table
             country = CountryModel.find_by_code(
                 new_country_object.country_code)
             if country:
@@ -120,7 +114,6 @@ def populate_population_table():
         pop_reader = csv.reader(population_file)
         for row in pop_reader:
 
-            # make it a PopulationModel object
             new_population_object = PopulationModel(*row)
 
             if new_population_object.year == "Year":
@@ -131,7 +124,6 @@ def populate_population_table():
             if population:
                 continue
 
-            # can't check if in table as don't have unique identifiers
             new_population_object.save_to_db()
 
 
@@ -270,27 +262,17 @@ def populate_icd_code_lists_table():
 
 
 def populate_mortality_table():
+    # this takes way too long. Don't use.
     # with open('/var/www/html/items-rest/raw_data/Mort-ICD10.csv', 'r') as mort_file:
     with open('./raw_data/Mort-ICD10.csv', 'r') as mort_file:
         mort_reader = csv.reader(mort_file)
         for row in mort_reader:
             new_mortality_entry = MortalityDataModel(*row)
-            # too much data to check each line each time
 
             new_mortality_entry.save_to_db()
-            # this takes way too long. need to find another way of generating the table more quickly
-            # this way would take over 15 hours
 
 
 def add_total_population_entries():
     pass
-    # need array of all possible years, all possible sexes and all possible admins and subdivs and all possible countires
-    # loop through each array nested. check to see if exists and save them to vars
-    # return the json_unformated. add relevant numbers together and save new entry to db
-
-
-def add_first_admin():
-    username = "whomortalitydatabase@gmail.com"
-
-    superuser = SuperuserModel(username)
-    superuser.save_to_db()
+    # TODO: add sum of male and female data and add new table entries.
+    # alternatively - in the json and visualize page add an "all" checkbox and sum the data each time

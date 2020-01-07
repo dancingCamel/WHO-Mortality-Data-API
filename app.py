@@ -78,8 +78,7 @@ app.config['TESTING'] = False
 def load_user(user_id):
     return UserModel.find_by_id(user_id)
 
-# uncomment these to populate all tables first time run programme
-# moved to run file for production.
+# move to run file for production
 @app.before_first_request
 def create_tables():
     db.create_all()
@@ -98,13 +97,11 @@ def create_tables():
     #     populate_icd_table_UE1()
     # populate_icd_code_lists_table()
 
-
     # Country endpoints
 api.add_resource(CountryCode, '/api/country-code/<string:country_code>')
 api.add_resource(CountryName, '/api/country-name/<string:country_name>')
 api.add_resource(CountryList, '/api/country-list')
 api.add_resource(CountrySearch, '/api/country-search/<string:search_term>')
-# replicate search endpoint specifically for browser page search
 api.add_resource(CountryDesc, '/api/country-desc/<string:search_term>')
 
 # Sex endpoints
@@ -145,7 +142,6 @@ api.add_resource(PopulationSearchMultiple, '/api/population-search-multiple')
 api.add_resource(Icd, '/api/icd/<string:code_list>/<string:code>')
 api.add_resource(IcdList, '/api/icd-list')
 api.add_resource(IcdSearch, '/api/icd-search/<string:search_term>')
-# ICD endpoints specifically for browser based search
 api.add_resource(IcdDesc, '/api/icd-desc/<string:search_term>')
 api.add_resource(IcdCode, '/api/icd-code/<string:code>')
 
@@ -187,25 +183,13 @@ api.add_resource(Codes, '/codes')
 api.add_resource(Profile, '/profile')
 api.add_resource(Contact, '/contact')
 
-# API info endpoinds
+# API info endpoints
 api.add_resource(Info, '/api/info')
 api.add_resource(ExternalDocs, '/api/externalDocs')
 api.add_resource(Paths, '/api/paths')
 
 
-# remove for deployment
-# db.init_app(app)
-
-# allow to run either by flask run or app.py
 if __name__ == '__main__':
     db.init_app(app)
     with app.app_context():
         app.run(host="127.0.0.1", port=5000, debug=True)
-
-#  remove this for deployment
-
-
-# def create_app():
-#     with app.app_context():
-#         db.init_app(app)
-#         return app

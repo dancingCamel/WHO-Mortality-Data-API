@@ -19,10 +19,7 @@ class SubdivCode(Resource):
 
     @requireAdmin
     def post(self, subdiv_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = Subdiv.parser.parse_args()
+        data = SubdivCode.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
         if subdiv:
@@ -37,10 +34,7 @@ class SubdivCode(Resource):
 
     @requireAdmin
     def put(self, subdiv_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = Subdiv.parser.parse_args()
+        data = SubdivCode.parser.parse_args()
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
         if subdiv:
@@ -57,9 +51,7 @@ class SubdivCode(Resource):
 
     @requireAdmin
     def delete(self, subdiv_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
+
         subdiv = SubdivModel.find_by_code(subdiv_code)
 
         if subdiv:

@@ -273,19 +273,14 @@ class MortalityDataModel(db.Model):
             'infant_deaths4': self.infant_deaths4
         }
 
-    # class methods:
-    # don't need to search with list as each country will only use one list in a given year
     @classmethod
     def search_mortalities(cls, kwargs):
         return cls.query.filter_by(**kwargs).all()
 
     @classmethod
     def search_single_mortality(cls, kwargs):
-        # search_single - validate the dictionary to ensure it contains enough info to select just one entry.
-        # must include country, year, sex, cause, admin, subdiv
         return cls.query.filter_by(**kwargs).first()
 
-    # /country/year/sex/cause endpoint and use parser to get admin and subdiv codes
     # put and post functions
     @classmethod
     def find_by_caysc(cls, country_code, admin_code, year, sex, cause):

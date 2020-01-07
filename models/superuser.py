@@ -1,6 +1,6 @@
 from db import db
 
-# use superuser instead of admin as admin is used extensively elsewhere in the API
+# use "superuser" instead of "admin" as admin is used extensively elsewhere in the API
 
 
 class SuperuserModel(db.Model):

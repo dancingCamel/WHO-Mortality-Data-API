@@ -8,7 +8,6 @@ from models.blacklist import BlacklistModel
 
 def requireApiKey(view_function):
     @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
         api_key = request.headers.get('api_key')
         user = UserModel.find_by_key(api_key)
@@ -16,7 +15,6 @@ def requireApiKey(view_function):
         blacklisted = BlacklistModel.find_by_api_key(api_key=api_key)
 
         if api_key and user:
-            # check to see if user is denied access
             if blacklisted:
                 abort(401)
             return view_function(*args, **kwargs)
@@ -29,7 +27,6 @@ def valid_api_key(api_key):
     user = UserModel.find_by_key(api_key)
     blacklisted = BlacklistModel.find_by_api_key(api_key=api_key)
     if api_key and user:
-        # check to see if user is denied access
         if blacklisted:
             return False
     else:

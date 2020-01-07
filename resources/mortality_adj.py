@@ -10,14 +10,17 @@ from models.code_list_ref import CodeListRefModel
 from validate import *
 
 
+def round_up(n, decimals=100):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
+
 class MortalityAdjustedSearch(Resource):
     @requireApiKey
     def get(self):
         # find all results for mortality search then change values depending on population per 100,000.
 
-        # use get_args() for variables. search with dict. Two dicts, one for mortality, one for population
         query = {}
-        # Validate request and add to query
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -56,11 +59,11 @@ class MortalityAdjustedSearch(Resource):
                 return {'message': 'Please enter a valid cause code'}, 400
 
             cause_code_list_extended = {}
-            # first get the corresponding description for the code given
+
             icd_codes = [code.json()
                          for code in IcdModel.find_by_code(cause_upper)]
             for icd_code in icd_codes:
-                # find other codes with same description
+
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
             unspecified_codes = []
@@ -74,7 +77,7 @@ class MortalityAdjustedSearch(Resource):
                 unspecified_codes = [matching_icd_code.json(
                 ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
             else:
-                # remove unspecified from description
+
                 position = match.span()
                 start = position[0] - 2
                 end = position[1] + 1
@@ -183,11 +186,6 @@ class MortalityAdjustedSearch(Resource):
                 if key in things_to_skip:
                     continue
 
-                # always round data up
-                def round_up(n, decimals=100):
-                    multiplier = 10 ** decimals
-                    return math.ceil(n * multiplier) / multiplier
-
                 # format age_breakdown data per 100,000
                 if key == "age_breakdown":
                     ages_to_delete = []
@@ -217,7 +215,6 @@ class MortalityAdjustedSearchMultiple(Resource):
         def strip_whitespace(string):
             return ('').join(string.split(' '))
 
-        # check all variables given and make list of strings from user input. strip all whitespace
         country_code_input = request.args.get('country', type=str)
         year_input = request.args.get('year', type=str)
         sex_code_input = request.args.get('sex', type=str)
@@ -232,18 +229,15 @@ class MortalityAdjustedSearchMultiple(Resource):
         year_list = strip_whitespace(year_input).split(',')
         sex_code_list = strip_whitespace(sex_code_input).split(',')
         cause_code_list = strip_whitespace(cause_code_input).split(',')
-        # make causes uppercase
         cause_code_list = list(map(
             lambda x: x.upper(), cause_code_list))
 
-        # find all codes that have matching description to codes given and search for those, too
-        # that way can compare countries that use different code lists
         cause_code_list_extended = {}
         for icd_code in filter(valid_cause, cause_code_list):
-            # first get the corresponding description for the code given
+
             complete_icd_codes = [code.json()
                                   for code in IcdModel.find_by_code(icd_code)]
-            # find other codes with same description
+
             for icd_code in complete_icd_codes:
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
@@ -263,7 +257,6 @@ class MortalityAdjustedSearchMultiple(Resource):
                     unspecified_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
                 else:
-                    # remove unspecified from description
 
                     position = match.span()
                     start = position[0] - 2
@@ -274,7 +267,6 @@ class MortalityAdjustedSearchMultiple(Resource):
                     generic_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
-                # add to extended code list
                 for matching_code in matching_codes:
                     cause_code_list_extended[matching_code['list']
                                              ] = matching_code['code']
@@ -332,7 +324,6 @@ class MortalityAdjustedSearchMultiple(Resource):
                                 query['admin_code'] = admin
                                 query['subdiv_code'] = subdiv
 
-                                # check only one result for each permutaton of variable. continue if not
                                 result = [entry.json()
                                           for entry in MortalityDataModel.search_mortalities(query)]
 
@@ -380,7 +371,7 @@ class MortalityAdjustedSearchMultiple(Resource):
                                     else:
                                         country = CountryModel.find_by_code(
                                             country_code).json()
-                                        # return {'message': "No population data available for '{}' in year {} for sex '{}'.".format(country['description'], year, sex)}, 404
+
                                         del entry['infant_age_breakdown']
                                         del entry['age_format']
                                         del entry['infant_age_format']
@@ -401,11 +392,6 @@ class MortalityAdjustedSearchMultiple(Resource):
                                     for key, value in entry.items():
                                         if key in things_to_skip:
                                             continue
-
-                                        # always round data up
-                                        def round_up(n, decimals=100):
-                                            multiplier = 10 ** decimals
-                                            return math.ceil(n * multiplier) / multiplier
 
                                         # format age_breakdown data per 100,000
                                         if key == "age_breakdown":
@@ -432,7 +418,6 @@ class MortalityAdjustedSearchMultiple(Resource):
                                 if result:
                                     results.append(result[0])
 
-        # return list to user if not empty
         if len(results) == 0:
             return {'message': "No mortality entries match your query."}, 404
 
@@ -442,11 +427,9 @@ class MortalityAdjustedSearchMultiple(Resource):
 class MortalityAdjustedOne(Resource):
     @requireApiKey
     def get(self):
-        # find all results for mortality search then change values depending on population per 100,000. round?
 
-        # use get_args() for variables. search with dict. Two dicts, one for mortality, one for population
         query = {}
-        # Validate request and add to query
+
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -483,11 +466,11 @@ class MortalityAdjustedOne(Resource):
             if not valid_cause(cause_upper):
                 return {'message': 'Please enter a valid cause code'}, 400
             cause_code_list_extended = {}
-            # first get the corresponding description for the code given
+
             icd_codes = [code.json()
                          for code in IcdModel.find_by_code(cause_upper)]
             for icd_code in icd_codes:
-                # find other codes with same description
+
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
             unspecified_codes = []
@@ -501,7 +484,7 @@ class MortalityAdjustedOne(Resource):
                 unspecified_codes = [matching_icd_code.json(
                 ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
             else:
-                # remove unspecified from description
+
                 position = match.span()
                 start = position[0] - 2
                 end = position[1] + 1
@@ -511,7 +494,6 @@ class MortalityAdjustedOne(Resource):
                 generic_codes = [matching_icd_code.json(
                 ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
-            # add to extended code list
             for matching_code in matching_codes:
                 cause_code_list_extended[matching_code['list']
                                          ] = matching_code['code']
@@ -569,7 +551,6 @@ class MortalityAdjustedOne(Resource):
             if len(results) > 1:
                 return {'message': "More than one population entry was found matching your query."}, 400
 
-            # for each item in the results lits, find the corresponding population
             for entry in results:
                 pop_query = {}
                 pop_query['country_code'] = entry['country']['code']
@@ -592,24 +573,15 @@ class MortalityAdjustedOne(Resource):
                         country_code).json()
                     return {'message': "No population data available for '{}' in year {} for sex '{}'.".format(country['description'], year, sex)}, 404
 
-                # remove infant mortality data as no related population data given
                 del entry['infant_age_breakdown']
-                # delete age format numbers as now irrelevant
                 del entry['age_format']
                 del entry['infant_age_format']
 
-                # divide mortality data by corresponding population number and multiply by 100,000
-                # population is population of that specific age/sex. not total country population
                 things_to_skip = ["country", "admin", "subdiv", "year",
                                   "code_list", "cause", "sex", "infant_age_breakdown"]
                 for key, value in entry.items():
                     if key in things_to_skip:
                         continue
-
-                    # always round data up
-                    def round_up(n, decimals=100):
-                        multiplier = 10 ** decimals
-                        return math.ceil(n * multiplier) / multiplier
 
                     # format age_breakdown data per 100,000
                     if key == "age_breakdown":

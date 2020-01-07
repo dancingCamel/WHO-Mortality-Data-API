@@ -5,12 +5,14 @@ from auth import requireApiKey, requireAdmin
 from models.user import UserModel
 
 
+def strip_whitespace(string):
+    return ('').join(string.split(' '))
+
+
 class PopulationSearch(Resource):
-    # search for entries
     @requireApiKey
     def get(self):
         query = {}
-        # Validate request and add to query
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -77,10 +79,7 @@ class PopulationChange(Resource):
 
     @requireAdmin
     def post(self, country_code, year, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        # need to add new country to countries list and new admin/subdiv to admin/subdiv lists before adding new population entry using those codes
+        # check country/admin/subdiv exist in respective databases before adding new population
         data = PopulationChange.parser.parse_args()
 
         # validation
@@ -150,12 +149,8 @@ class PopulationChange(Resource):
 
     @requireAdmin
     def delete(self, country_code, year, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
-        # validation
         if not valid_country_code(country_code):
             return {'message': '{} is not a valid country_code'.format(country_code)}, 400
 
@@ -209,12 +204,8 @@ class PopulationChange(Resource):
 
     @requireAdmin
     def put(self, country_code, year, sex):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = PopulationChange.parser.parse_args()
 
-        # validation
         if not valid_country_code(country_code):
             return {'message': '{} is not a valid country_code'.format(country_code)}, 400
 
@@ -301,7 +292,7 @@ class PopulationOne(Resource):
     @requireApiKey
     def get(self):
         query = {}
-        # Validate request and add to query
+
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -348,12 +339,10 @@ class PopulationOne(Resource):
 
 
 class PopulationSearchMultiple(Resource):
-    # want to accept a list in each of the variables and search each permutation.
+
     @requireApiKey
     def get(self):
-        def strip_whitespace(string):
-            return ('').join(string.split(' '))
-        # check all variables given make list of strings from user input. strip all whitespace
+
         country_code_input = request.args.get('country', type=str)
         year_input = request.args.get('year', type=str)
         sex_code_input = request.args.get('sex', type=str)
@@ -381,14 +370,13 @@ class PopulationSearchMultiple(Resource):
             subdiv_code_list.append("")
 
         results = []
-        # loop over all permutations of list items and validate codes.
+
         for country_code in filter(valid_country_code, country_code_list):
             for year in filter(valid_year, year_list):
                 for sex in filter(valid_sex, sex_code_list):
                     for admin in filter(valid_admin, admin_code_list):
                         for subdiv in filter(valid_subdiv, subdiv_code_list):
 
-                            # generate query
                             query = {}
                             query['country_code'] = country_code
                             query['sex'] = sex
@@ -396,27 +384,22 @@ class PopulationSearchMultiple(Resource):
                             query['admin'] = admin
                             query['subdiv'] = subdiv
 
-                            # check only one result for each permutaton of variable. continue if not
                             result = [entry.json()
                                       for entry in PopulationModel.search_populations(query)]
 
                             if result:
                                 if len(result) > 1:
-                                    # return {'message': "More than one population entry was found matching your query."}, 400
                                     continue
-                                # add all results to a results list
+
                                 results.append(result[0])
 
-        # if results is a blank list then send an error message for 404 not found
         if len(results) == 0:
             return {'message': 'No populations match your search parameters'}, 404
 
-        # return results list to user
         return {'results': results}, 200
 
 
 class PopulationsList(Resource):
-    # get all population data
     @requireApiKey
     def get(self):
         populations = [entry.json() for entry in PopulationModel.find_all()]

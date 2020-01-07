@@ -7,11 +7,15 @@ import re
 from auth import requireApiKey, requireAdmin
 
 
+def strip_whitespace(string):
+    return ('').join(string.split(' '))
+
+
 class MortalityDataSearch(Resource):
     @requireApiKey
     def get(self):
         query = {}
-        # Validate request and add to query
+
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -49,11 +53,11 @@ class MortalityDataSearch(Resource):
                 return {'message': 'Please enter a valid cause code'}, 400
 
             cause_code_list_extended = {}
-            # first get the corresponding description for the code given
+
             icd_codes = [code.json()
                          for code in IcdModel.find_by_code(cause_upper)]
             for icd_code in icd_codes:
-                # find other codes with same description
+
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
             unspecified_codes = []
@@ -67,7 +71,7 @@ class MortalityDataSearch(Resource):
                 unspecified_codes = [matching_icd_code.json(
                 ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
             else:
-                # remove unspecified from description
+
                 position = match.span()
                 start = position[0] - 2
                 end = position[1] + 1
@@ -77,7 +81,6 @@ class MortalityDataSearch(Resource):
                 generic_codes = [matching_icd_code.json(
                 ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
-            # add to extended code list
             for matching_code in matching_codes:
                 cause_code_list_extended[matching_code['list']
                                          ] = matching_code['code']
@@ -141,14 +144,10 @@ class MortalityDataSearch(Resource):
 
 
 class MortalitySearchMultiple(Resource):
-    # want to accept a list in each of the variables and search each permutation.
+
     @requireApiKey
     def get(self):
 
-        def strip_whitespace(string):
-            return ('').join(string.split(' '))
-
-        # check all variables given and make list of strings from user input. strip all whitespace
         country_code_input = request.args.get('country', type=str)
         year_input = request.args.get('year', type=str)
         sex_code_input = request.args.get('sex', type=str)
@@ -163,18 +162,16 @@ class MortalitySearchMultiple(Resource):
         year_list = strip_whitespace(year_input).split(',')
         sex_code_list = strip_whitespace(sex_code_input).split(',')
         cause_code_list = strip_whitespace(cause_code_input).split(',')
-        # make causes uppercase
+
         cause_code_list = list(map(
             lambda x: x.upper(), cause_code_list))
 
-        # find all codes that have matching description to codes given and search for those, too
-        # that way can compare countries that use different code lists
         cause_code_list_extended = {}
         for icd_code in filter(valid_cause, cause_code_list):
-            # first get the corresponding description for the code given
+
             complete_icd_codes = [code.json()
                                   for code in IcdModel.find_by_code(icd_code)]
-            # find other codes with same description
+
             for icd_code in complete_icd_codes:
                 matching_codes = [matching_icd_code.json()
                                   for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
@@ -194,7 +191,6 @@ class MortalitySearchMultiple(Resource):
                     unspecified_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
                 else:
-                    # remove unspecified from description
 
                     position = match.span()
                     start = position[0] - 2
@@ -205,7 +201,6 @@ class MortalitySearchMultiple(Resource):
                     generic_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
-                # add to extended code list
                 for matching_code in matching_codes:
                     cause_code_list_extended[matching_code['list']
                                              ] = matching_code['code']
@@ -236,7 +231,7 @@ class MortalitySearchMultiple(Resource):
             subdiv_code_list = strip_whitespace(subdiv_code_input).split(',')
         subdiv_code_list.append("")
 
-        # replace nested for loops with product function? - itertools.product or from itertools import product
+        # TODO: replace nested for loops with product function? - itertools.product or from itertools import product
         # def product(*args, **kwds):
         #     # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
         #     # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
@@ -249,7 +244,6 @@ class MortalitySearchMultiple(Resource):
 
         results = []
 
-        # loop over all permutations of list items and validate codes.
         for country_code in filter(valid_country_code, country_code_list):
             for year in filter(valid_year, year_list):
                 for sex in filter(valid_sex, sex_code_list):
@@ -257,7 +251,6 @@ class MortalitySearchMultiple(Resource):
                         for admin in filter(valid_admin, admin_code_list):
                             for subdiv in filter(valid_subdiv, subdiv_code_list):
 
-                                # generate query
                                 code_list_entry = CodeListRefModel.find_by_year_and_country(
                                     year, country_code)
 
@@ -274,7 +267,6 @@ class MortalitySearchMultiple(Resource):
                                 query['admin_code'] = admin
                                 query['subdiv_code'] = subdiv
 
-                                # check only one result for each permutaton of variable. continue if not
                                 result = [entry.json()
                                           for entry in MortalityDataModel.search_mortalities(query)]
 
@@ -299,17 +291,11 @@ class MortalitySearchMultiple(Resource):
                                 if result:
                                     if len(result) == 1:
                                         results.append(result[0])
-
                                 continue
 
-        # debug
-        # return {'start': start, 'end': end, 'code': generic_code, 'lists': str(cause_code_list_extended)}
-
-        # if results is a blank list then send an error message for 404 not found
         if len(results) == 0:
             return {'message': 'No mortality data matches your search parameters'}, 404
 
-        # return results list to user
         return {'results': results}, 200
 
 
@@ -317,7 +303,7 @@ class MortalityDataOne(Resource):
     @requireApiKey
     def get(self):
         query = {}
-        # Validate request and add to query
+
         country_code = request.args.get('country', type=str)
         if country_code:
             if not valid_country_code(country_code):
@@ -354,10 +340,10 @@ class MortalityDataOne(Resource):
                 if not valid_cause(cause_upper):
                     return {'message': 'Please enter a valid cause code'}, 400
                 cause_code_list_extended = {}
-                # first get the corresponding description for the code given
+
                 icd_codes = [code.json()
                              for code in IcdModel.find_by_code(cause_upper)]
-                # find other codes with same description
+
                 for icd_code in icd_codes:
                     matching_codes = [matching_icd_code.json()
                                       for matching_icd_code in IcdModel.search_specific(icd_code['description'])]
@@ -372,7 +358,7 @@ class MortalityDataOne(Resource):
                     unspecified_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(unspecified_code)]
                 else:
-                    # remove unspecified from description
+
                     position = match.span()
                     start = position[0] - 2
                     end = position[1] + 1
@@ -382,7 +368,6 @@ class MortalityDataOne(Resource):
                     generic_codes = [matching_icd_code.json(
                     ) for matching_icd_code in IcdModel.search_specific(generic_code)]
 
-                # add to extended code list
                 for matching_code in matching_codes:
                     cause_code_list_extended[matching_code['list']
                                              ] = matching_code['code']
@@ -480,12 +465,9 @@ class MortalityDataChange(Resource):
 
     @requireAdmin
     def post(self, country_code, year, sex, cause):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
+
         data = MortalityDataChange.parser.parse_args()
 
-        # validation
         if not valid_country_code(country_code):
             return {'message': '{} is not a valid country_code'.format(country_code)}, 400
 
@@ -684,7 +666,6 @@ class MortalityDataChange(Resource):
     def delete(self, country_code, year, sex, cause):
         data = MortalityDataChange.parser.parse_args()
 
-        # validation
         if not valid_country_code(country_code):
             return {'message': '{} is not a valid country_code'.format(country_code)}, 400
 

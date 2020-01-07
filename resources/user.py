@@ -21,11 +21,10 @@ class UserRegister(Resource):
         return make_response(render_template('register.html'), 200, headers)
 
     def post(self):
-        # username is just user's email address
+        # username is user's email address
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # validate username and password
         def valid_username(username):
             pattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
             if re.match(pattern, username):
@@ -47,26 +46,21 @@ class UserRegister(Resource):
             flash(message, 'error')
             return redirect(url_for('userregister'))
 
-        # check to see if username already exists
         user = UserModel.find_by_username(username)
-
-        if user:  # if a user is found, we want to redirect back to signup page so user can try again
+        if user:
             message = "Email address already exists"
             flash(message, 'error')
             return redirect(url_for('userregister'))
 
-        # hash password
         hashed_password = generate_password_hash(
             password, method='pbkdf2:sha256', salt_length=32)
 
-        # generate api key and check not already used
         api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
         all_blacklist = [
             blacklist.api_key for blacklist in BlacklistModel.find_all()]
         while UserModel.find_by_key(api_key) or api_key in all_blacklist:
             api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
-        # create new user
         username = str(utils.escape(username))
         new_user = UserModel(username, hashed_password, api_key)
 
@@ -76,7 +70,6 @@ class UserRegister(Resource):
 
         email = str(utils.escape(email))
 
-        # set up email config
         smtp_server = current_app.config['MAIL_SERVER']
         port = current_app.config['MAIL_PORT']
         sender_email = current_app.config['MAIL_DEFAULT_SENDER']
@@ -84,7 +77,6 @@ class UserRegister(Resource):
         receiver_email = current_app.config['MAIL_DEFAULT_SENDER']
         password = current_app.config['MAIL_PASSWORD']
 
-        # set up mime message
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = sender_email
@@ -98,7 +90,6 @@ class UserRegister(Resource):
         msg.attach(part1)
         msg.attach(part2)
 
-        # Create a secure SSL context
         context = ssl.create_default_context()
 
         with smtplib.SMTP(smtp_server, port=port, local_hostname="127.0.0.1") as server:
@@ -110,7 +101,6 @@ class UserRegister(Resource):
             except:
                 pass
 
-        # add the new user to the database
         try:
             new_user.save_to_db()
             message = "Registered successfully. Please log in."
@@ -143,10 +133,9 @@ class User(Resource):
 
 
 class UserPassword(Resource):
-    # don't redirect users as json expected as return
     @login_required
     def put(self):
-        # get info
+
         old_password = request.headers.get('oldPassword')
         old_password2 = request.headers.get('oldPassword2')
         new_password = request.headers.get('password')
@@ -156,19 +145,16 @@ class UserPassword(Resource):
         if not fresh:
             return {'message': "To protect your account, please <a href='/login'>reauthenticate.</a>"}, 401
 
-        # check old pass and new pass match
         if old_password != old_password2:
             error = "Please check your credentials - missmatch."
             return {'message': error}, 401
 
-        # check user exists and password is correct
         user = UserModel.find_by_username(username)
 
         if not user or not check_password_hash(user.password, old_password):
             error = "Please check your credentials."
             return {'message': error}, 401
 
-        # update password
         hashed_new_password = generate_password_hash(
             new_password, method='pbkdf2:sha256', salt_length=32)
 
@@ -183,7 +169,6 @@ class UserPassword(Resource):
 
 
 class UserApiKey(Resource):
-    # don't redirect users as json expected as return
     @login_required
     def put(self):
         username = request.headers.get('username')
@@ -198,11 +183,9 @@ class UserApiKey(Resource):
         if not user:
             return {'message': "User not found. Try loggin in again."}
 
-        # check current api_key matches one sent by user
         if user.api_key != api_key:
             return {'message': "Something isn't right. Try logging in again."}
 
-        # generate api key and check not already used or in blacklist
         new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         all_blacklist = [
@@ -210,7 +193,6 @@ class UserApiKey(Resource):
         while UserModel.find_by_key(new_api_key) or new_api_key in all_blacklist:
             new_api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
-        # update api key in user database
         try:
             blacklist_entry = BlacklistModel(api_key)
             blacklist_entry.save_to_db()
@@ -219,7 +201,6 @@ class UserApiKey(Resource):
         except:
             return {'message': "Something went wrong generating a new key. Try again later."}
 
-        # return new api_key
         return {'new_api_key': new_api_key}, 201
 
 
@@ -234,17 +215,13 @@ class UserLogin(Resource):
         password = request.form.get('password')
         rememberBool = True if request.form.get('remember') else False
 
-        # find user in db
         user = UserModel.find_by_username(username)
 
-        # check if user actually exists
         if not user or not check_password_hash(user.password, password):
-            # if user doesn't exist or password is wrong, reload the page
             message = "Please check your login credentials."
             flash(message, 'error')
             return redirect(url_for('userlogin'))
 
-        # if the above check passes, then we know the user has the right credentials
         login_user(user, remember=rememberBool)
 
         return redirect(url_for('profile'))

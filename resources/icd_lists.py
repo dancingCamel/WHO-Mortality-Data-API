@@ -20,13 +20,10 @@ class IcdCodeListCode(Resource):
 
     @requireAdmin
     def post(self, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         if IcdListsModel.find_by_code(code):
             return {'message': "List '{}' already exists.".format(code)}, 404
 
-        data = IcdCodeList.parser.parse_args()
+        data = IcdCodeListCode.parser.parse_args()
         new_list = IcdListsModel(code, data['description'])
         try:
             new_list.save_to_db()
@@ -36,12 +33,9 @@ class IcdCodeListCode(Resource):
 
     @requireAdmin
     def put(self, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         code_list = IcdListsModel.find_by_code(code)
 
-        data = IcdCodeList.parser.parse_args()
+        data = IcdCodeListCode.parser.parse_args()
         if code_list:
             code_list.description = data['description']
         else:
@@ -55,9 +49,6 @@ class IcdCodeListCode(Resource):
 
     @requireAdmin
     def delete(self, code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         code_list = IcdListsModel.find_by_code(code)
         if code_list:
             code_list.delete_from_db()
@@ -75,7 +66,6 @@ class IcdCodeListDesc(Resource):
 
 
 class IcdAllCodeLists(Resource):
-    # return all available code lists and their descritpion e.g. 101, 103, 104
     @requireApiKey
     def get(self):
         code_lists = [code_list.json()

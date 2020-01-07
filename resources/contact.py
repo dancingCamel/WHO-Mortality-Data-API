@@ -13,7 +13,6 @@ class Contact(Resource):
         return make_response(render_template('contact.html'), 200, headers)
 
     def post(self):
-        # get info from form
         subject = request.form.get("subject")
         message = request.form.get("message")
         name = request.form.get("name")
@@ -24,7 +23,6 @@ class Contact(Resource):
         name = str(utils.escape(name))
         email = str(utils.escape(email))
 
-        # set up email config
         smtp_server = current_app.config['MAIL_SERVER']
         port = current_app.config['MAIL_PORT']
         sender_email = current_app.config['MAIL_DEFAULT_SENDER']
@@ -32,7 +30,6 @@ class Contact(Resource):
         receiver_email = current_app.config['MAIL_DEFAULT_SENDER']
         password = current_app.config['MAIL_PASSWORD']
 
-        # set up mime message
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = sender_email
@@ -48,7 +45,6 @@ class Contact(Resource):
         msg.attach(part1)
         msg.attach(part2)
 
-        # Create a secure SSL context
         context = ssl.create_default_context()
 
         with smtplib.SMTP(smtp_server, port=port, local_hostname="127.0.0.1") as server:
@@ -60,7 +56,6 @@ class Contact(Resource):
                 message = "Thank you for your message. We'll get back to you as soon as possible. <a href=\"/\">Home</a>"
                 flash(message, 'info')
             except Exception as e:
-                # except Exception as e:
                 error = "Sorry, your message could not be sent. Please try again later. <a href=\"/\">Home</a>"
                 flash(error, 'error')
 

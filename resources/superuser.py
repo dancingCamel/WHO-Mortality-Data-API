@@ -42,9 +42,6 @@ class SuperuserUpdate(Resource):
 
     @requireAdmin
     def delete(self):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         data = _superuser_parser.parse_args()
 
         superuser = SuperuserModel.find_by_username(data['username'])

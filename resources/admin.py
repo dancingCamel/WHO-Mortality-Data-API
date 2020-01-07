@@ -20,9 +20,6 @@ class Admin(Resource):
 
     @requireAdmin
     def post(self, admin_code, country_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
         data = Admin.parser.parse_args()
 
         if AdminModel.find_by_code_and_country(admin_code, country_code):
@@ -37,9 +34,6 @@ class Admin(Resource):
 
     @requireAdmin
     def put(self, admin_code, country_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
         data = Admin.parser.parse_args()
 
         entry = AdminModel.find_by_code_and_country(admin_code, country_code)
@@ -56,9 +50,7 @@ class Admin(Resource):
 
     @requireAdmin
     def delete(self, admin_code, country_code):
-        claims = get_jwt_claims()
-        if not claims['is_admin']:
-            return {'message': 'Admin privilege required'}, 401
+
         entry = AdminModel.find_by_code_and_country(admin_code, country_code)
 
         if entry:
@@ -96,7 +88,7 @@ class AdminList(Resource):
 
 
 class AdminSearch(Resource):
-    # search endpoint for use in JSON and Visualise pages
+    # search endpoint for use in JSON and Visualize pages
     @requireApiKey
     def get(self, search_term):
         admins = [admin.json()

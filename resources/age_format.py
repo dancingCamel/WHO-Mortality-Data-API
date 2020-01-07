@@ -5,7 +5,6 @@ from auth import requireApiKey, requireAdmin
 
 class AgeFormatCode(Resource):
     parser = reqparse.RequestParser()
-    # add arguments with for loop like in population resource
     for num in range(2, 27):
         parser.add_argument('pop' + str(num),
                             type=str,
@@ -21,10 +20,7 @@ class AgeFormatCode(Resource):
 
     @requireAdmin
     def post(self, age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = AgeFormat.parser.parse_args()
+        data = AgeFormatCode.parser.parse_args()
 
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
@@ -40,10 +36,7 @@ class AgeFormatCode(Resource):
 
     @requireAdmin
     def put(self, age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
-        data = AgeFormat.parser.parse_args()
+        data = AgeFormatCode.parser.parse_args()
 
         age_format = AgeFormatModel.find_by_code(age_format_code)
 
@@ -84,9 +77,6 @@ class AgeFormatCode(Resource):
 
     @requireAdmin
     def delete(self, age_format_code):
-        # claims = get_jwt_claims()
-        # if not claims['is_admin']:
-        #     return {'message': 'Admin privilege required'}, 401
         age_format = AgeFormatModel.find_by_code(age_format_code)
         if age_format:
             age_format.delete_from_db()

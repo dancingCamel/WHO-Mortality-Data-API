@@ -205,11 +205,9 @@ class PopulationModel(db.Model):
             'pop26': self.pop26
         }
 
-    # use for creating list of distinct entries to use in making total population entries
     @classmethod
     def distinct_entries(cls, column):
         return cls.query.distinct(column).all()
-        # session.query.with_entities(cls.column).distinct()
 
     @classmethod
     def find_by_year(cls, year):
@@ -227,7 +225,6 @@ class PopulationModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
-    # searching by incomplete datasets may yield multiple results
     @classmethod
     def find_by_cys(cls, country_code, year, sex):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex).all()
@@ -240,19 +237,15 @@ class PopulationModel(db.Model):
     def find_by_cyss(cls, country_code, year, sex, subdiv):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, subdiv=subdiv).all()
 
-    # if have all these data points there will definitely only be one population entry
     @classmethod
     def find_by_cysas(cls, country_code, year, sex, admin, subdiv):
         return cls.query.filter_by(country_code=country_code, year=year, sex=sex, admin=admin, subdiv=subdiv).all()
 
     @classmethod
-    # pass a dictionary to this.
-    # return list of multiple population entries that match search criteria
     def search_populations(cls, kwargs):
         return cls.query.filter_by(**kwargs).all()
 
     @classmethod
-    # return only one population entry
     def search_single_population(cls, kwargs):
         return cls.query.filter_by(**kwargs).first()
 
