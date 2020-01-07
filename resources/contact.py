@@ -51,9 +51,6 @@ class Contact(Resource):
         # Create a secure SSL context
         context = ssl.create_default_context()
 
-        # try to send message and redirect to contact page
-        # need to add local_hostname as the default hostname has an invalid character in it
-        # TODO: change this for production
         with smtplib.SMTP(smtp_server, port=port, local_hostname="127.0.0.1") as server:
             try:
                 server.starttls(context=context)

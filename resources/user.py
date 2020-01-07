@@ -1,4 +1,4 @@
-from flask import render_template, make_response, url_for, request, redirect, flash
+from flask import render_template, make_response, url_for, request, redirect, flash, current_app
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user, login_fresh
@@ -8,6 +8,11 @@ from os import urandom
 from models.blacklist import BlacklistModel
 from models.user import UserModel
 import re
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from jinja2 import utils
 
 
 class UserRegister(Resource):
@@ -62,7 +67,48 @@ class UserRegister(Resource):
             api_key = str(b64encode(urandom(64)).decode('latin1'))[0:64]
 
         # create new user
+        username = str(utils.escape(username))
         new_user = UserModel(username, hashed_password, api_key)
+
+        # send email
+        subject = "A new user has signed up!"
+        email = username
+
+        email = str(utils.escape(email))
+
+        # set up email config
+        smtp_server = current_app.config['MAIL_SERVER']
+        port = current_app.config['MAIL_PORT']
+        sender_email = current_app.config['MAIL_DEFAULT_SENDER']
+        mail_username = current_app.config['MAIL_USERNAME']
+        receiver_email = current_app.config['MAIL_DEFAULT_SENDER']
+        password = current_app.config['MAIL_PASSWORD']
+
+        # set up mime message
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+
+        text = "A new user has registered.  (" + email + ")"
+        html = "<h2>A new user has registered.</h2><p><h3>(" + email + ")</h3>"
+
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Create a secure SSL context
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP(smtp_server, port=port, local_hostname="127.0.0.1") as server:
+            try:
+                server.starttls(context=context)
+                server.login(mail_username, password)
+                server.send_message(msg,
+                                    sender_email, receiver_email)
+            except:
+                pass
 
         # add the new user to the database
         try:
