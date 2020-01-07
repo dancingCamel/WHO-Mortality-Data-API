@@ -27,6 +27,8 @@
     <link rel="stylesheet" type="text/css" href="../static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
 </head>
 
 <body>
@@ -189,6 +191,21 @@
     {% block script %}
     {% endblock %}
 
+    <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+    <script>
+        window.cookieconsent.initialise({
+            "palette": {
+                "popup": {
+                    "background": "#eb6c44",
+                    "text": "#ffffff"
+                },
+                "button": {
+                    "background": "#f5d948"
+                }
+            },
+            "theme": "classic"
+        });
+    </script>
 </body>
 
 </html>
